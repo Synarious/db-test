@@ -6,7 +6,7 @@
     <meta name="robots" content="noindex, follow">
     <meta name="referrer" content="no-referrer">
     <meta name="theme-color" content="#101012">
-    <title>Take the BDSM Quiz · Deviant Bound</title>
+    <title>Take the BDSM Test · Deviant Bound</title>
     <link rel="icon" href="img/favicon/favicon.ico">
     <link rel="stylesheet" href="css/site.css">
     <link rel="stylesheet" href="css/quiz.css">
@@ -21,7 +21,7 @@
             <a class="site-brand" href="index.html"><span class="site-brand-mark"><img src="img/favicon/android-chrome-192x192.png" alt="" width="24" height="24"></span>Deviant Bound</a>
             <nav class="site-nav" aria-label="Main navigation">
                 <a href="index.html">Home</a>
-                <a href="quiz.html" aria-current="page">Quiz</a>
+                <a href="quiz.html" aria-current="page">BDSM Test</a>
                 <a href="results.html">Results</a>
                 <a href="profiles.html">Profiles</a>
             </nav>
@@ -30,7 +30,7 @@
     </header>
     <main id="main" class="page quiz-page" tabindex="-1">
         <section id="age-gate" class="panel age-gate" aria-labelledby="age-heading">
-            <p class="eyebrow">BDSM Quiz</p>
+            <p class="eyebrow">BDSM Test</p>
             <h1 id="age-heading" tabindex="-1">Adults only</h1>
             <p id="age-intro" class="description">Confirm you are 18 or older to open the quiz.</p>
             <div id="age-actions" class="actions">
@@ -41,26 +41,31 @@
             <noscript><p>Enable JavaScript to use the quiz.</p></noscript>
         </section>
         <p id="quiz-profile" class="quiz-profile" hidden><span></span><a href="profiles.html">Manage profiles</a></p>
-        <section id="mode-picker" class="panel" aria-labelledby="mode-heading" hidden>
-            <h1 id="mode-heading" tabindex="-1">Choose your quiz</h1>
-            <p class="description">Rate each statement based on what appeals to you. Assume all adults involved freely agree and can stop at any time.</p>
+        <section id="mode-picker" aria-labelledby="mode-heading" hidden>
+            <h1 id="mode-heading" tabindex="-1">Choose your test</h1>
+            <p class="description">Rate each statement based on what appeals to you. Assume everyone involved is an adult who freely agrees and can stop at any time.</p>
             <div class="quiz-modes">
                 <div class="mode-card">
-                    <h2>Standard</h2>
-                    <p>30 questions covering all 29 categories.</p>
-                    <button type="button" data-mode="standard">Start standard quiz</button>
+                    <header class="mode-card-heading">
+                        <h2>Quick</h2>
+                        <p class="mode-length">30 questions</p>
+                    </header>
+                    <p class="mode-summary">Covers all 29 categories in fewer questions.</p>
+                    <button type="button" data-mode="standard">Start Quick</button>
                 </div>
                 <div class="mode-card">
-                    <h2>Advanced</h2>
-                    <p>69 questions with follow-ups for every category.</p>
-                    <button type="button" data-mode="advanced">Start advanced quiz</button>
+                    <header class="mode-card-heading">
+                        <h2>Advanced</h2>
+                        <p class="mode-length">69 questions</p>
+                    </header>
+                    <p class="mode-summary">Adds follow-up questions across all 29 categories.</p>
+                    <button type="button" data-mode="advanced">Start Advanced</button>
                 </div>
             </div>
         </section>
         <section id="quiz" class="panel quiz-panel" aria-labelledby="quiz-heading" hidden>
             <div class="quiz-toolbar">
                 <div>
-                    <p class="eyebrow">BDSM Quiz</p>
                     <h1 id="quiz-heading" tabindex="-1"></h1>
                 </div>
                 <div class="actions">
@@ -68,13 +73,13 @@
                     <button type="button" id="open-reset" class="secondary" aria-haspopup="dialog">Reset answers</button>
                 </div>
             </div>
-            <div class="quiz-progress">
-                <label id="progress-label" for="progress"></label>
-                <progress id="progress"></progress>
-            </div>
             <form id="response-form">
                 <p id="response-description" class="description">Assume adult consent and agreed boundaries. Leave any question unrated to skip it.</p>
                 <div id="question-list"></div>
+                <div class="quiz-progress">
+                    <label id="progress-label" for="progress"></label>
+                    <progress id="progress"></progress>
+                </div>
                 <div class="quiz-actions actions">
                     <button type="button" id="previous" class="secondary">Back</button>
                     <button type="submit" id="next">Continue</button>
@@ -86,6 +91,7 @@
             <header class="report-header">
                 <h1 id="local-report-heading" tabindex="-1">Your results</h1>
                 <p class="description">Browser storage is unavailable. Your results are available here until you leave the page.</p>
+                <p class="description" id="local-missed-questions" hidden></p>
             </header>
             <ul id="local-scores" class="scores" aria-label="Your quiz scores"></ul>
             <div class="results-back"><button type="button" id="return-to-quiz" class="secondary">Return to quiz</button></div>
@@ -101,7 +107,7 @@
     </main>
     <footer class="site-footer">
         <div class="site-footer-inner">
-            <span>Deviant Bound <span class="footer-divider" aria-hidden="true">/</span> BDSM Quiz</span>
+            <span>Deviant Bound <span class="footer-divider" aria-hidden="true">/</span> BDSM Test</span>
             <a href="about.html">About &amp; privacy</a>
         </div>
     </footer>

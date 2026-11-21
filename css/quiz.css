@@ -1,19 +1,29 @@
 .quiz-page { display: grid; align-content: center; }
+.quiz-page:has(#mode-picker:not([hidden])) {
+    max-width: 53rem;
+    align-content: start;
+    padding-top: clamp(2rem, 6vh, 4rem);
+}
 .quiz-profile { display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin: 0 0 .85rem; color: var(--muted); font-size: .9rem; overflow-wrap: anywhere; }
 .age-gate { width: min(100%, 34rem); margin-inline: auto; }
 .age-gate .actions { margin-top: 1.5rem; }
-.quiz-modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; margin-top: 1.5rem; }
-#mode-heading:focus, #progress-label:focus, #local-report-heading:focus { outline: none; }
+#mode-picker > .description { max-inline-size: 61ch; margin-top: .65rem; }
+.quiz-modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; margin-top: 1.35rem; }
+#mode-heading:focus, #quiz-heading:focus, #local-report-heading:focus { outline: none; }
 .mode-card {
     display: grid;
     grid-template-rows: auto 1fr auto;
-    justify-items: start;
-    padding: 1rem;
+    gap: .75rem;
+    padding: clamp(1rem, 3vw, 1.4rem);
     border: 1px solid var(--border);
-    border-radius: .65rem;
-    background: var(--inset);
+    border-radius: .9rem;
+    background: linear-gradient(145deg, var(--surface), var(--inset));
 }
-.mode-card p { margin: .55rem 0 1rem; color: var(--muted); }
+.mode-card:hover, .mode-card:focus-within { border-color: var(--control-border); }
+.mode-card-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .25rem .8rem; }
+.mode-length { margin: 0; color: var(--accent); font-size: .875rem; font-weight: 650; }
+.mode-summary { margin: 0; color: var(--muted); }
+.mode-card button { margin-top: .15rem; }
 .quiz-toolbar, .quiz-actions {
     display: flex;
     justify-content: space-between;
@@ -38,48 +48,77 @@
 .question-row {
     min-inline-size: 0;
     margin: 0;
-    padding: .65rem 1rem .9rem;
+    padding: 1rem clamp(.85rem, 3vw, 1.35rem);
     border: 1px solid var(--border);
     border-radius: .8rem;
     background: var(--inset);
 }
-.question-row legend { padding-inline: .35rem; font-size: 1.05rem; font-weight: 700; }
-.rating-controls { display: grid; grid-template-columns: 1fr auto; align-items: center; }
-.rating-controls output { color: var(--accent); font-weight: 700; }
-.clear-rating { min-height: 2rem; padding: 0 .55rem; }
-.rating-track { grid-column: 1 / -1; }
+.question-prompt {
+    display: block;
+    max-inline-size: 65ch;
+    margin-inline: auto;
+    margin-block-end: .75rem;
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.5;
+}
+.question-number { color: var(--muted); font-variant-numeric: tabular-nums; }
+.question-row:has(input.unrated) + .question-row:has(input.unrated):not(:focus-within) .question-prompt {
+    filter: blur(2px);
+    opacity: .7;
+}
+@media (prefers-reduced-motion: no-preference) {
+    .question-prompt { transition: filter 160ms ease-out, opacity 160ms ease-out; }
+}
 .rating-track input {
     display: block;
     width: 100%;
-    height: 2.75rem;
+    height: 3rem;
     margin: 0;
     appearance: none;
     background: transparent;
     cursor: pointer;
-    --fill: linear-gradient(to right, var(--accent) var(--rating-fill), var(--control-border) var(--rating-fill));
+    --thumb-size: 1.35rem;
+    --track-size: .75rem;
+    --fill-width: calc(var(--thumb-size) / 2 + (100% - var(--thumb-size)) * var(--rating-position));
+    --rating-hue: calc(120deg * var(--rating-position));
+    --rating-color: hsl(var(--rating-hue) 75% 55%);
+    --rating-start: hsl(0 75% 55%);
+    --fill: linear-gradient(to right in hsl, var(--rating-start), var(--rating-color)) left / var(--fill-width) 100% no-repeat var(--control-border);
+    --thumb-color: var(--rating-color);
 }
-.rating-track input.unrated { --fill: var(--control-border); }
-.rating-track input::-webkit-slider-runnable-track { height: .5rem; border-radius: 1rem; background: var(--fill); }
-.rating-track input::-moz-range-track { height: .5rem; border-radius: 1rem; background: var(--fill); }
+.rating-track input.unrated { --fill: var(--control-border); --thumb-color: var(--control); }
+.rating-track input:focus-visible { outline: none; }
+.rating-track input::-webkit-slider-runnable-track {
+    height: var(--track-size);
+    border-radius: 1rem;
+    background: var(--fill);
+}
+.rating-track input::-moz-range-track {
+    height: var(--track-size);
+    border-radius: 1rem;
+    background: var(--fill);
+}
 .rating-track input::-webkit-slider-thumb {
     appearance: none;
-    width: 1.35rem;
-    height: 1.35rem;
-    margin-top: -.425rem;
+    width: var(--thumb-size);
+    height: var(--thumb-size);
+    margin-top: calc((var(--track-size) - var(--thumb-size)) / 2);
     border: 2px solid var(--primary);
     border-radius: 50%;
-    background: var(--accent);
+    background: var(--thumb-color);
 }
 .rating-track input::-moz-range-thumb {
     box-sizing: border-box;
-    width: 1.35rem;
-    height: 1.35rem;
+    width: var(--thumb-size);
+    height: var(--thumb-size);
     border: 2px solid var(--primary);
     border-radius: 50%;
-    background: var(--accent);
+    background: var(--thumb-color);
 }
-.rating-track input.unrated::-webkit-slider-thumb { background: var(--control); }
-.rating-track input.unrated::-moz-range-thumb { background: var(--control); }
+.rating-track input:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--accent); outline-offset: 3px; }
+.rating-track input:focus-visible::-moz-range-thumb { outline: 2px solid var(--accent); outline-offset: 3px; }
 .rating-scale { display: flex; justify-content: space-between; gap: .35rem; color: var(--muted); font-size: .8rem; }
 .quiz-actions button { min-width: 6.5rem; border-radius: .75rem; }
 .quiz-actions #previous { margin-inline-end: auto; }
@@ -88,4 +127,5 @@
 }
 @media (forced-colors: active) {
     .quiz-progress progress, .rating-track input { appearance: auto; }
+    .rating-track input:focus-visible { outline: 2px solid Highlight; }
 }

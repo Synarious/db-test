@@ -20,7 +20,7 @@
             <a class="site-brand" href="index.html"><span class="site-brand-mark"><img src="img/favicon/android-chrome-192x192.png" alt="" width="24" height="24"></span>Deviant Bound</a>
             <nav class="site-nav" aria-label="Main navigation">
                 <a href="index.html">Home</a>
-                <a href="quiz.html">Quiz</a>
+                <a href="quiz.html">BDSM Test</a>
                 <a href="results.html" aria-current="page">Results</a>
                 <a href="profiles.html">Profiles</a>
             </nav>
@@ -29,13 +29,14 @@
     </header>
     <main id="main" class="page results-page" tabindex="-1">
         <div class="page-heading">
-            <p class="eyebrow">BDSM Quiz</p>
+            <p class="eyebrow">BDSM Test</p>
             <h1 id="results-heading">Results preview</h1>
             <p id="result-intro" class="description">This example profile shows how role scores will appear.</p>
+            <p id="missed-questions" class="description" hidden></p>
         </div>
         <section id="saved-result-gate" class="panel saved-result-gate" aria-labelledby="saved-result-heading" hidden>
             <h2 id="saved-result-heading">View your saved results</h2>
-            <p class="description">Confirm you are 18 or older to open your personal results in this tab.</p>
+            <p class="description" id="result-age-description">Confirm you are 18 or older to open your personal results in this tab.</p>
             <div class="actions">
                 <button type="button" id="confirm-result-age">I am 18 or older</button>
                 <a class="button secondary" href="results.html#preview">Keep viewing the preview</a>
@@ -53,11 +54,15 @@
                 <button type="button" class="secondary" id="open-share" aria-haspopup="dialog"><span class="icon icon-share" aria-hidden="true"></span>Save / Share</button>
             </div>
             <ul id="result-scores" class="scores" aria-label="Example role scores" hidden></ul>
+            <footer class="report-footer">
+                <time id="report-date" hidden></time>
+                <a href="https://bdsmtest.deviantbound.com/">bdsmtest.deviantbound.com</a>
+            </footer>
             <noscript><p>Enable JavaScript to display quiz results.</p></noscript>
         </section>
         <div class="actions results-back">
-            <a class="button secondary" href="quiz.html" id="quiz-link">Take the quiz</a>
-            <a class="button secondary" href="profiles.html#create-profile" id="save-guest-result" hidden>Save to a profile</a>
+            <a class="button secondary" href="quiz.html" id="quiz-link">Take the BDSM Test</a>
+            <a class="button secondary" href="profiles.html#create-profile" id="save-default-result" hidden>Save to a profile</a>
         </div>
         <dialog id="details-dialog" aria-labelledby="detail-title">
             <div class="dialog-heading">
@@ -80,11 +85,12 @@
                 <form method="dialog"><button class="secondary" autofocus>Close</button></form>
             </div>
             <p id="share-description">The share link opens the example profile.</p>
-            <label class="share-field">Preview link
+            <label class="share-field"><span id="share-link-label">Preview link</span>
                 <input id="share-link" type="url" readonly>
             </label>
             <div class="actions">
                 <button type="button" id="copy-link">Copy preview link</button>
+                <button type="button" id="save-report-image" class="secondary">Save PNG</button>
                 <button type="button" id="print-report" class="secondary">Print / save PDF</button>
             </div>
             <p id="share-status" class="status" role="status"></p>
@@ -92,7 +98,7 @@
     </main>
     <footer class="site-footer">
         <div class="site-footer-inner">
-            <span>Deviant Bound <span class="footer-divider" aria-hidden="true">/</span> BDSM Quiz</span>
+            <span>Deviant Bound <span class="footer-divider" aria-hidden="true">/</span> BDSM Test</span>
             <a href="about.html">About &amp; privacy</a>
         </div>
     </footer>

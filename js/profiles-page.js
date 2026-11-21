@@ -1,6 +1,6 @@
 import { modes } from './questions.js';
 import { isRating } from './quiz-state.js';
-import { loadDraft } from './session.js';
+import { clearDraft, loadDraft } from './session.js';
 import {
     activeProfile, createProfile, exportProfile, importProfile, isProfileChange, listProfiles,
     readProfile, removeProfile, savedTheme, selectProfile, themes, updateProfile,
@@ -15,15 +15,23 @@ const importButton = document.querySelector('#import-profile');
 const backupFile = document.querySelector('#backup-file');
 const status = document.querySelector('#profile-status');
 const noProfiles = document.querySelector('#no-profiles');
-const useGuest = document.querySelector('#use-guest');
-const rename = document.querySelector('#rename-dialog');
-const renameForm = document.querySelector('#rename-form');
-const renameStatus = document.querySelector('#rename-status');
+const useDefault = document.querySelector('#use-default');
+const currentProgress = document.querySelector('#current-profile-progress');
+const editProfile = document.querySelector('#edit-profile-dialog');
+const editForm = document.querySelector('#edit-profile-form');
+const editStatus = document.querySelector('#edit-profile-status');
+const resetProfile = document.querySelector('#reset-profile-dialog');
+const resetStatus = document.querySelector('#reset-profile-status');
+const resetDefault = document.querySelector('#reset-default');
 const deletion = document.querySelector('#delete-dialog');
 const deleteStatus = document.querySelector('#delete-status');
 let editingId = null;
 
-function guestDrafts() {
+for (const [id, label] of Object.entries(themes)) {
+    editForm.elements.theme.add(new Option(label, id));
+}
+
+function defaultDrafts() {
     return Object.fromEntries(Object.keys(modes).map(mode => [mode, loadDraft(mode)]));
 }
 
@@ -45,26 +53,32 @@ function profileCard(profile, selected) {
     }
 
     const progress = card.querySelector('.profile-progress');
+    progress.hidden = selected;
+    if (!selected) renderProfileProgress(progress, profile.drafts, false);
+    return card;
+}
+
+function renderProfileProgress(progress, drafts, showLinks) {
+    progress.replaceChildren();
     for (const [mode, settings] of Object.entries(modes)) {
-        const draft = profile.drafts[mode];
+        const draft = drafts[mode];
         const ratings = Object.values(draft.responses);
         const rated = ratings.filter(isRating).length;
         const row = document.createElement('div');
         const label = document.createElement('dt');
-        label.textContent = `${settings.label} quiz`;
+        label.textContent = settings.label;
         const summary = document.createElement('dd');
-        summary.textContent = draft.completedAt ? 'Complete' : `${rated} / ${settings.items.length} rated`;
-        if (selected && ratings.length) {
+        summary.textContent = draft.completedAt ? 'Complete' : ratings.length ? `${rated} of ${settings.items.length} rated` : 'Not started';
+        if (showLinks) {
             const link = document.createElement('a');
             link.href = `${draft.completedAt ? 'results' : 'quiz'}.html?mode=${mode}`;
-            link.textContent = draft.completedAt ? 'View results' : 'Resume';
-            link.setAttribute('aria-label', `${link.textContent} for the ${settings.label.toLowerCase()} quiz`);
+            link.textContent = draft.completedAt ? 'View results' : ratings.length ? 'Resume' : 'Start';
+            link.setAttribute('aria-label', `${link.textContent} for the ${settings.label}`);
             summary.append(link);
         }
         row.append(label, summary);
         progress.append(row);
     }
-    return card;
 }
 
 function renderProfiles() {
@@ -77,17 +91,19 @@ function renderProfiles() {
         available = false;
     }
 
-    document.querySelector('#current-profile-label').textContent = active ? 'Active profile' : 'Current session';
-    document.querySelector('#current-profile-heading').textContent = active?.name ?? 'Guest';
+    const defaults = defaultDrafts();
+    document.querySelector('#current-profile-heading').textContent = active?.name ?? 'Default';
     document.querySelector('#current-profile-description').textContent = active
-        ? `Quiz progress is saved in this browser. ${themes[active.theme]} theme.`
-        : 'Guest quiz progress stays in this tab.';
-    useGuest.hidden = !active;
+        ? `Progress is saved in this browser. ${themes[active.theme]} theme.`
+        : 'Progress stays in this tab.';
+    renderProfileProgress(currentProgress, active?.drafts ?? defaults, true);
+    useDefault.hidden = !active;
+    resetDefault.hidden = Boolean(active);
     noProfiles.hidden = profiles.length > 0;
-    noProfiles.textContent = available ? 'Your saved profiles will appear here.' : 'Browser storage is unavailable.';
+    noProfiles.textContent = available ? 'No saved profiles yet.' : 'Browser storage is unavailable.';
     list.hidden = profiles.length === 0;
     list.replaceChildren(...profiles.map(profile => profileCard(profile, profile.id === active?.id)));
-    copyProgress.hidden = !Object.values(guestDrafts()).some(draft => Object.keys(draft.responses).length);
+    copyProgress.hidden = !Object.values(defaults).some(draft => Object.keys(draft.responses).length);
     createForm.querySelector('button[type="submit"]').disabled = !available;
     importButton.disabled = !available;
 }
@@ -97,14 +113,24 @@ function profilesChanged(message) {
     showStatus(message, true);
 }
 
-useGuest.addEventListener('click', () => {
+function confirmReset(profile) {
+    editingId = profile?.id ?? null;
+    document.querySelector('#reset-profile-description').textContent =
+        `Clear the answers and results for both tests in ${profile?.name ?? 'Default'}? Profile settings will be kept.`;
+    resetStatus.textContent = '';
+    resetProfile.showModal();
+}
+
+resetDefault.addEventListener('click', () => confirmReset(null));
+
+useDefault.addEventListener('click', () => {
     try {
         selectProfile(null);
     } catch {
-        showStatus('Could not switch to guest. Check browser storage and try again.');
+        showStatus('Could not switch to Default. Check browser storage and try again.');
         return;
     }
-    profilesChanged('Switched to guest.');
+    profilesChanged('Switched to Default.');
 });
 
 createForm.addEventListener('submit', event => {
@@ -118,7 +144,7 @@ createForm.addEventListener('submit', event => {
     let profile;
     try {
         const copy = !copyProgress.hidden && createForm.elements.copyProgress.checked;
-        profile = createProfile({ name, theme: savedTheme(), drafts: copy ? guestDrafts() : undefined });
+        profile = createProfile({ name, theme: savedTheme(), drafts: copy ? defaultDrafts() : undefined });
     } catch {
         showStatus('Could not create the profile. Check browser storage and try again.');
         return;
@@ -164,11 +190,18 @@ list.addEventListener('click', event => {
             }
             profilesChanged(`${profile.name} is now active.`);
             break;
-        case 'rename':
+        case 'edit':
             editingId = profile.id;
-            renameForm.elements.name.value = profile.name;
-            renameStatus.textContent = '';
-            rename.showModal();
+            editForm.elements.name.value = profile.name;
+            editForm.elements.theme.value = profile.theme;
+            editForm.elements.displayName.value = profile.details.displayName;
+            editForm.elements.age.value = profile.details.age ?? '';
+            editForm.elements.role.value = profile.details.role;
+            editStatus.textContent = '';
+            editProfile.showModal();
+            break;
+        case 'reset':
+            confirmReset(profile);
             break;
         case 'export':
             downloadProfile(profile);
@@ -183,22 +216,45 @@ list.addEventListener('click', event => {
     }
 });
 
-renameForm.addEventListener('submit', event => {
+editForm.addEventListener('submit', event => {
     if (event.submitter?.formMethod === 'dialog') return;
     event.preventDefault();
-    const name = renameForm.elements.name.value.trim();
+    const fields = editForm.elements;
+    const name = fields.name.value.trim();
     if (!name) {
-        renameStatus.textContent = 'Enter a profile name.';
+        editStatus.textContent = 'Enter a profile name.';
         return;
     }
     try {
-        updateProfile(editingId, { name });
+        updateProfile(editingId, {
+            name,
+            theme: fields.theme.value,
+            details: { displayName: fields.displayName.value, age: fields.age.valueAsNumber, role: fields.role.value },
+        });
     } catch {
-        renameStatus.textContent = 'Could not rename the profile. Check that it is still available.';
+        editStatus.textContent = 'Could not save the changes. Check that the profile is still available.';
         return;
     }
-    rename.close();
-    profilesChanged(`Profile renamed to ${name}.`);
+    editProfile.close();
+    profilesChanged(`Changes saved for ${name}.`);
+});
+
+document.querySelector('#reset-profile-form').addEventListener('submit', event => {
+    if (event.submitter?.formMethod === 'dialog') return;
+    event.preventDefault();
+    let name = 'Default';
+    try {
+        if (editingId) {
+            name = updateProfile(editingId, { drafts: {} }).name;
+        } else if (!Object.keys(modes).map(clearDraft).every(Boolean)) {
+            throw new Error('Could not clear Default progress.');
+        }
+    } catch {
+        resetStatus.textContent = 'Could not fully reset progress. Check browser storage and try again.';
+        return;
+    }
+    resetProfile.close();
+    profilesChanged(`Progress reset for ${name}.`);
 });
 
 document.querySelector('#delete-form').addEventListener('submit', event => {

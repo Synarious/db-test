@@ -20,7 +20,7 @@
             <a class="site-brand" href="index.html"><span class="site-brand-mark"><img src="img/favicon/android-chrome-192x192.png" alt="" width="24" height="24"></span>Deviant Bound</a>
             <nav class="site-nav" aria-label="Main navigation">
                 <a href="index.html">Home</a>
-                <a href="quiz.html">Quiz</a>
+                <a href="quiz.html">BDSM Test</a>
                 <a href="results.html">Results</a>
                 <a href="profiles.html" aria-current="page">Profiles</a>
             </nav>
@@ -36,68 +36,87 @@
         <div id="profile-manager" hidden>
             <section class="panel current-profile" aria-labelledby="current-profile-heading">
                 <div>
-                    <p class="eyebrow" id="current-profile-label">Current session</p>
-                    <h2 id="current-profile-heading">Guest</h2>
-                    <p class="description" id="current-profile-description">Guest quiz progress stays in this tab.</p>
+                    <p class="eyebrow">Active profile</p>
+                    <h2 id="current-profile-heading">Default</h2>
                 </div>
-                <div class="actions">
-                    <a class="button" href="quiz.html">Open quiz</a>
-                    <button type="button" id="use-guest" class="secondary" hidden>Switch to guest</button>
+                <div class="actions profile-toolbar-actions">
+                    <button type="button" id="use-default" class="secondary" hidden>Switch to Default</button>
+                    <button type="button" id="reset-default" class="text-button" aria-haspopup="dialog">Reset progress</button>
+                    <button type="button" class="text-button" id="import-profile" title="Restore a JSON backup as a separate profile">Import backup</button>
+                    <input type="file" id="backup-file" accept=".json,application/json" hidden>
+                    <a class="button secondary" href="#create-profile">New profile</a>
                 </div>
             </section>
             <p id="profile-status" class="status" role="status" tabindex="-1"></p>
             <div class="profile-layout">
-                <section class="panel saved-profiles" aria-labelledby="saved-profiles-heading">
-                    <h2 id="saved-profiles-heading">Saved profiles</h2>
-                    <p class="description" id="no-profiles">Your saved profiles will appear here.</p>
-                    <ul id="profile-list" class="profile-list" hidden></ul>
+                <section class="panel profile-overview" aria-label="Profile overview">
+                    <section aria-labelledby="test-progress-heading">
+                        <header class="profile-list-heading">
+                            <h2 id="test-progress-heading">Test progress</h2>
+                            <p class="description" id="current-profile-description">Progress stays in this tab.</p>
+                        </header>
+                        <dl class="profile-progress" id="current-profile-progress"></dl>
+                    </section>
+                    <section class="saved-profiles" aria-labelledby="saved-profiles-heading">
+                        <h2 id="saved-profiles-heading">Saved profiles</h2>
+                        <p class="description" id="no-profiles">No saved profiles yet.</p>
+                        <ul id="profile-list" class="profile-list" hidden></ul>
+                    </section>
                 </section>
-                <div class="profile-side">
-                    <section class="panel" id="create-profile" aria-labelledby="create-heading">
-                        <h2 id="create-heading">Create profile</h2>
-                        <form id="create-form" class="profile-form">
-                            <label class="field">Profile name<input id="new-profile-name" name="name" maxlength="80" autocomplete="off" required></label>
-                            <label class="copy-progress" id="copy-progress-option" hidden>
-                                <input type="checkbox" name="copyProgress"> Copy guest quiz progress from this tab
-                            </label>
-                            <button type="submit">Create profile</button>
-                        </form>
-                    </section>
-                    <section class="panel" aria-labelledby="backup-heading">
-                        <h2 id="backup-heading">Import backup</h2>
-                        <p class="description">Restore a quiz backup as a separate profile. Backup files contain your answers and profile details.</p>
-                        <button type="button" class="secondary" id="import-profile">Choose backup file</button>
-                        <input type="file" id="backup-file" accept=".json,application/json" hidden>
-                    </section>
-                </div>
+                <section class="panel create-profile" id="create-profile" aria-labelledby="create-heading">
+                    <h2 id="create-heading">Create profile</h2>
+                    <form id="create-form" class="profile-form">
+                        <label class="field">Profile name<input id="new-profile-name" name="name" maxlength="80" autocomplete="off" required></label>
+                        <label class="copy-progress" id="copy-progress-option" hidden>
+                            <input type="checkbox" name="copyProgress"> Copy progress from Default
+                        </label>
+                        <button type="submit">Create profile</button>
+                    </form>
+                </section>
             </div>
         </div>
         <template id="profile-card">
             <li class="profile-card">
                 <header class="profile-card-heading">
-                    <h3></h3>
-                    <span class="profile-badge" hidden>Active</span>
+                    <div class="profile-card-name">
+                        <h3></h3>
+                        <span class="profile-badge" hidden>Active</span>
+                    </div>
+                    <p class="profile-theme"></p>
                 </header>
-                <p class="profile-theme"></p>
                 <dl class="profile-progress"></dl>
                 <div class="actions profile-card-actions">
                     <button type="button" class="secondary" data-action="activate">Make active</button>
-                    <button type="button" class="text-button" data-action="rename" aria-haspopup="dialog">Rename</button>
+                    <button type="button" class="text-button" data-action="edit" aria-haspopup="dialog">Edit</button>
+                    <button type="button" class="text-button" data-action="reset" aria-haspopup="dialog">Reset progress</button>
                     <button type="button" class="text-button" data-action="export">Export</button>
                     <button type="button" class="text-button" data-action="delete" aria-haspopup="dialog">Delete</button>
                 </div>
             </li>
         </template>
-        <dialog id="rename-dialog" aria-labelledby="rename-heading">
-            <h2 id="rename-heading">Rename profile</h2>
-            <form id="rename-form" class="profile-form">
+        <dialog id="edit-profile-dialog" aria-labelledby="edit-profile-heading">
+            <h2 id="edit-profile-heading">Edit profile</h2>
+            <form id="edit-profile-form" class="profile-form">
                 <label class="field">Profile name<input name="name" maxlength="80" autocomplete="off" autofocus required></label>
+                <label class="field">Theme<select name="theme"></select></label>
+                <label class="field">Display name for reports<input name="displayName" maxlength="60" autocomplete="off"></label>
+                <label class="field">Age for reports<input name="age" type="number" min="18" max="999" step="1" inputmode="numeric" autocomplete="off"></label>
+                <label class="field">Role for reports<input name="role" maxlength="60" autocomplete="off"></label>
                 <div class="actions">
-                    <button type="submit">Save name</button>
+                    <button type="submit">Save changes</button>
                     <button type="submit" formmethod="dialog" formnovalidate class="secondary">Cancel</button>
                 </div>
-                <p class="status" id="rename-status" role="status"></p>
+                <p class="status" id="edit-profile-status" role="status"></p>
             </form>
+        </dialog>
+        <dialog id="reset-profile-dialog" aria-labelledby="reset-profile-heading" aria-describedby="reset-profile-description">
+            <h2 id="reset-profile-heading">Reset profile progress?</h2>
+            <p id="reset-profile-description"></p>
+            <form id="reset-profile-form" class="actions">
+                <button type="submit" formmethod="dialog" class="secondary" autofocus>Cancel</button>
+                <button type="submit">Reset progress</button>
+            </form>
+            <p class="status" id="reset-profile-status" role="status"></p>
         </dialog>
         <dialog id="delete-dialog" aria-labelledby="delete-heading" aria-describedby="delete-description">
             <h2 id="delete-heading">Delete profile?</h2>
@@ -111,7 +130,7 @@
     </main>
     <footer class="site-footer">
         <div class="site-footer-inner">
-            <span>Deviant Bound <span class="footer-divider" aria-hidden="true">/</span> BDSM Quiz</span>
+            <span>Deviant Bound <span class="footer-divider" aria-hidden="true">/</span> BDSM Test</span>
             <a href="about.html">About &amp; privacy</a>
         </div>
     </footer>

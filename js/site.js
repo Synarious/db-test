@@ -31,7 +31,7 @@ dialog.innerHTML = `
                 <figure class="appearance-example">
                     <figcaption>Results preview</figcaption>
                     <div class="appearance-preview" aria-hidden="true">
-                        <strong>Standard quiz</strong>
+                        <strong>BDSM Test</strong>
                         <div><span>Switch</span><span class="example-score">84%</span></div>
                         <span class="example-track"><span></span></span>
                         <div><span>Dominant</span><span class="example-score">62%</span></div>
@@ -92,7 +92,7 @@ for (const button of document.querySelectorAll('[data-customize]')) {
         editingId = profile?.id ?? null;
         context.textContent = profile
             ? `Appearance for ${profile.name}. Your theme applies across the site.`
-            : 'Guest appearance. Your theme applies across the site in this browser.';
+            : 'Default appearance. Your theme applies across the site in this browser.';
         details.hidden = !profile;
         details.disabled = !profile;
         form.elements.displayName.value = profile?.details.displayName ?? '';

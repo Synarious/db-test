@@ -79,6 +79,6 @@ const asItem = ([id, text, weights, reason]) => ({ id, text, weights, reason });
 const standardItems = standard.map(asItem);
 
 export const modes = {
-    standard: { label: 'Standard', items: standardItems },
+    standard: { label: 'Quick', items: standardItems },
     advanced: { label: 'Advanced', items: [...standardItems, ...followups.map(asItem)] },
 };

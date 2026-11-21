@@ -8,8 +8,16 @@ export const responseOptions = [
     'Strongly agree',
 ];
 
+export const ratingStep = 0.01;
+
 export function isRating(value) {
-    return Number.isInteger(value) && value >= 1 && value <= responseOptions.length;
+    return Number.isFinite(value) && value >= 1 && value <= responseOptions.length
+        && Number(value.toFixed(2)) === value;
+}
+
+export function missedQuestionsMessage(items, responses) {
+    const missed = items.filter(({ id }) => !isRating(responses[id])).length;
+    return missed ? `You left ${missed} ${missed === 1 ? 'question' : 'questions'} unanswered.` : '';
 }
 
 export function newDraft() {

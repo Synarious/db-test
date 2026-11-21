@@ -1,4 +1,4 @@
-# BDSM Quiz question bank
+# BDSM Test question bank
 
 Rate each statement on a 1–5 agreement scale. Assume that everyone involved is an adult who freely agrees and can stop at any time.
 
@@ -21,9 +21,9 @@ For each category, convert a positive item to `(rating − 1) / 4` or a reverse 
 
 Skipped items are excluded from both the numerator and the denominator. A category with no rated items shows **Unrated**. The report displays the number of rated items contributing to each score. Categories are scored independently, so a person can score high on both Dominant and Submissive. Switch measures explicit interest in changing roles.
 
-Advanced mode asks all 30 standard items and adds 39 follow-ups. Each category receives at least one added item. The extra items sample more contexts and help distinguish related interests. The weights and scores are unvalidated design judgments.
+Advanced includes all 30 Quick questions and adds 39 follow-ups. Each category receives at least one added item. The extra items sample more contexts and help distinguish related interests. The weights and scores are unvalidated design judgments.
 
-## Standard mode · Q01–Q30
+## Quick · Q01–Q30
 
 | ID | Statement | Scoring weights | Reasoning |
 | --- | --- | --- | --- |
@@ -58,7 +58,7 @@ Advanced mode asks all 30 standard items and adds 39 follow-ups. Each category r
 | Q29 | I am interested in nonsexual roleplay where consenting adults take on a different imagined age. | Ageplayer +3 | Measures the imagined-age element independently of caregiving, titles, and power exchange. |
 | Q30 | I like changing which role I take in a power exchange as my mood or partner changes. | Switch +2 | Checks whether flexibility itself appeals, beyond liking both roles in principle. |
 
-## Advanced mode additions · Q31–Q69
+## Advanced follow-ups · Q31–Q69
 
 | ID | Statement | Scoring weights | Reasoning |
 | --- | --- | --- | --- |

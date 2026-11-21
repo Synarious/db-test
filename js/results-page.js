@@ -1,10 +1,12 @@
 import { modes } from './questions.js';
-import { isRating, requestedMode } from './quiz-state.js';
+import { isRating, missedQuestionsMessage, requestedMode } from './quiz-state.js';
 import { sampleScores } from './sample-report.js';
 import { scoreQuiz } from './scoring.js';
 import { renderScores } from './score-list.js';
 import { loadAgeSelection, loadDraft, saveAgeSelection } from './session.js';
 import { activeProfile, isProfileChange } from './profile-store.js';
+import { decodeResults, encodeResults } from './shared-results.js';
+import { saveReportImage } from './report-image.js';
 
 const statistics = document.querySelector('#statistics-dialog');
 const statisticsList = document.querySelector('#statistics-list');
@@ -16,11 +18,11 @@ const quizLink = document.querySelector('#quiz-link');
 const scoreList = document.querySelector('#result-scores');
 const resultGate = document.querySelector('#saved-result-gate');
 const resultHeading = document.querySelector('#results-heading');
-
-shareLink.value = new URL('results.html#preview', location.href).href;
+const reportDate = document.querySelector('#report-date');
+const reportDateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' });
 
 function finishedQuiz(profile) {
-    if (location.hash === '#preview') return null;
+    if (location.hash === '#preview' || location.hash.startsWith('#results=')) return null;
     const selected = requestedMode();
     const candidates = selected ? [selected] : Object.keys(modes);
     return candidates.map(mode => ({ mode, ...(profile?.drafts[mode] ?? loadDraft(mode)) }))
@@ -40,34 +42,57 @@ function displayDetails(entry) {
 function refreshResults() {
     const profile = activeProfile();
     const age = loadAgeSelection();
+    const sharedScores = decodeResults(location.hash);
+    const invalidShare = location.hash.startsWith('#results=') && !sharedScores;
     const candidate = age === 'yes' || (age === null && profile) ? finishedQuiz(profile) : null;
     const completed = age === 'yes' ? candidate : null;
-    resultGate.hidden = age !== null || !candidate;
+    const shared = age === 'yes' && Boolean(sharedScores);
+    resultGate.hidden = age !== null || !(candidate || sharedScores);
+    document.querySelector('#saved-result-heading').textContent = sharedScores ? 'View shared results' : 'View your saved results';
+    document.querySelector('#result-age-description').textContent = sharedScores
+        ? 'Confirm you are 18 or older to open the shared results.'
+        : 'Confirm you are 18 or older to open your personal results in this tab.';
     const settings = completed ? modes[completed.mode] : null;
-    const scores = settings ? scoreQuiz(settings.items, completed.responses) : sampleScores;
+    const missed = document.querySelector('#missed-questions');
+    missed.textContent = completed ? missedQuestionsMessage(settings.items, completed.responses) : '';
+    missed.hidden = !missed.textContent;
+    const scores = settings ? scoreQuiz(settings.items, completed.responses) : shared ? sharedScores : sampleScores;
+    const shareable = Boolean(completed || shared);
 
-    const heading = completed ? 'Your results' : 'Results preview';
+    const heading = completed ? 'Your results' : shared ? 'Shared results' : 'Results preview';
     document.title = `${heading} · Deviant Bound`;
     resultHeading.textContent = heading;
     document.querySelector('#result-intro').textContent = completed
         ? `${profile ? `Active profile · ${profile.name}. ` : ''}Open More info to see how many questions contributed to each score.`
-        : 'This example profile shows how role scores will appear.';
-    document.querySelector('#report-heading').textContent = completed ? `${settings.label} quiz` : 'Example profile';
+        : shared ? 'These role scores were shared by someone who took the quiz.'
+            : invalidShare ? 'This shared results link is invalid or unsupported. The example profile is shown below.'
+                : 'This example profile shows how role scores will appear.';
+    document.querySelector('#report-heading').textContent = completed ? settings.label : shared ? 'Quiz scores' : 'Example profile';
+    const date = new Date();
+    reportDate.dateTime = [
+        date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0'),
+    ].join('-');
+    reportDate.textContent = reportDateFormat.format(date);
+    reportDate.hidden = false;
     const profileLine = document.querySelector('#report-profile');
     const { displayName, age: profileAge, role } = completed && profile ? profile.details : {};
     profileLine.textContent = [displayName, profileAge ? `Age ${profileAge}` : '', role].filter(Boolean).join(' · ');
     profileLine.hidden = !profileLine.textContent;
     document.querySelector('#report-note').textContent = completed
         ? `${settings.items.length} questions · Weighted agreement`
-        : 'Illustrative scores';
-    document.querySelector('#statistics-title').textContent = completed ? 'Quiz statistics' : 'Preview statistics';
-    document.querySelector('#share-description').textContent = completed
-        ? 'Print or save a PDF of your scores. The share link opens the example profile.'
+        : shared ? 'Weighted agreement' : 'Illustrative scores';
+    document.querySelector('#statistics-title').textContent = shareable ? 'Quiz statistics' : 'Preview statistics';
+    document.querySelector('#share-description').textContent = shareable
+        ? 'Anyone with this link can view these role scores. Quiz answers and profile details stay out of the link.'
         : 'The share link opens the example profile.';
+    const linkLabel = shareable ? 'Results link' : 'Preview link';
+    document.querySelector('#share-link-label').textContent = linkLabel;
+    document.querySelector('#copy-link').textContent = `Copy ${linkLabel.toLowerCase()}`;
+    shareLink.value = new URL(`results.html${shareable ? encodeResults(scores) : '#preview'}`, location.href).href;
     quizLink.href = completed ? `quiz.html?mode=${completed.mode}` : 'quiz.html';
-    quizLink.textContent = completed ? 'Review answers' : 'Take the quiz';
-    document.querySelector('#save-guest-result').hidden = !completed || Boolean(profile);
-    scoreList.setAttribute('aria-label', completed ? 'Your quiz scores' : 'Example role scores');
+    quizLink.textContent = completed ? 'Review answers' : 'Take the BDSM Test';
+    document.querySelector('#save-default-result').hidden = !completed || Boolean(profile);
+    scoreList.setAttribute('aria-label', completed ? 'Your quiz scores' : shared ? 'Shared quiz scores' : 'Example role scores');
     renderScores(scoreList, scores, displayDetails);
 
     const rated = scores.filter(entry => entry.score !== null);
@@ -79,7 +104,8 @@ function refreshResults() {
             ['Categories scored', `${rated.length} of ${scores.length}`],
             ['Highest score', high],
         ]
-        : [['Example roles', scores.length], ['Highest example score', high]];
+        : shared ? [['Categories scored', `${rated.length} of ${scores.length}`], ['Highest score', high]]
+            : [['Example roles', scores.length], ['Highest example score', high]];
 
     statisticsList.replaceChildren(...metrics.map(([label, value]) => {
         const row = document.createElement('div');
@@ -100,7 +126,7 @@ document.querySelector('#open-share').addEventListener('click', () => {
 document.querySelector('#copy-link').addEventListener('click', async () => {
     try {
         await navigator.clipboard.writeText(shareLink.value);
-        shareStatus.textContent = 'Preview link copied.';
+        shareStatus.textContent = 'Link copied.';
     } catch {
         shareLink.focus();
         shareLink.select();
@@ -108,6 +134,19 @@ document.querySelector('#copy-link').addEventListener('click', async () => {
     }
 });
 document.querySelector('#print-report').addEventListener('click', () => window.print());
+const saveImage = document.querySelector('#save-report-image');
+saveImage.addEventListener('click', async () => {
+    saveImage.disabled = true;
+    shareStatus.textContent = 'Preparing image…';
+    try {
+        await saveReportImage(scoreList.closest('.report'));
+        shareStatus.textContent = 'PNG download started.';
+    } catch {
+        shareStatus.textContent = 'Could not save the image. Try again or use Print / save PDF.';
+    } finally {
+        saveImage.disabled = false;
+    }
+});
 document.querySelector('#confirm-result-age').addEventListener('click', () => {
     if (!saveAgeSelection('yes')) {
         document.querySelector('#result-age-status').textContent = 'Could not save your age choice. Check browser storage and try again.';

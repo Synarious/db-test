@@ -1,5 +1,5 @@
 import { modes } from './questions.js';
-import { newDraft, normalizeDraft, requestedMode, responseOptions } from './quiz-state.js';
+import { missedQuestionsMessage, newDraft, normalizeDraft, ratingStep, requestedMode, responseOptions } from './quiz-state.js';
 import { scoreQuiz } from './scoring.js';
 import { renderScores } from './score-list.js';
 import { clearDraft, loadAgeSelection, loadDraft, saveAgeSelection, saveDraft } from './session.js';
@@ -55,74 +55,72 @@ function renderProgress(draft, items) {
 }
 
 function questionControl(item, index, draft) {
-    const row = document.createElement('fieldset');
+    const row = document.createElement('div');
     row.className = 'question-row';
-    const heading = document.createElement('legend');
-    heading.textContent = `${index + 1}. ${item.text}`;
-    heading.id = `heading-${item.id}`;
-    const controls = document.createElement('div');
-    controls.className = 'rating-controls';
+    const heading = document.createElement('label');
+    heading.className = 'question-prompt';
+    const number = document.createElement('span');
+    number.className = 'question-number';
+    number.textContent = `${index + 1}. `;
+    const statement = document.createElement('span');
+    statement.textContent = item.text;
+    heading.append(number, statement);
 
     const slider = document.createElement('input');
     slider.type = 'range';
     slider.id = `rating-${item.id}`;
     slider.min = '1';
     slider.max = '5';
-    slider.step = '1';
-    slider.setAttribute('aria-labelledby', heading.id);
+    slider.step = String(ratingStep);
+    heading.htmlFor = slider.id;
 
-    const output = document.createElement('output');
-    output.htmlFor = slider.id;
-    const clear = document.createElement('button');
-    clear.type = 'button';
-    clear.className = 'text-button clear-rating';
-    clear.textContent = 'Clear';
-    clear.setAttribute('aria-label', `Clear rating for question ${index + 1}`);
-
-    function update(rating) {
-        slider.value = String(rating ?? 3);
-        slider.style.setProperty('--rating-fill', `${(Number(slider.value) - 1) * 25}%`);
+    function updateDisplay(rating) {
+        slider.style.setProperty('--rating-position', (slider.valueAsNumber - 1) / 4);
         slider.classList.toggle('unrated', rating == null);
-        output.textContent = rating == null ? 'Unrated' : `${rating} · ${responseOptions[rating - 1]}`;
-        slider.setAttribute('aria-valuetext', rating == null ? 'Unrated. Press Space to select 3, or use arrow keys to adjust.' : output.textContent);
-        clear.hidden = rating == null;
+        const label = responseOptions[Math.round(rating) - 1];
+        slider.setAttribute('aria-valuetext', rating == null
+            ? 'Unrated. Press Space to select neutral, or use arrow keys to adjust.'
+            : `${rating}, ${label}. Press Delete to return to unrated.`);
     }
 
     function saveRating(rating) {
+        slider.value = String(rating ?? 3);
+        updateDisplay(rating);
         if (draft.responses[item.id] === rating) return;
         draft.responses[item.id] = rating;
         draft.completedAt = null;
-        update(rating);
         renderProgress(draft, modes[mode].items);
         showStorageState(persistDraft(draft));
     }
 
-    update(draft.responses[item.id]);
-    const select = () => saveRating(Number(slider.value));
-    slider.addEventListener('input', select);
-    slider.addEventListener('click', select);
+    slider.value = String(draft.responses[item.id] ?? 3);
+    updateDisplay(draft.responses[item.id]);
+    const commitRating = () => saveRating(slider.valueAsNumber);
+    slider.addEventListener('input', () => updateDisplay(slider.valueAsNumber));
+    slider.addEventListener('change', commitRating);
+    slider.addEventListener('click', commitRating);
     slider.addEventListener('keydown', event => {
+        if (event.key === 'Delete') {
+            event.preventDefault();
+            if (draft.responses[item.id] != null) saveRating(null);
+            return;
+        }
         if (event.key !== ' ' && event.key !== 'Enter') return;
         event.preventDefault();
-        select();
-    });
-    clear.addEventListener('click', () => {
-        saveRating(null);
-        slider.focus();
+        commitRating();
     });
 
     const track = document.createElement('div');
     track.className = 'rating-track';
     const scale = document.createElement('div');
     scale.className = 'rating-scale';
-    for (const label of ['1 · Disagree', '3 · Neutral', '5 · Agree']) {
+    for (const label of ['Disagree', 'Neutral', 'Agree']) {
         const tick = document.createElement('span');
         tick.textContent = label;
         scale.append(tick);
     }
     track.append(slider, scale);
-    controls.append(output, clear, track);
-    row.append(heading, controls);
+    row.append(heading, track);
     return row;
 }
 
@@ -131,15 +129,15 @@ function showStep(moveFocus = false) {
     const draft = getDraft(mode);
     const start = Math.floor(draft.index / pageSize) * pageSize;
     const end = Math.min(start + pageSize, items.length);
-    document.querySelector('#quiz-heading').textContent = `${label} quiz`;
+    const heading = document.querySelector('#quiz-heading');
+    heading.textContent = label;
     progressLabel.textContent = `Questions ${start + 1}–${end} of ${items.length}`;
-    progressLabel.tabIndex = -1;
     progress.max = items.length;
     renderProgress(draft, items);
     questionList.replaceChildren(...items.slice(start, end).map((item, i) => questionControl(item, start + i, draft)));
     back.disabled = start === 0;
     next.textContent = end === items.length ? 'See results' : 'Next page';
-    if (moveFocus) progressLabel.focus();
+    if (moveFocus) heading.focus();
 }
 
 function showAgeSelection(moveFocus = false) {
@@ -163,7 +161,7 @@ function showAgeSelection(moveFocus = false) {
             const key = button.dataset.mode;
             const draft = getDraft(key);
             const action = Object.keys(draft.responses).length ? 'Resume' : 'Start';
-            button.textContent = `${action} ${modes[key].label.toLowerCase()} quiz`;
+            button.textContent = `${action} ${modes[key].label}`;
         }
         if (moveFocus) document.querySelector('#mode-heading').focus();
     } else if (declined && moveFocus) {
@@ -206,6 +204,9 @@ function advance() {
     }
     showStorageState(false);
     renderScores(document.querySelector('#local-scores'), scoreQuiz(items, draft.responses));
+    const missed = document.querySelector('#local-missed-questions');
+    missed.textContent = missedQuestionsMessage(items, draft.responses);
+    missed.hidden = !missed.textContent;
     quiz.hidden = true;
     localReport.hidden = false;
     document.querySelector('#local-report-heading').focus();
@@ -233,7 +234,7 @@ back.addEventListener('click', () => {
 document.querySelector('#open-reset').addEventListener('click', () => {
     reset.returnValue = '';
     document.querySelector('#reset-description').textContent = profile
-        ? `This clears the ${modes[mode].label.toLowerCase()} answers and result for ${profile.name}.`
+        ? `This clears the ${modes[mode].label} answers and result for ${profile.name}.`
         : 'This clears the answers and result for the current mode in this tab.';
     reset.showModal();
 });

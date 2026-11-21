@@ -155,10 +155,28 @@
 body {
     display: flex;
     flex-direction: column;
+    position: relative;
+    isolation: isolate;
     min-height: 100vh;
     min-height: 100svh;
     margin: 0;
     background: radial-gradient(ellipse at 75% 4%, color-mix(in srgb, var(--accent) 6%, transparent), transparent 48rem);
+}
+
+/* A repeating tile drawn from the bundled Glyphicons Halflings font. */
+body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--accent);
+    opacity: .11;
+    mask: url("../img/icon-texture.png") center top / 460px 360px repeat;
+}
+
+@media print, (forced-colors: active) {
+    body::before { display: none; }
 }
 
 main { flex: 1 0 auto; }
@@ -291,7 +309,7 @@ dialog p { color: var(--muted); overflow-wrap: anywhere; }
 
 .profile-fields { display: grid; grid-template-columns: minmax(0, 1fr) 5rem minmax(0, 1fr); gap: .75rem; }
 .profile-fields label, .field { display: grid; gap: .35rem; font-size: .9rem; font-weight: 650; }
-:is(.profile-fields, .field) input {
+:is(.profile-fields, .field) :is(input, select) {
     width: 100%;
     min-width: 0;
     min-height: 2.75rem;

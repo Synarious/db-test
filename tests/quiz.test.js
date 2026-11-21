@@ -4,6 +4,7 @@ import { modes } from '../js/questions.js';
 import { normalizeDraft } from '../js/quiz-state.js';
 import { roles } from '../js/roles.js';
 import { scoreQuiz } from '../js/scoring.js';
+import { decodeResults, encodeResults } from '../js/shared-results.js';
 import { loadDraft, saveDraft } from '../js/session.js';
 import {
     activeProfile, createProfile, exportProfile, importProfile, listProfiles, removeProfile,
@@ -11,6 +12,15 @@ import {
 } from '../js/profile-store.js';
 
 const { standard, advanced } = modes;
+
+test('shared results round-trip scores and unrated categories without answers', () => {
+    const scores = scoreQuiz(standard.items, { Q01: 5, Q02: 1, Q03: 3.72 });
+    const hash = encodeResults(scores);
+    assert.match(hash, /^#results=v1\.[A-Za-z0-9_-]+$/);
+    assert.deepEqual(decodeResults(hash), scores.map(({ role, description, score }) => ({ role, description, score })));
+    assert.equal(decodeResults(hash.slice(0, -1)), null);
+    assert.equal(decodeResults('#preview'), null);
+});
 
 test('both modes cover the requested categories with unique, reasoned items', () => {
     assert.equal(Object.keys(roles).length, 29);
@@ -53,6 +63,14 @@ test('requires a valid rating or explicit skip for each item before marking a mo
     assert.deepEqual(normalizeDraft({
         index: 17, responses: { Q01: 5, Q02: '5', Q31: 4 }, completedAt: 100,
     }, 'standard'), { index: 1, responses: { Q01: 5 }, completedAt: null });
+});
+
+test('preserves fractional ratings and uses their exact values for scoring', () => {
+    const draft = normalizeDraft({ responses: { Q02: 3.72, Q03: 4.125 } }, 'standard');
+    assert.deepEqual(draft.responses, { Q02: 3.72 });
+    const result = scoreQuiz(standard.items, draft.responses).find(entry => entry.role === 'Submissive');
+    assert.equal(result.answered, 1);
+    assert.equal(result.score, 68);
 });
 
 test('guest progress and profile progress stay independent across profile switches', t => {
@@ -101,5 +119,12 @@ test('guest progress and profile progress stay independent across profile switch
     assert.equal(backup.name, 'Renamed');
     assert.equal(backup.details.displayName, 'Nickname');
     assert.deepEqual(backup.drafts.advanced, answer(1));
+    const reset = updateProfile(first.id, { drafts: {} });
+    assert.deepEqual(loadDraft('standard', first.id).responses, {});
+    assert.deepEqual(loadDraft('advanced', first.id).responses, {});
+    assert.equal(reset.name, backup.name);
+    assert.equal(reset.theme, backup.theme);
+    assert.deepEqual(reset.details, backup.details);
+    assert.equal(loadDraft('standard').responses.Q01, 5);
     assert.throws(() => importProfile('{"format":"unknown","version":1}'), /quiz profile backup/);
 });
