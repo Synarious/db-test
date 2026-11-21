@@ -1,6 +1,6 @@
 import { modes } from './questions.js';
 import { isRating } from './quiz-state.js';
-import { clearDraft, loadDraft } from './session.js';
+import { clearDraft, isDefaultDraftChange, loadDraft } from './session.js';
 import {
     activeProfile, createProfile, exportProfile, importProfile, isProfileChange, listProfiles,
     readProfile, removeProfile, savedTheme, selectProfile, themes, updateProfile,
@@ -95,7 +95,7 @@ function renderProfiles() {
     document.querySelector('#current-profile-heading').textContent = active?.name ?? 'Default';
     document.querySelector('#current-profile-description').textContent = active
         ? `Progress is saved in this browser. ${themes[active.theme]} theme.`
-        : 'Progress stays in this tab.';
+        : 'Progress is saved in this browser.';
     renderProfileProgress(currentProgress, active?.drafts ?? defaults, true);
     useDefault.hidden = !active;
     resetDefault.hidden = Boolean(active);
@@ -296,7 +296,7 @@ backupFile.addEventListener('change', async () => {
 
 document.addEventListener('quizprofilechange', renderProfiles);
 window.addEventListener('storage', event => {
-    if (isProfileChange(event.key)) renderProfiles();
+    if (isProfileChange(event.key) || isDefaultDraftChange(event.key)) renderProfiles();
 });
 window.addEventListener('pageshow', event => {
     if (event.persisted) renderProfiles();

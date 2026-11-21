@@ -5,13 +5,32 @@ import { normalizeDraft } from '../js/quiz-state.js';
 import { roles } from '../js/roles.js';
 import { scoreQuiz } from '../js/scoring.js';
 import { decodeResults, encodeResults } from '../js/shared-results.js';
-import { loadDraft, saveDraft } from '../js/session.js';
+import { clearDraft, loadAgeSelection, loadDraft, saveAgeSelection, saveDraft } from '../js/session.js';
 import {
     activeProfile, createProfile, exportProfile, importProfile, listProfiles, removeProfile,
     saveAppearance, savedTheme, selectProfile, updateProfile,
 } from '../js/profile-store.js';
 
 const { standard, advanced } = modes;
+
+function mockStorage(t, name) {
+    const previous = Object.getOwnPropertyDescriptor(globalThis, name);
+    const values = new Map();
+    const storage = {
+        get length() { return values.size; },
+        key: index => [...values.keys()][index] ?? null,
+        getItem: key => values.get(key) ?? null,
+        setItem: (key, value) => values.set(key, String(value)),
+        removeItem: key => values.delete(key),
+        clear: () => values.clear(),
+    };
+    Object.defineProperty(globalThis, name, { configurable: true, value: storage });
+    t.after(() => {
+        if (previous) Object.defineProperty(globalThis, name, previous);
+        else delete globalThis[name];
+    });
+    return storage;
+}
 
 test('shared results round-trip scores and unrated categories without answers', () => {
     const scores = scoreQuiz(standard.items, { Q01: 5, Q02: 1, Q03: 3.72 });
@@ -73,25 +92,57 @@ test('preserves fractional ratings and uses their exact values for scoring', () 
     assert.equal(result.score, 68);
 });
 
+test('Default drafts keep ratings, skips, and position across tab sessions', t => {
+    const session = mockStorage(t, 'sessionStorage');
+    mockStorage(t, 'localStorage');
+    const draft = {
+        index: 5, responses: { Q01: 4.25, Q02: null, Q03: 2, Q04: null, Q05: null },
+        completedAt: null, updatedAt: 100,
+    };
+    const completed = {
+        index: 65, responses: Object.fromEntries(advanced.items.map(({ id }) => [id, 3])),
+        completedAt: 200,
+    };
+
+    assert.ok(saveAgeSelection('yes'));
+    assert.ok(saveDraft('standard', draft));
+    assert.ok(saveDraft('advanced', completed));
+    session.clear();
+
+    assert.deepEqual(loadDraft('standard'), draft);
+    assert.deepEqual(loadDraft('advanced'), completed);
+    assert.equal(loadAgeSelection(), null);
+});
+
+test('existing session progress migrates and stale tabs cannot restore reset answers', t => {
+    const session = mockStorage(t, 'sessionStorage');
+    mockStorage(t, 'localStorage');
+    const key = 'db-quiz.responses.v1.standard';
+    const draft = { index: 0, responses: { Q01: 5 }, completedAt: null };
+    session.setItem(key, JSON.stringify(draft));
+    assert.deepEqual(loadDraft('standard'), draft);
+    assert.equal(session.getItem(key), null);
+    assert.deepEqual(loadDraft('standard'), draft);
+
+    assert.ok(clearDraft('standard'));
+    session.setItem(key, JSON.stringify(draft));
+    assert.deepEqual(loadDraft('standard').responses, {});
+});
+
+test('Default still saves in the tab when browser-wide storage is blocked', t => {
+    mockStorage(t, 'sessionStorage');
+    const local = mockStorage(t, 'localStorage');
+    local.setItem = () => { throw new Error('Storage unavailable'); };
+    const draft = { index: 0, responses: { Q01: 5 }, completedAt: null };
+    assert.ok(saveDraft('standard', draft));
+    assert.deepEqual(loadDraft('standard'), draft);
+    assert.ok(clearDraft('standard'));
+    assert.deepEqual(loadDraft('standard').responses, {});
+});
+
 test('guest progress and profile progress stay independent across profile switches', t => {
-    for (const name of ['sessionStorage', 'localStorage']) {
-        const previous = Object.getOwnPropertyDescriptor(globalThis, name);
-        const values = new Map();
-        Object.defineProperty(globalThis, name, {
-            configurable: true,
-            value: {
-                get length() { return values.size; },
-                key: index => [...values.keys()][index] ?? null,
-                getItem: key => values.get(key) ?? null,
-                setItem: (key, value) => values.set(key, String(value)),
-                removeItem: key => values.delete(key),
-            },
-        });
-        t.after(() => {
-            if (previous) Object.defineProperty(globalThis, name, previous);
-            else delete globalThis[name];
-        });
-    }
+    mockStorage(t, 'sessionStorage');
+    mockStorage(t, 'localStorage');
 
     const answer = rating => ({ index: 0, responses: { Q01: rating }, completedAt: null });
     assert.ok(saveDraft('standard', answer(5)));

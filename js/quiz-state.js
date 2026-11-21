@@ -37,11 +37,13 @@ export function normalizeDraft(value, mode) {
     const firstUnfinished = items.findIndex(({ id }) => !Object.hasOwn(responses, id));
     const lastAvailable = firstUnfinished < 0 ? items.length - 1 : firstUnfinished;
     const finished = firstUnfinished === -1 && Number.isSafeInteger(value.completedAt) && value.completedAt > 0;
-    return {
+    const draft = {
         index: Number.isInteger(value.index) ? Math.min(Math.max(value.index, 0), lastAvailable) : 0,
         responses,
         completedAt: finished ? value.completedAt : null,
     };
+    if (Number.isSafeInteger(value.updatedAt) && value.updatedAt > 0) draft.updatedAt = value.updatedAt;
+    return draft;
 }
 
 export function requestedMode() {

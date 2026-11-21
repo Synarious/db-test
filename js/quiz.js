@@ -2,7 +2,7 @@ import { modes } from './questions.js';
 import { missedQuestionsMessage, newDraft, normalizeDraft, ratingStep, requestedMode, responseOptions } from './quiz-state.js';
 import { scoreQuiz } from './scoring.js';
 import { renderScores } from './score-list.js';
-import { clearDraft, loadAgeSelection, loadDraft, saveAgeSelection, saveDraft } from './session.js';
+import { clearDraft, isDefaultDraftChange, loadAgeSelection, loadDraft, saveAgeSelection, saveDraft } from './session.js';
 import { activeProfile, isProfileChange } from './profile-store.js';
 
 const gate = document.querySelector('#age-gate');
@@ -27,10 +27,9 @@ const profileContext = document.querySelector('#quiz-profile');
 
 let ageSelection = loadAgeSelection();
 let profile = activeProfile();
-let mode = requestedMode();
+let mode = null;
 let storageAvailable = true;
 const drafts = new Map();
-
 
 function getDraft(key) {
     if (!drafts.has(key)) drafts.set(key, loadDraft(key, profile?.id));
@@ -38,6 +37,7 @@ function getDraft(key) {
 }
 
 function persistDraft(draft) {
+    draft.updatedAt = Date.now();
     const saved = saveDraft(mode, draft, profile?.id);
     if (saved && profile) profile.drafts[mode] = normalizeDraft(draft, mode);
     return saved;
@@ -96,7 +96,7 @@ function questionControl(item, index, draft) {
     slider.value = String(draft.responses[item.id] ?? 3);
     updateDisplay(draft.responses[item.id]);
     const commitRating = () => saveRating(slider.valueAsNumber);
-    slider.addEventListener('input', () => updateDisplay(slider.valueAsNumber));
+    slider.addEventListener('input', commitRating);
     slider.addEventListener('change', commitRating);
     slider.addEventListener('click', commitRating);
     slider.addEventListener('keydown', event => {
@@ -175,13 +175,28 @@ function chooseAge(value) {
     showAgeSelection(true);
 }
 
-function chooseMode(value) {
+function setMode(value) {
     mode = value;
     const url = new URL(location.href);
     if (value) url.searchParams.set('mode', value);
     else url.searchParams.delete('mode');
-    history.replaceState(null, '', url);
+    history.replaceState(value ? null : { choosingMode: true }, '', url);
+}
+
+function chooseMode(value) {
+    setMode(value);
     showAgeSelection(true);
+}
+
+function restoreMode() {
+    mode = requestedMode();
+    if (mode || history.state?.choosingMode) return;
+
+    const latest = Object.keys(modes)
+        .map(key => ({ key, draft: getDraft(key) }))
+        .filter(({ draft }) => !draft.completedAt && Object.keys(draft.responses).length)
+        .sort((a, b) => (b.draft.updatedAt ?? 0) - (a.draft.updatedAt ?? 0))[0];
+    if (latest) setMode(latest.key);
 }
 
 function advance() {
@@ -233,9 +248,8 @@ back.addEventListener('click', () => {
 
 document.querySelector('#open-reset').addEventListener('click', () => {
     reset.returnValue = '';
-    document.querySelector('#reset-description').textContent = profile
-        ? `This clears the ${modes[mode].label} answers and result for ${profile.name}.`
-        : 'This clears the answers and result for the current mode in this tab.';
+    document.querySelector('#reset-description').textContent =
+        `This clears the ${modes[mode].label} answers and result for ${profile?.name ?? 'Default'}.`;
     reset.showModal();
 });
 reset.addEventListener('close', () => {
@@ -247,14 +261,15 @@ reset.addEventListener('close', () => {
 });
 
 window.addEventListener('storage', event => {
-    if (!isProfileChange(event.key, profile?.id)) return;
+    const defaultChanged = !profile && isDefaultDraftChange(event.key);
+    if (!defaultChanged && !isProfileChange(event.key, profile?.id)) return;
     const current = activeProfile();
     const switched = profile?.id !== current?.id;
     const updatedDrafts = !switched && current && JSON.stringify(profile.drafts) !== JSON.stringify(current.drafts);
     const renamed = !switched && profile?.name !== current?.name;
     profile = current;
     if (switched && reset.open) reset.close();
-    if (switched || updatedDrafts) {
+    if (switched || updatedDrafts || defaultChanged) {
         drafts.clear();
         storageAvailable = true;
         showAgeSelection();
@@ -269,10 +284,11 @@ window.addEventListener('pageshow', event => {
     if (!storageAvailable && profile?.id === current?.id) return;
     profile = current;
     ageSelection = loadAgeSelection();
-    mode = requestedMode();
     drafts.clear();
     storageAvailable = true;
+    restoreMode();
     showAgeSelection();
 });
 
+restoreMode();
 showAgeSelection();

@@ -3,7 +3,7 @@ import { isRating, missedQuestionsMessage, requestedMode } from './quiz-state.js
 import { sampleScores } from './sample-report.js';
 import { scoreQuiz } from './scoring.js';
 import { renderScores } from './score-list.js';
-import { loadAgeSelection, loadDraft, saveAgeSelection } from './session.js';
+import { isDefaultDraftChange, loadAgeSelection, loadDraft, saveAgeSelection } from './session.js';
 import { activeProfile, isProfileChange } from './profile-store.js';
 import { decodeResults, encodeResults } from './shared-results.js';
 import { saveReportImage } from './report-image.js';
@@ -44,7 +44,7 @@ function refreshResults() {
     const age = loadAgeSelection();
     const sharedScores = decodeResults(location.hash);
     const invalidShare = location.hash.startsWith('#results=') && !sharedScores;
-    const candidate = age === 'yes' || (age === null && profile) ? finishedQuiz(profile) : null;
+    const candidate = age === 'no' ? null : finishedQuiz(profile);
     const completed = age === 'yes' ? candidate : null;
     const shared = age === 'yes' && Boolean(sharedScores);
     resultGate.hidden = age !== null || !(candidate || sharedScores);
@@ -159,7 +159,7 @@ document.querySelector('#confirm-result-age').addEventListener('click', () => {
 document.querySelector('#report-tools').hidden = false;
 document.addEventListener('quizprofilechange', refreshResults);
 window.addEventListener('storage', event => {
-    if (isProfileChange(event.key)) refreshResults();
+    if (isProfileChange(event.key) || isDefaultDraftChange(event.key)) refreshResults();
 });
 window.addEventListener('hashchange', refreshResults);
 window.addEventListener('pageshow', event => {
