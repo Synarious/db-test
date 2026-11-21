@@ -1,6 +1,7 @@
 import { modes } from './questions.js';
 import { isRating } from './quiz-state.js';
 import { clearDraft, isDefaultDraftChange, loadDraft } from './session.js';
+import { decodeResults, resultsHashFromLink } from './shared-results.js';
 import {
     activeProfile, createProfile, exportProfile, importProfile, isProfileChange, listProfiles,
     readProfile, removeProfile, savedTheme, selectProfile, themes, updateProfile,
@@ -13,6 +14,10 @@ const createForm = document.querySelector('#create-form');
 const copyProgress = document.querySelector('#copy-progress-option');
 const importButton = document.querySelector('#import-profile');
 const backupFile = document.querySelector('#backup-file');
+const importLinkButton = document.querySelector('#import-share-link');
+const importDialog = document.querySelector('#import-share-dialog');
+const importForm = document.querySelector('#import-share-form');
+const importStatus = document.querySelector('#import-share-status');
 const status = document.querySelector('#profile-status');
 const noProfiles = document.querySelector('#no-profiles');
 const useDefault = document.querySelector('#use-default');
@@ -54,30 +59,40 @@ function profileCard(profile, selected) {
 
     const progress = card.querySelector('.profile-progress');
     progress.hidden = selected;
-    if (!selected) renderProfileProgress(progress, profile.drafts, false);
+    if (!selected) renderProfileProgress(progress, profile.drafts, false, profile.importedResults);
     return card;
 }
 
-function renderProfileProgress(progress, drafts, showLinks) {
+function progressRow(title, summaryText, href, linkText) {
+    const row = document.createElement('div');
+    const label = document.createElement('dt');
+    label.textContent = title;
+    const summary = document.createElement('dd');
+    summary.textContent = summaryText;
+    if (href) {
+        const link = document.createElement('a');
+        link.href = href;
+        link.textContent = linkText;
+        link.setAttribute('aria-label', `${linkText} for ${title}`);
+        summary.append(link);
+    }
+    row.append(label, summary);
+    return row;
+}
+
+function renderProfileProgress(progress, drafts, showLinks, importedResults) {
     progress.replaceChildren();
     for (const [mode, settings] of Object.entries(modes)) {
         const draft = drafts[mode];
         const ratings = Object.values(draft.responses);
         const rated = ratings.filter(isRating).length;
-        const row = document.createElement('div');
-        const label = document.createElement('dt');
-        label.textContent = settings.label;
-        const summary = document.createElement('dd');
-        summary.textContent = draft.completedAt ? 'Complete' : ratings.length ? `${rated} of ${settings.items.length} rated` : 'Not started';
-        if (showLinks) {
-            const link = document.createElement('a');
-            link.href = `${draft.completedAt ? 'results' : 'quiz'}.html?mode=${mode}`;
-            link.textContent = draft.completedAt ? 'View results' : ratings.length ? 'Resume' : 'Start';
-            link.setAttribute('aria-label', `${link.textContent} for the ${settings.label}`);
-            summary.append(link);
-        }
-        row.append(label, summary);
-        progress.append(row);
+        const summary = draft.completedAt ? 'Complete' : ratings.length ? `${rated} of ${settings.items.length} rated` : 'Not started';
+        const href = showLinks ? `${draft.completedAt ? 'results' : 'quiz'}.html?mode=${mode}` : null;
+        const linkText = draft.completedAt ? 'View results' : ratings.length ? 'Resume' : 'Start';
+        progress.append(progressRow(settings.label, summary, href, linkText));
+    }
+    if (importedResults) {
+        progress.append(progressRow('Imported results', 'Saved', showLinks ? 'results.html?report=imported' : null, 'View report'));
     }
 }
 
@@ -96,7 +111,7 @@ function renderProfiles() {
     document.querySelector('#current-profile-description').textContent = active
         ? `Progress is saved in this browser. ${themes[active.theme]} theme.`
         : 'Progress is saved in this browser.';
-    renderProfileProgress(currentProgress, active?.drafts ?? defaults, true);
+    renderProfileProgress(currentProgress, active?.drafts ?? defaults, true, active?.importedResults);
     useDefault.hidden = !active;
     resetDefault.hidden = Boolean(active);
     noProfiles.hidden = profiles.length > 0;
@@ -106,6 +121,7 @@ function renderProfiles() {
     copyProgress.hidden = !Object.values(defaults).some(draft => Object.keys(draft.responses).length);
     createForm.querySelector('button[type="submit"]').disabled = !available;
     importButton.disabled = !available;
+    importLinkButton.disabled = !available;
 }
 
 function profilesChanged(message) {
@@ -115,8 +131,9 @@ function profilesChanged(message) {
 
 function confirmReset(profile) {
     editingId = profile?.id ?? null;
+    const imported = profile?.importedResults ? ' and the imported report' : '';
     document.querySelector('#reset-profile-description').textContent =
-        `Clear the answers and results for both tests in ${profile?.name ?? 'Default'}? Profile settings will be kept.`;
+        `Clear the answers and results for both tests${imported} in ${profile?.name ?? 'Default'}? Profile settings will be kept.`;
     resetStatus.textContent = '';
     resetProfile.showModal();
 }
@@ -245,7 +262,7 @@ document.querySelector('#reset-profile-form').addEventListener('submit', event =
     let name = 'Default';
     try {
         if (editingId) {
-            name = updateProfile(editingId, { drafts: {} }).name;
+            name = updateProfile(editingId, { drafts: {}, importedResults: null }).name;
         } else if (!Object.keys(modes).map(clearDraft).every(Boolean)) {
             throw new Error('Could not clear Default progress.');
         }
@@ -294,6 +311,45 @@ backupFile.addEventListener('change', async () => {
     }
 });
 
+function openShareImport(link = '') {
+    importForm.reset();
+    importForm.elements.link.value = link;
+    importStatus.textContent = '';
+    importDialog.showModal();
+    if (link) importForm.elements.name.focus();
+}
+
+importLinkButton.addEventListener('click', () => openShareImport());
+importDialog.addEventListener('close', () => {
+    if (!importDialog.open) importForm.reset();
+});
+importForm.addEventListener('submit', event => {
+    if (event.submitter?.formMethod === 'dialog') return;
+    event.preventDefault();
+    const fields = importForm.elements;
+    const importedResults = resultsHashFromLink(fields.link.value);
+    if (!importedResults) {
+        importStatus.textContent = 'Paste a valid Deviant Bound results link.';
+        fields.link.focus();
+        return;
+    }
+    const name = fields.name.value.trim();
+    if (!name) {
+        importStatus.textContent = 'Enter a profile name.';
+        fields.name.focus();
+        return;
+    }
+    let imported;
+    try {
+        imported = createProfile({ name, theme: savedTheme(), importedResults });
+    } catch {
+        importStatus.textContent = 'Could not save the imported profile. Check browser storage and try again.';
+        return;
+    }
+    importDialog.close();
+    profilesChanged(`Imported results into ${imported.name}. Select Make active to view them.`);
+});
+
 document.addEventListener('quizprofilechange', renderProfiles);
 window.addEventListener('storage', event => {
     if (isProfileChange(event.key) || isDefaultDraftChange(event.key)) renderProfiles();
@@ -307,4 +363,8 @@ manager.hidden = false;
 if (location.hash === '#create-profile') {
     createForm.elements.copyProgress.checked = !copyProgress.hidden;
     createForm.elements.name.focus();
+} else if (decodeResults(location.hash) && !importLinkButton.disabled) {
+    const link = new URL(`results.html${location.hash}`, location.href).href;
+    history.replaceState(history.state, '', location.pathname + location.search);
+    openShareImport(link);
 }

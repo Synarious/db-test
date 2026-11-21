@@ -21,9 +21,7 @@ const resultHeading = document.querySelector('#results-heading');
 const reportDate = document.querySelector('#report-date');
 const reportDateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' });
 
-function finishedQuiz(profile) {
-    if (location.hash === '#preview' || location.hash.startsWith('#results=')) return null;
-    const selected = requestedMode();
+function finishedQuiz(profile, selected) {
     const candidates = selected ? [selected] : Object.keys(modes);
     return candidates.map(mode => ({ mode, ...(profile?.drafts[mode] ?? loadDraft(mode)) }))
         .filter(draft => draft.completedAt)
@@ -43,11 +41,18 @@ function refreshResults() {
     const profile = activeProfile();
     const age = loadAgeSelection();
     const sharedScores = decodeResults(location.hash);
-    const invalidShare = location.hash.startsWith('#results=') && !sharedScores;
-    const candidate = age === 'no' ? null : finishedQuiz(profile);
+    const hasShare = location.hash.startsWith('#results=');
+    const showLocal = location.hash !== '#preview' && !hasShare && age !== 'no';
+    const mode = requestedMode();
+    const showImported = new URLSearchParams(location.search).get('report') === 'imported';
+    const candidate = showLocal && !showImported ? finishedQuiz(profile, mode) : null;
+    const importedScores = showLocal && (showImported || (!mode && !candidate))
+        ? decodeResults(profile?.importedResults) : null;
     const completed = age === 'yes' ? candidate : null;
     const shared = age === 'yes' && Boolean(sharedScores);
-    resultGate.hidden = age !== null || !(candidate || sharedScores);
+    const imported = age === 'yes' && Boolean(importedScores);
+    const scoresOnly = shared || imported;
+    resultGate.hidden = age !== null || !(candidate || sharedScores || importedScores);
     document.querySelector('#saved-result-heading').textContent = sharedScores ? 'View shared results' : 'View your saved results';
     document.querySelector('#result-age-description').textContent = sharedScores
         ? 'Confirm you are 18 or older to open the shared results.'
@@ -56,18 +61,22 @@ function refreshResults() {
     const missed = document.querySelector('#missed-questions');
     missed.textContent = completed ? missedQuestionsMessage(settings.items, completed.responses) : '';
     missed.hidden = !missed.textContent;
-    const scores = settings ? scoreQuiz(settings.items, completed.responses) : shared ? sharedScores : sampleScores;
-    const shareable = Boolean(completed || shared);
+    const scores = settings ? scoreQuiz(settings.items, completed.responses)
+        : shared ? sharedScores : imported ? importedScores : sampleScores;
+    const shareable = Boolean(completed || scoresOnly);
 
-    const heading = completed ? 'Your results' : shared ? 'Shared results' : 'Results preview';
+    const heading = completed ? 'Your results' : shared ? 'Shared results' : imported ? 'Imported results' : 'Results preview';
+    const previewIntro = hasShare && !sharedScores
+        ? 'This shared results link is invalid or unsupported. The example profile is shown below.'
+        : 'This example profile shows how role scores will appear.';
     document.title = `${heading} · Deviant Bound`;
     resultHeading.textContent = heading;
     document.querySelector('#result-intro').textContent = completed
         ? `${profile ? `Active profile · ${profile.name}. ` : ''}Open More info to see how many questions contributed to each score.`
         : shared ? 'These role scores were shared by someone who took the quiz.'
-            : invalidShare ? 'This shared results link is invalid or unsupported. The example profile is shown below.'
-                : 'This example profile shows how role scores will appear.';
-    document.querySelector('#report-heading').textContent = completed ? settings.label : shared ? 'Quiz scores' : 'Example profile';
+            : imported ? `These role scores were imported into ${profile.name} from a share link.`
+                : previewIntro;
+    document.querySelector('#report-heading').textContent = completed ? settings.label : scoresOnly ? 'Quiz scores' : 'Example profile';
     const date = new Date();
     reportDate.dateTime = [
         date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0'),
@@ -80,7 +89,7 @@ function refreshResults() {
     profileLine.hidden = !profileLine.textContent;
     document.querySelector('#report-note').textContent = completed
         ? `${settings.items.length} questions · Weighted agreement`
-        : shared ? 'Weighted agreement' : 'Illustrative scores';
+        : scoresOnly ? 'Weighted agreement' : 'Illustrative scores';
     document.querySelector('#statistics-title').textContent = shareable ? 'Quiz statistics' : 'Preview statistics';
     document.querySelector('#share-description').textContent = shareable
         ? 'Anyone with this link can view these role scores. Quiz answers and profile details stay out of the link.'
@@ -92,7 +101,10 @@ function refreshResults() {
     quizLink.href = completed ? `quiz.html?mode=${completed.mode}` : 'quiz.html';
     quizLink.textContent = completed ? 'Review answers' : 'Take the BDSM Test';
     document.querySelector('#save-default-result').hidden = !completed || Boolean(profile);
-    scoreList.setAttribute('aria-label', completed ? 'Your quiz scores' : shared ? 'Shared quiz scores' : 'Example role scores');
+    const importLink = document.querySelector('#import-shared-result');
+    importLink.hidden = !shared;
+    importLink.href = shared ? `profiles.html${location.hash}` : 'profiles.html';
+    scoreList.setAttribute('aria-label', completed ? 'Your quiz scores' : scoresOnly ? 'Quiz role scores' : 'Example role scores');
     renderScores(scoreList, scores, displayDetails);
 
     const rated = scores.filter(entry => entry.score !== null);
@@ -104,7 +116,7 @@ function refreshResults() {
             ['Categories scored', `${rated.length} of ${scores.length}`],
             ['Highest score', high],
         ]
-        : shared ? [['Categories scored', `${rated.length} of ${scores.length}`], ['Highest score', high]]
+        : scoresOnly ? [['Categories scored', `${rated.length} of ${scores.length}`], ['Highest score', high]]
             : [['Example roles', scores.length], ['Highest example score', high]];
 
     statisticsList.replaceChildren(...metrics.map(([label, value]) => {

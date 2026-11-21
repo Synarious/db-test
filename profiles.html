@@ -43,6 +43,7 @@
                     <button type="button" id="use-default" class="secondary" hidden>Switch to Default</button>
                     <button type="button" id="reset-default" class="text-button" aria-haspopup="dialog">Reset progress</button>
                     <button type="button" class="text-button" id="import-profile" title="Restore a JSON backup as a separate profile">Import backup</button>
+                    <button type="button" class="text-button" id="import-share-link" aria-haspopup="dialog">Import share link</button>
                     <input type="file" id="backup-file" accept=".json,application/json" hidden>
                     <a class="button secondary" href="#create-profile">New profile</a>
                 </div>
@@ -94,6 +95,19 @@
                 </div>
             </li>
         </template>
+        <dialog id="import-share-dialog" aria-labelledby="import-share-heading" aria-describedby="import-share-description">
+            <h2 id="import-share-heading">Import share link</h2>
+            <p id="import-share-description">Save the role scores from a Deviant Bound results link to a new profile.</p>
+            <form id="import-share-form" class="profile-form">
+                <label class="field">Results link<input name="link" inputmode="url" autocomplete="off" autocapitalize="none" spellcheck="false" autofocus required></label>
+                <label class="field">Profile name<input name="name" maxlength="80" autocomplete="off" required></label>
+                <div class="actions">
+                    <button type="submit">Import results</button>
+                    <button type="submit" formmethod="dialog" formnovalidate class="secondary">Cancel</button>
+                </div>
+                <p class="status" id="import-share-status" role="status"></p>
+            </form>
+        </dialog>
         <dialog id="edit-profile-dialog" aria-labelledby="edit-profile-heading">
             <h2 id="edit-profile-heading">Edit profile</h2>
             <form id="edit-profile-form" class="profile-form">

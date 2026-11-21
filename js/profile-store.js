@@ -1,5 +1,6 @@
 import { modes } from './questions.js';
 import { newDraft, normalizeDraft } from './quiz-state.js';
+import { decodeResults } from './shared-results.js';
 
 export const themes = Object.freeze({
     graphite: 'Graphite',
@@ -30,6 +31,7 @@ function cleanText(value, maxLength) {
 
 function normalizeProfile(value) {
     const age = value.details?.age;
+    const importedResults = value.importedResults;
     return {
         name: cleanText(value.name, 80),
         theme: normalizeTheme(value.theme),
@@ -41,6 +43,7 @@ function normalizeProfile(value) {
         drafts: Object.fromEntries(Object.keys(modes).map(mode => [
             mode, normalizeDraft(value.drafts?.[mode], mode),
         ])),
+        ...(decodeResults(importedResults) ? { importedResults } : {}),
     };
 }
 

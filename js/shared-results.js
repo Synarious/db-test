@@ -13,7 +13,7 @@ export function encodeResults(scores) {
 }
 
 export function decodeResults(hash) {
-    if (!hash.startsWith(prefix)) return null;
+    if (typeof hash !== 'string' || !hash.startsWith(prefix)) return null;
     const payload = hash.slice(prefix.length);
     if (payload.length !== Math.ceil(categories.length * 4 / 3) || !/^[\w-]+$/.test(payload)) return null;
 
@@ -22,4 +22,17 @@ export function decodeResults(hash) {
     return categories.map(([role, description], index) => ({
         role, description, score: bytes[index] === unrated ? null : bytes[index],
     })).sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
+}
+
+export function resultsHashFromLink(value) {
+    const link = value.trim();
+    if (link.startsWith('#')) return decodeResults(link) ? link : null;
+
+    try {
+        const { protocol, hash } = new URL(link);
+        if ((protocol === 'https:' || protocol === 'http:') && decodeResults(hash)) return hash;
+    } catch {
+        return null;
+    }
+    return null;
 }

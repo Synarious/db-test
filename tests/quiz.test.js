@@ -4,7 +4,7 @@ import { modes } from '../js/questions.js';
 import { normalizeDraft } from '../js/quiz-state.js';
 import { roles } from '../js/roles.js';
 import { scoreQuiz } from '../js/scoring.js';
-import { decodeResults, encodeResults } from '../js/shared-results.js';
+import { decodeResults, encodeResults, resultsHashFromLink } from '../js/shared-results.js';
 import { clearDraft, loadAgeSelection, loadDraft, saveAgeSelection, saveDraft } from '../js/session.js';
 import {
     activeProfile, createProfile, exportProfile, importProfile, listProfiles, removeProfile,
@@ -39,6 +39,19 @@ test('shared results round-trip scores and unrated categories without answers', 
     assert.deepEqual(decodeResults(hash), scores.map(({ role, description, score }) => ({ role, description, score })));
     assert.equal(decodeResults(hash.slice(0, -1)), null);
     assert.equal(decodeResults('#preview'), null);
+});
+
+test('results link imports require a valid score payload', () => {
+    const hash = encodeResults(scoreQuiz(standard.items, { Q01: 5 }));
+    const base = 'https://bdsmtest.deviantbound.com/results.html';
+    assert.equal(resultsHashFromLink(`  ${base}${hash}\n`), hash);
+    assert.equal(resultsHashFromLink(hash), hash);
+    for (const link of [
+        base, `${base}#preview`, `${base}${hash.slice(0, -1)}`, hash.replace('v1.', 'v2.'),
+        `data:text/plain,results${hash}`, 'wrong link',
+    ]) {
+        assert.equal(resultsHashFromLink(link), null, link);
+    }
 });
 
 test('both modes cover the requested categories with unique, reasoned items', () => {
@@ -178,4 +191,26 @@ test('guest progress and profile progress stay independent across profile switch
     assert.deepEqual(reset.details, backup.details);
     assert.equal(loadDraft('standard').responses.Q01, 5);
     assert.throws(() => importProfile('{"format":"unknown","version":1}'), /quiz profile backup/);
+});
+
+test('imported scores survive profile edits, quiz progress, and backups as a separate report', t => {
+    mockStorage(t, 'localStorage');
+    const current = createProfile({ name: 'Current' });
+    selectProfile(current.id);
+    const importedResults = encodeResults(scoreQuiz(standard.items, { Q01: 5 }));
+    const imported = createProfile({ name: 'Import', importedResults });
+
+    assert.equal(activeProfile().id, current.id);
+    assert.deepEqual(imported.drafts.standard.responses, {});
+    assert.equal(imported.drafts.standard.completedAt, null);
+    assert.equal(imported.drafts.advanced.completedAt, null);
+    selectProfile(imported.id);
+    updateProfile(imported.id, { name: 'Renamed' });
+    assert.ok(saveDraft('standard', { responses: { Q01: 3.72 } }, imported.id));
+
+    const backup = importProfile(exportProfile(activeProfile()));
+    assert.equal(backup.importedResults, importedResults);
+    assert.deepEqual(backup.drafts.standard.responses, { Q01: 3.72 });
+    assert.equal(updateProfile(imported.id, { drafts: {}, importedResults: null }).importedResults, undefined);
+    assert.equal(createProfile({ name: 'Invalid', importedResults: '#preview' }).importedResults, undefined);
 });
