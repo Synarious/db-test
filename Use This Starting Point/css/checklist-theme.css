@@ -1,0 +1,104 @@
+.checklist-theme {
+    --checklist-width: 70rem;
+    --checklist-gap: clamp(.75rem, 2vw, 1.125rem);
+    --checklist-padding: clamp(1rem, 3vw, 1.5rem);
+    --checklist-border: var(--theme-border, #343b4a);
+    --checklist-muted: var(--theme-muted, #bec5d5);
+    --checklist-surface: var(--theme-surface, #181c25);
+    --checklist-inset: var(--theme-canvas, #10141d);
+    --checklist-control: var(--theme-control, #202635);
+    --checklist-control-border: var(--theme-control-border, #626d83);
+    --page-gutter: clamp(.875rem, 3vw, 2rem);
+    background:
+        radial-gradient(ellipse at 50% 0, var(--theme-glow, #171d2e), transparent 48rem),
+        var(--theme-canvas, #0c0e13) var(--theme-pattern, var(--checklist-pattern)) repeat;
+}
+.checklist-theme > main,
+.checklist-theme .site-header-inner { max-width: var(--checklist-width); padding-inline: var(--page-gutter); }
+.checklist-theme > main { padding-block-start: clamp(1rem, 3vw, 2rem); }
+
+#app > .page-hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem 2rem;
+    margin-block: 0 var(--checklist-gap);
+    padding: clamp(1.25rem, 4vw, 2.35rem);
+    border-color: var(--theme-border, #414c65);
+    border-radius: 1rem;
+    background:
+        linear-gradient(110deg, var(--theme-hero, #242d43), var(--theme-tint, #1a2233) 50%, var(--checklist-surface));
+}
+.page-hero-heading { flex: 1 0 min(100%, 13rem); }
+.page-hero h1 {
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    letter-spacing: -.045em;
+}
+.page-hero [inert] { display: none; }
+.page-progress {
+    display: grid;
+    gap: .5rem;
+    max-width: 18rem;
+    margin-top: .7rem;
+    color: var(--theme-muted, #d7dff1);
+    font-size: .875rem;
+    font-variant-numeric: tabular-nums;
+}
+.page-progress p { margin: 0; }
+.page-progress progress {
+    --progress-track: color-mix(in srgb, var(--theme-muted, #bec5d5) 24%, var(--checklist-surface));
+    width: 100%;
+    height: .5rem;
+    appearance: none;
+    border: 0;
+    border-radius: 1rem;
+    background: var(--progress-track);
+    accent-color: var(--accent);
+}
+.page-progress progress::-webkit-progress-bar { border-radius: inherit; background: var(--progress-track); }
+.page-progress progress::-webkit-progress-value { border-radius: inherit; background: var(--accent); }
+.page-progress progress::-moz-progress-bar { border-radius: 1rem; background: var(--accent); }
+@media (forced-colors: active) {
+    .page-progress progress { appearance: auto; }
+}
+
+.page-actions { gap: .5rem; font-size: .875rem; }
+.page-actions :is(button, .button), .page-primary {
+    justify-content: center;
+    padding-inline: .9rem;
+    border-radius: .55rem;
+    text-align: center;
+}
+.page-primary { background: var(--theme-action, #c8d7ff); border-color: var(--theme-action, #c8d7ff); color: var(--theme-on-action, #121929); }
+.page-primary:not(:disabled):hover { background: var(--theme-action-hover, #dee7ff); border-color: var(--theme-action-hover, #dee7ff); }
+:is(.page-actions, .checklist-theme dialog:not(.compare-import)) .secondary {
+    border-color: var(--checklist-control-border);
+    background: var(--checklist-control);
+    color: var(--primary);
+}
+:is(.page-actions, .checklist-theme dialog:not(.compare-import)) .secondary:not(:disabled):hover { background: var(--theme-hover, #2b3549); }
+
+.checklist-theme dialog:not(.compare-import) { background: var(--checklist-surface); border-color: var(--checklist-control-border); }
+.checklist-theme :is(#questionnaire, #finish-fields) fieldset {
+    padding: .9rem clamp(.625rem, 2vw, 1rem) 1rem;
+    gap: .55rem .85rem;
+    border-color: var(--checklist-border);
+    border-radius: .85rem;
+    background: var(--checklist-surface);
+    box-shadow: inset 0 1px 0 #ffffff05;
+}
+.checklist-theme .rating-direction { color: var(--checklist-muted); }
+.checklist-theme .rating-tile { border-radius: .55rem; border-color: var(--checklist-control-border); }
+.checklist-theme .rating-choice input:not(:checked) + .rating-tile { background: var(--checklist-inset); }
+.checklist-theme .rating-choice:hover input:not(:checked) + .rating-tile {
+    border-color: var(--accent);
+    background: var(--theme-hover, #2b3549);
+}
+.checklist-theme .rating-choice-blank .rating-tile { width: 100%; height: 100%; min-height: 2.75rem; }
+
+@media (max-width: 36rem) {
+    .page-actions { width: 100%; }
+    .page-actions > * { flex: 1 1 auto; }
+}

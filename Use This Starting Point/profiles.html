@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, follow">
+    <meta name="referrer" content="no-referrer">
+    <title>Profiles · Deviant Bound</title>
+    <link rel="icon" href="img/favicon/favicon-32x32.png">
+    <script src="js/image-themes.js"></script>
+    <link rel="stylesheet" href="css/app.css">
+    <script defer src="js/catalog.js"></script>
+    <script defer src="js/advanced-expansion.js"></script>
+    <script defer src="js/advanced-catalog.js"></script>
+    <script defer src="js/site-header.js"></script>
+    <script defer src="js/backup-v1.js"></script>
+    <script defer src="js/answers.js"></script>
+    <script defer src="js/share-links.js"></script>
+    <script defer src="js/compare-import.js"></script>
+    <script defer src="js/file-download.js"></script>
+    <script defer src="js/age-gate.js"></script>
+    <script defer src="js/answer-backups.js"></script>
+</head>
+<body class="profiles-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a class="site-brand" href="index.html" data-checklist-nav>
+                <span class="site-brand-mark">
+                    <img src="img/favicon/android-chrome-192x192.png" width="22" height="22" alt="">
+                </span>
+                Deviant Bound
+            </a>
+            <nav class="site-nav" aria-label="Main navigation">
+                <a href="index.html" data-checklist-nav>MyList</a>
+                <a href="results.html" data-checklist-nav>Results</a>
+                <a href="compare.html" data-checklist-nav>Compare</a>
+                <a href="profiles.html" data-checklist-nav aria-current="page">Profiles</a>
+                <details class="site-help">
+                    <summary>Help</summary>
+                    <ul>
+                        <li><a href="docs/about.html">About and privacy</a></li>
+                        <li><a href="docs/troubleshooting.html">Troubleshooting</a></li>
+                        <li><a href="docs/ios-devices.html">iPhone and iPad downloads</a></li>
+                    </ul>
+                </details>
+            </nav>
+        </div>
+    </header>
+    <main id="main" tabindex="-1">
+        <section id="age-gate" class="panel" aria-labelledby="age-heading">
+            <h1 id="age-heading">Adults only</h1>
+            <p class="age-gate-intro">MyList contains adult sexual topics. Confirm your age to continue.</p>
+            <div class="actions">
+                <button type="button" id="accept-age" disabled>I am 18 or older</button>
+                <button type="button" id="decline-age" class="secondary" disabled>I am under 18</button>
+            </div>
+            <p class="age-gate-note">Your choice is saved in this browser.</p>
+            <p id="age-status" role="status">If these buttons stay disabled, reload the page with JavaScript enabled and all app files available.</p>
+        </section>
+        <section id="app" hidden aria-labelledby="app-heading">
+            <header class="panel checklist-heading">
+                <h1 id="app-heading" tabindex="-1">Profiles</h1>
+            </header>
+            <section id="backup-heading" class="panel" aria-labelledby="import-heading">
+                <h2 id="import-heading">Import into MyList</h2>
+                <p class="note">Import a backup or share link into your active profile or a new named profile.</p>
+                <div class="actions">
+                    <button type="button" id="import-answers" class="secondary" aria-haspopup="dialog" aria-controls="import-dialog">Import backup</button>
+                    <input type="file" id="answer-backup-file" accept=".json,application/json" hidden>
+                </div>
+                <form id="import-share-url" class="share-link-options">
+                    <label for="import-url-value">MyList share URL</label>
+                    <input type="text" id="import-url-value" placeholder="Paste a share URL" autocomplete="off" autocapitalize="none" spellcheck="false" required>
+                    <button type="submit" class="secondary" aria-haspopup="dialog" aria-controls="import-dialog">Review import</button>
+                </form>
+            </section>
+            <dialog id="import-dialog" aria-labelledby="import-review-heading" aria-describedby="import-summary">
+                <div class="dialog-heading">
+                    <h2 id="import-review-heading" tabindex="-1" autofocus>Review import</h2>
+                    <button type="button" id="close-import" class="secondary">Close</button>
+                </div>
+                <p id="import-summary" class="note" aria-live="polite"></p>
+                <form id="confirm-import" hidden>
+                    <fieldset class="import-destinations">
+                        <legend>Where to import</legend>
+                        <label><input type="radio" name="destination" value="active" checked> <span id="import-active-label"></span></label>
+                        <label><input type="radio" name="destination" value="new"> Create a new profile</label>
+                    </fieldset>
+                    <div id="import-name-field" hidden>
+                        <label for="import-profile-name">New profile name</label>
+                        <input type="text" id="import-profile-name" class="profile-field" maxlength="80" autocomplete="off">
+                    </div>
+                    <button type="submit">Import</button>
+                </form>
+                <p class="profile-status" id="import-status" role="status"></p>
+                <a id="view-imported-list" class="button" href="index.html" data-checklist-nav hidden>Open MyList</a>
+            </dialog>
+            <section class="panel" aria-labelledby="saved-profiles-heading">
+                <h2 id="saved-profiles-heading">Saved profiles</h2>
+                <p class="note">Each profile keeps its own ratings and settings in this browser. Saved profile names are private.</p>
+                <ul id="saved-profile-list" role="list" aria-labelledby="saved-profiles-heading" hidden></ul>
+                <template id="saved-profile-row">
+                    <li class="saved-profile-row">
+                        <div class="saved-profile-info">
+                            <div class="saved-profile-heading">
+                                <h3></h3>
+                                <span class="profile-active" hidden>Active</span>
+                            </div>
+                            <span class="note profile-meta"></span>
+                        </div>
+                        <div class="actions">
+                            <button type="button" data-action="edit" class="secondary" aria-haspopup="dialog" aria-controls="edit-profile-dialog">Edit</button>
+                            <button type="button" data-action="share" class="secondary" aria-haspopup="dialog" aria-controls="share-profile-dialog">Share</button>
+                            <button type="button" data-action="export" class="secondary">Export</button>
+                            <a data-action="compare" class="button secondary">Compare</a>
+                        </div>
+                    </li>
+                </template>
+                <p id="no-saved-profiles" class="note" hidden>There are no saved profiles yet.</p>
+                <form id="add-profile">
+                    <label for="new-profile-name">New profile name</label>
+                    <input type="text" id="new-profile-name" class="profile-field" maxlength="80" autocomplete="off" required>
+                    <button type="submit">Add blank profile</button>
+                </form>
+                <p class="profile-status" id="saved-profile-status" role="status"></p>
+            </section>
+            <dialog id="edit-profile-dialog" aria-labelledby="edit-profile-heading">
+                <div class="dialog-heading">
+                    <h2 id="edit-profile-heading">Edit profile</h2>
+                    <form method="dialog"><button type="submit" class="secondary">Close</button></form>
+                </div>
+                <form id="rename-profile">
+                    <label for="saved-profile-name">Profile name</label>
+                    <input type="text" id="saved-profile-name" class="profile-field" maxlength="80" autocomplete="off" required autofocus>
+                    <button type="submit">Save name</button>
+                </form>
+                <div class="actions profile-edit-actions">
+                    <button type="button" id="edit-profile-ratings" class="secondary">Edit ratings</button>
+                    <button type="button" id="activate-profile" class="secondary">Make active</button>
+                    <button type="button" id="remove-profile" class="secondary">Remove profile</button>
+                </div>
+                <p class="profile-status" id="edit-profile-status" role="status"></p>
+            </dialog>
+            <dialog id="share-profile-dialog" aria-labelledby="share-heading">
+                <div class="dialog-heading">
+                    <h2 id="share-heading">Share profile</h2>
+                    <form method="dialog"><button type="submit" class="secondary">Close</button></form>
+                </div>
+                <div id="share-url-options" class="share-link-options">
+                    <p class="note">Anyone with the URL can view the results profile and included ratings, including hidden ratings.</p>
+                    <label for="share-link" id="share-link-label">Share URL</label>
+                    <input type="text" id="share-link" readonly>
+                    <button type="button" id="copy-share-link">Copy URL</button>
+                    <p class="profile-status" id="share-link-status" role="status"></p>
+                </div>
+            </dialog>
+        </section>
+        <section class="panel" aria-labelledby="clear-heading">
+            <h2 id="clear-heading">Clear MyList data</h2>
+            <p class="note">Delete all saved profiles, ratings, settings, and your age-gate choice from this browser.</p>
+            <button type="button" id="clear-answers" class="secondary" disabled>Clear MyList data</button>
+            <p class="profile-status" id="clear-status" role="status"></p>
+        </section>
+    </main>
+</body>
+</html>

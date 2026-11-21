@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, follow">
+    <meta name="referrer" content="no-referrer">
+    <title>Your results · Deviant Bound</title>
+    <link rel="icon" href="img/favicon/favicon-32x32.png">
+    <script src="js/image-themes.js"></script>
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/compare.css">
+    <link rel="stylesheet" href="css/checklist-theme.css">
+    <link rel="stylesheet" href="css/results-page.css">
+    <script defer src="js/html2canvas.min.js"></script>
+    <script defer src="js/catalog.js"></script>
+    <script defer src="js/advanced-expansion.js"></script>
+    <script defer src="js/advanced-catalog.js"></script>
+    <script defer src="js/site-header.js"></script>
+    <script defer src="js/backup-v1.js"></script>
+    <script defer src="js/answers.js"></script>
+    <script defer src="js/share-links.js"></script>
+    <script defer src="js/file-download.js"></script>
+    <script defer src="js/rating-icons.js"></script>
+    <script defer src="js/age-gate.js"></script>
+    <script defer src="js/image-sheet.js"></script>
+    <script defer src="js/image-layout.js"></script>
+    <script defer src="js/compare-import.js"></script>
+    <script defer src="js/results.js"></script>
+</head>
+<body class="results-page checklist-theme">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a class="site-brand" href="index.html" data-checklist-nav>
+                <span class="site-brand-mark">
+                    <img src="img/favicon/android-chrome-192x192.png" width="22" height="22" alt="">
+                </span>
+                Deviant Bound
+            </a>
+            <nav class="site-nav" aria-label="Main navigation">
+                <a href="index.html" data-checklist-nav>MyList</a>
+                <a href="results.html" data-checklist-nav aria-current="page">Results</a>
+                <a href="compare.html" data-checklist-nav>Compare</a>
+                <a href="profiles.html" data-checklist-nav>Profiles</a>
+                <details class="site-help">
+                    <summary>Help</summary>
+                    <ul>
+                        <li><a href="docs/about.html">About and privacy</a></li>
+                        <li><a href="docs/troubleshooting.html">Troubleshooting</a></li>
+                        <li><a href="docs/ios-devices.html">iPhone and iPad downloads</a></li>
+                    </ul>
+                </details>
+            </nav>
+        </div>
+    </header>
+    <main id="main" tabindex="-1">
+        <section id="age-gate" class="panel" aria-labelledby="age-heading">
+            <h1 id="age-heading">Adults only</h1>
+            <p class="age-gate-intro">MyList contains adult sexual topics. Confirm your age to continue.</p>
+            <div class="actions">
+                <button type="button" id="accept-age" disabled>I am 18 or older</button>
+                <button type="button" id="decline-age" class="secondary" disabled>I am under 18</button>
+            </div>
+            <p class="age-gate-note">Your choice is saved in this browser.</p>
+            <p id="age-status" role="status">If these buttons stay disabled, reload the page with JavaScript enabled and all app files available.</p>
+        </section>
+        <section id="app" hidden aria-labelledby="app-heading">
+            <header class="panel page-hero results-hero">
+                <div class="page-hero-heading">
+                    <h1 id="app-heading" tabindex="-1">Your results</h1>
+                    <div class="page-progress" hidden>
+                        <div class="results-progress-label">
+                            <span class="results-progress-icon" aria-hidden="true" hidden></span>
+                            <p id="results-progress" role="status"></p>
+                        </div>
+                        <progress id="results-meter" aria-hidden="true" value="0" max="1"></progress>
+                    </div>
+                </div>
+                <div class="actions page-actions">
+                    <button type="button" id="open-compare" class="secondary" aria-haspopup="dialog" hidden>Compare</button>
+                    <a class="button secondary" id="compare-results" href="compare.html">Compare results</a>
+                    <a class="button secondary" id="edit-answers" href="index.html">Edit answers</a>
+                    <a class="button secondary" id="profiles-link" href="profiles.html" hidden>Import into MyList</a>
+                </div>
+            </header>
+            <dialog id="compare-dialog" class="compare-import" aria-labelledby="compare-import-heading" aria-describedby="compare-import-intro">
+                <div class="dialog-heading">
+                    <h2 id="compare-import-heading" tabindex="-1" autofocus>Load someone’s results</h2>
+                    <form method="dialog"><button type="submit" class="secondary">Close</button></form>
+                </div>
+                <p class="note" id="compare-import-intro">See where your ratings match and where they differ. The comparison runs in your browser.</p>
+                <form id="compare-link-form">
+                    <label for="compare-link">Compare with a share link</label>
+                    <p id="compare-link-help" class="note">Ask the other person to open <strong>Results</strong> and select <strong>Share URL (Copy)</strong>. Paste the full link below.</p>
+                    <div class="compare-link-entry">
+                        <input type="text" id="compare-link" placeholder="Paste their MyList share link" aria-describedby="compare-link-help compare-link-status" autocomplete="off" autocapitalize="none" spellcheck="false" required>
+                        <button type="submit">Compare results</button>
+                    </div>
+                    <p id="compare-link-status" class="compare-error" role="status" aria-atomic="true"></p>
+                </form>
+                <div class="compare-alternatives">
+                    <section aria-labelledby="compare-backup-heading">
+                        <h3 id="compare-backup-heading">Have a backup file?</h3>
+                        <p class="note" id="compare-backup-help">Ask them to open <strong>Profiles</strong> and select <strong>Export</strong> for their profile. Choose the JSON file they send you.</p>
+                        <button type="button" class="secondary" id="compare-backup" aria-describedby="compare-backup-help">Choose backup file</button>
+                        <input type="file" id="compare-file" accept=".json,application/json" hidden>
+                    </section>
+                    <section aria-labelledby="compare-example-heading">
+                        <h3 id="compare-example-heading">Just exploring?</h3>
+                        <p class="note" id="compare-example-help">Preview the comparison using two fictional sets of ratings.</p>
+                        <button type="button" class="secondary" id="compare-example" aria-describedby="compare-example-help">Try an example</button>
+                    </section>
+                </div>
+                <p id="compare-import-status" class="compare-error" role="status" aria-atomic="true"></p>
+            </dialog>
+            <section id="shared-results" class="panel shared-checklist" aria-label="Link details" hidden>
+                <p id="shared-results-status" role="status"></p>
+                <a id="own-results" href="results.html">View my results</a>
+            </section>
+            <section id="example-notice" class="panel example-notice" aria-labelledby="example-heading" hidden>
+                <div>
+                    <h2 id="example-heading">MyList is still in progress</h2>
+                    <p id="example-message" class="note"></p>
+                </div>
+                <div class="actions">
+                    <button type="button" class="secondary" id="view-own-results">View my results</button>
+                    <a class="button secondary" href="index.html">Continue MyList</a>
+                </div>
+            </section>
+            <section class="panel results-tools page-actions" aria-label="Share results">
+                <div class="results-tool">
+                    <button type="button" id="download-image" class="page-primary results-share-button" disabled>
+                        <span class="results-share-icon" aria-hidden="true"></span>
+                        Share Image (Download)
+                    </button>
+                    <div class="actions results-tool-actions">
+                        <label class="image-topic-control">
+                            <input type="checkbox" id="exclude-unrated">
+                            Only rated topics in PNG
+                        </label>
+                        <button type="button" id="download-text" class="results-utility" disabled>Download TXT</button>
+                    </div>
+                    <p id="status" class="results-tool-status" role="status"></p>
+                </div>
+                <span class="results-tool-divider">or</span>
+                <div id="share-url-options" class="results-tool" hidden>
+                    <button type="button" id="copy-share-link" class="secondary results-share-button" aria-describedby="share-privacy" disabled>
+                        <span class="results-share-icon" aria-hidden="true"></span>
+                        Share URL (Copy)
+                    </button>
+                    <div class="actions results-tool-actions">
+                        <p class="note" id="share-privacy">Anyone with the link can view your profile and included ratings, even hidden ones.</p>
+                        <button type="button" id="toggle-share-link" class="results-utility" aria-expanded="false" aria-controls="share-link-field" disabled>Show link</button>
+                    </div>
+                    <div id="share-link-field" hidden>
+                        <label for="share-link" id="share-link-label">Share URL</label>
+                        <input type="text" id="share-link" readonly>
+                    </div>
+                    <p id="share-link-status" class="results-tool-status" role="status"></p>
+                </div>
+            </section>
+            <details id="finish-missing" class="panel" open hidden>
+                <summary id="finish-heading"><span>Finish your checklist</span> <span id="finish-count"></span></summary>
+                <div class="finish-content">
+                    <p id="finish-status" role="status" class="note"></p>
+                    <div id="finish-guide">
+                        <div class="actions finish-actions">
+                            <button type="button" id="rate-next" class="page-primary">Rate next option</button>
+                            <a href="#summary-heading">View results summary</a>
+                        </div>
+                        <p class="note">Ratings save automatically. Use the arrow keys to browse and Space to select.</p>
+                    </div>
+                    <ul id="finish-rating-key" class="checklist-rating-key" aria-label="Rating key"></ul>
+                    <div id="finish-fields"></div>
+                </div>
+            </details>
+            <article id="capture" class="panel" aria-labelledby="summary-heading">
+                <h2 id="summary-heading" tabindex="-1">MyList</h2>
+                <ul id="results-profile" class="results-profile" aria-label="Profile details" hidden></ul>
+                <p id="consent-note" class="note">These are my preferences. Let’s compare what we’re both interested in and talk about boundaries before trying anything.</p>
+                <div class="results-layout">
+                    <div id="summary"></div>
+                </div>
+            </article>
+        </section>
+    </main>
+    <footer class="site-footer">
+        <div class="site-footer-inner">
+            <a class="site-brand site-footer-brand" href="index.html" data-checklist-nav>
+                <span class="site-brand-mark">
+                    <img src="img/favicon/android-chrome-192x192.png" width="22" height="22" alt="">
+                </span>
+                <span>MyList <small>Deviant Bound</small></span>
+            </a>
+            <nav class="site-footer-nav" aria-label="Help and resources">
+                <div>
+                    <h2>Help</h2>
+                    <ul>
+                        <li><a href="docs/about.html">About and privacy</a></li>
+                        <li><a href="docs/troubleshooting.html">Troubleshooting</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>Explore</h2>
+                    <ul>
+                        <li><a href="https://deviantbound.com">Community</a></li>
+                        <li><a href="https://bdsmtest.deviantbound.com/">BDSM Test</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </footer>
+</body>
+</html>

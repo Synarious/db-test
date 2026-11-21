@@ -1,0 +1,10 @@
+{
+    "name": "deviant-bound-quiz",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "node scripts/serve.js",
+        "questions": "node scripts/write-question-bank.js",
+        "test": "node --test tests/quiz.test.js"
+    }
+}

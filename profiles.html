@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, follow">
+    <meta name="referrer" content="no-referrer">
+    <meta name="theme-color" content="#101012">
+    <title>Profiles · Deviant Bound</title>
+    <link rel="icon" href="img/favicon/favicon.ico">
+    <link rel="stylesheet" href="css/site.css">
+    <link rel="stylesheet" href="css/profiles.css">
+    <script type="module" src="js/site.js"></script>
+    <script type="module" src="js/profiles-page.js"></script>
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a class="site-brand" href="index.html"><span class="site-brand-mark"><img src="img/favicon/android-chrome-192x192.png" alt="" width="24" height="24"></span>Deviant Bound</a>
+            <nav class="site-nav" aria-label="Main navigation">
+                <a href="index.html">Home</a>
+                <a href="quiz.html">Quiz</a>
+                <a href="results.html">Results</a>
+                <a href="profiles.html" aria-current="page">Profiles</a>
+            </nav>
+            <button class="secondary site-customize" type="button" data-customize aria-haspopup="dialog" hidden>Customize</button>
+        </div>
+    </header>
+    <main id="main" class="page profiles-page" tabindex="-1">
+        <header class="page-heading">
+            <h1>Profiles</h1>
+            <p class="description">Keep separate answers, results, and themes for each profile in this browser.</p>
+        </header>
+        <noscript><p>Enable JavaScript to manage your profiles.</p></noscript>
+        <div id="profile-manager" hidden>
+            <section class="panel current-profile" aria-labelledby="current-profile-heading">
+                <div>
+                    <p class="eyebrow" id="current-profile-label">Current session</p>
+                    <h2 id="current-profile-heading">Guest</h2>
+                    <p class="description" id="current-profile-description">Guest quiz progress stays in this tab.</p>
+                </div>
+                <div class="actions">
+                    <a class="button" href="quiz.html">Open quiz</a>
+                    <button type="button" id="use-guest" class="secondary" hidden>Switch to guest</button>
+                </div>
+            </section>
+            <p id="profile-status" class="status" role="status" tabindex="-1"></p>
+            <div class="profile-layout">
+                <section class="panel saved-profiles" aria-labelledby="saved-profiles-heading">
+                    <h2 id="saved-profiles-heading">Saved profiles</h2>
+                    <p class="description" id="no-profiles">Your saved profiles will appear here.</p>
+                    <ul id="profile-list" class="profile-list" hidden></ul>
+                </section>
+                <div class="profile-side">
+                    <section class="panel" id="create-profile" aria-labelledby="create-heading">
+                        <h2 id="create-heading">Create profile</h2>
+                        <form id="create-form" class="profile-form">
+                            <label class="field">Profile name<input id="new-profile-name" name="name" maxlength="80" autocomplete="off" required></label>
+                            <label class="copy-progress" id="copy-progress-option" hidden>
+                                <input type="checkbox" name="copyProgress"> Copy guest quiz progress from this tab
+                            </label>
+                            <button type="submit">Create profile</button>
+                        </form>
+                    </section>
+                    <section class="panel" aria-labelledby="backup-heading">
+                        <h2 id="backup-heading">Import backup</h2>
+                        <p class="description">Restore a quiz backup as a separate profile. Backup files contain your answers and profile details.</p>
+                        <button type="button" class="secondary" id="import-profile">Choose backup file</button>
+                        <input type="file" id="backup-file" accept=".json,application/json" hidden>
+                    </section>
+                </div>
+            </div>
+        </div>
+        <template id="profile-card">
+            <li class="profile-card">
+                <header class="profile-card-heading">
+                    <h3></h3>
+                    <span class="profile-badge" hidden>Active</span>
+                </header>
+                <p class="profile-theme"></p>
+                <dl class="profile-progress"></dl>
+                <div class="actions profile-card-actions">
+                    <button type="button" class="secondary" data-action="activate">Make active</button>
+                    <button type="button" class="text-button" data-action="rename" aria-haspopup="dialog">Rename</button>
+                    <button type="button" class="text-button" data-action="export">Export</button>
+                    <button type="button" class="text-button" data-action="delete" aria-haspopup="dialog">Delete</button>
+                </div>
+            </li>
+        </template>
+        <dialog id="rename-dialog" aria-labelledby="rename-heading">
+            <h2 id="rename-heading">Rename profile</h2>
+            <form id="rename-form" class="profile-form">
+                <label class="field">Profile name<input name="name" maxlength="80" autocomplete="off" autofocus required></label>
+                <div class="actions">
+                    <button type="submit">Save name</button>
+                    <button type="submit" formmethod="dialog" formnovalidate class="secondary">Cancel</button>
+                </div>
+                <p class="status" id="rename-status" role="status"></p>
+            </form>
+        </dialog>
+        <dialog id="delete-dialog" aria-labelledby="delete-heading" aria-describedby="delete-description">
+            <h2 id="delete-heading">Delete profile?</h2>
+            <p id="delete-description"></p>
+            <form id="delete-form" class="actions">
+                <button type="submit" formmethod="dialog" class="secondary" autofocus>Cancel</button>
+                <button type="submit">Delete profile</button>
+            </form>
+            <p class="status" id="delete-status" role="status"></p>
+        </dialog>
+    </main>
+    <footer class="site-footer">
+        <div class="site-footer-inner">
+            <span>Deviant Bound <span class="footer-divider" aria-hidden="true">/</span> BDSM Quiz</span>
+            <a href="about.html">About &amp; privacy</a>
+        </div>
+    </footer>
+</body>
+</html>

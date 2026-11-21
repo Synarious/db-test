@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, follow">
+    <meta name="referrer" content="no-referrer">
+    <title>MyList · Deviant Bound</title>
+    <link rel="icon" href="img/favicon/favicon-32x32.png">
+    <script src="js/image-themes.js"></script>
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/checklist-theme.css">
+    <link rel="stylesheet" href="css/checklist-page.css">
+    <script defer src="js/catalog.js"></script>
+    <script defer src="js/advanced-expansion.js"></script>
+    <script defer src="js/advanced-catalog.js"></script>
+    <script defer src="js/site-header.js"></script>
+    <script defer src="js/topic-descriptions.js"></script>
+    <script defer src="js/answers.js"></script>
+    <script defer src="js/share-links.js"></script>
+    <script defer src="js/rating-icons.js"></script>
+    <script defer src="js/age-gate.js"></script>
+    <script defer src="js/questionnaire.js"></script>
+</head>
+<body class="checklist-page checklist-theme">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a class="site-brand" href="index.html" data-checklist-nav>
+                <span class="site-brand-mark">
+                    <img src="img/favicon/android-chrome-192x192.png" width="22" height="22" alt="">
+                </span>
+                Deviant Bound
+            </a>
+            <nav class="site-nav" aria-label="Main navigation">
+                <a href="index.html" data-checklist-nav aria-current="page">MyList</a>
+                <a href="results.html" data-checklist-nav>Results</a>
+                <a href="compare.html" data-checklist-nav>Compare</a>
+                <a href="profiles.html" data-checklist-nav>Profiles</a>
+                <details class="site-help">
+                    <summary>Help</summary>
+                    <ul>
+                        <li><button type="button" id="open-instructions" aria-haspopup="dialog">Instructions</button></li>
+                        <li><a href="docs/about.html">About and privacy</a></li>
+                        <li><a href="docs/troubleshooting.html">Troubleshooting</a></li>
+                        <li><a href="docs/ios-devices.html">iPhone and iPad downloads</a></li>
+                    </ul>
+                </details>
+            </nav>
+        </div>
+    </header>
+    <main id="main" tabindex="-1">
+        <section id="age-gate" class="panel" aria-labelledby="age-heading">
+            <h1 id="age-heading">Adults only</h1>
+            <p class="age-gate-intro">MyList contains adult sexual topics. Confirm your age to continue.</p>
+            <div class="actions">
+                <button type="button" id="accept-age" disabled>I am 18 or older</button>
+                <button type="button" id="decline-age" class="secondary" disabled>I am under 18</button>
+            </div>
+            <p class="age-gate-note">Your choice is saved in this browser.</p>
+            <p id="age-status" role="status">If these buttons stay disabled, reload the page with JavaScript enabled and all app files available.</p>
+        </section>
+        <section id="app" hidden aria-labelledby="app-heading">
+            <div class="panel checklist-controls">
+                <header class="checklist-toolbar">
+                    <div class="checklist-toolbar-heading">
+                        <h1 id="app-heading" tabindex="-1">MyList</h1>
+                        <div class="page-progress" data-after-setup>
+                            <span id="checklist-progress-label" role="status">Loading progress…</span>
+                            <progress id="checklist-progress" aria-hidden="true" max="1" value="0"></progress>
+                        </div>
+                    </div>
+                    <div class="actions page-actions">
+                        <button type="button" class="secondary" id="open-customize" aria-haspopup="dialog" data-after-setup>Customize</button>
+                    </div>
+                </header>
+                <form id="question-preferences-form" aria-labelledby="question-preferences-heading">
+                    <h2 id="question-preferences-heading" tabindex="-1">Question preferences</h2>
+                    <p id="question-preferences-note" class="note" hidden>Choose which questions MyList shows and how your answers appear in results.</p>
+                    <div class="question-preference-fields">
+                        <label>MyList mode
+                            <select name="mode" required>
+                                <option value="standard" selected>Simple mode</option>
+                                <option value="advanced">Advanced mode</option>
+                            </select>
+                        </label>
+                        <label>Gender
+                            <select name="gender" required>
+                                <option value="" disabled selected>Choose gender</option>
+                                <option value="unspecified">Prefer not to say</option>
+                                <option value="female">Female</option>
+                                <option value="male">Male</option>
+                                <option value="another">Another gender</option>
+                            </select>
+                        </label>
+                        <label>Interested in
+                            <select name="partnerGender" required>
+                                <option value="" disabled selected>Choose partners</option>
+                                <option value="anyone">Anyone</option>
+                                <option value="female">Female partners</option>
+                                <option value="male">Male partners</option>
+                            </select>
+                        </label>
+                        <fieldset id="fantasy-options">
+                            <legend>Fantasy options</legend>
+                            <div class="fantasy-options-choices">
+                                <label><input type="radio" name="fantasy" value="0" checked> Hide</label>
+                                <label><input type="radio" name="fantasy" value="1"> Show</label>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <button id="start-list" class="page-primary" type="submit" hidden disabled>Start MyList</button>
+                    <p id="question-preferences-status" role="status"></p>
+                </form>
+            </div>
+            <p id="status" class="checklist-status" role="status"></p>
+            <ul id="checklist-rating-key" class="checklist-rating-key" aria-label="Rating key" data-after-setup></ul>
+            <dialog id="customize-dialog" aria-labelledby="customize-heading" aria-describedby="customize-note">
+                <header class="customize-header">
+                    <div class="dialog-heading">
+                        <h2 id="customize-heading">Customize MyList</h2>
+                        <form method="dialog"><button type="submit" class="secondary" autofocus>Close</button></form>
+                    </div>
+                    <p id="customize-note">Add optional details to your results and downloads.</p>
+                </header>
+                <form id="customize-form">
+                    <div class="customize-body">
+                        <div class="customize-fields">
+                            <label>Name <input name="name" type="text" maxlength="60"></label>
+                            <label>Age <input name="age" type="number" min="18" step="1" inputmode="numeric"></label>
+                            <label>BDSM role <input name="role" type="text" maxlength="60" placeholder="e.g. Switch"></label>
+                        </div>
+                        <fieldset>
+                            <legend>Theme</legend>
+                            <p class="customize-theme-note">Applies to every page and PNG download.</p>
+                            <div id="image-theme-picker" class="image-theme-options"></div>
+                            <figure class="image-theme-example" aria-hidden="true">
+                                <figcaption>PNG preview</figcaption>
+                                <div id="image-theme-preview" class="theme-preview"></div>
+                            </figure>
+                        </fieldset>
+                    </div>
+                    <div class="customize-actions">
+                        <p id="customize-status" role="status"></p>
+                        <button type="submit" class="page-primary">Save changes</button>
+                    </div>
+                </form>
+            </dialog>
+            <dialog id="review-dialog" aria-labelledby="review-heading" aria-describedby="review-description">
+                <h2 id="review-heading">MyList is incomplete</h2>
+                <p id="review-description">On the results page, “Finish your checklist” shows every option you still need to rate.</p>
+                <p id="review-count"></p>
+                <form method="dialog" class="actions">
+                    <button type="submit" class="secondary" autofocus>Back to MyList</button>
+                    <a id="continue-to-results" class="button page-primary" href="results.html#finish-missing">Continue to results</a>
+                </form>
+            </dialog>
+            <div id="questionnaire" data-after-setup></div>
+            <div class="checklist-bottom" data-after-setup>
+                <nav class="checklist-pagination" aria-label="MyList pages">
+                    <details id="section-picker">
+                        <summary id="checklist-page-number">Sections</summary>
+                        <ul></ul>
+                    </details>
+                    <div class="checklist-page-actions page-actions">
+                        <a id="previous-section" class="button secondary" hidden>Previous</a>
+                        <a id="next-section" class="button page-primary" hidden>Next</a>
+                    </div>
+                </nav>
+                <div class="checklist-review">
+                    <button id="review-results" class="page-primary" type="button">Review results</button>
+                </div>
+            </div>
+        </section>
+    </main>
+    <dialog id="instructions-dialog" aria-labelledby="instructions-dialog-heading">
+        <div class="dialog-heading">
+            <h2 id="instructions-dialog-heading">Instructions</h2>
+            <form method="dialog"><button type="submit" class="secondary">Close</button></form>
+        </div>
+        <div class="checklist-tools-content">
+            <p>Pick a rating icon for each option, or choose Left blank to skip it.</p>
+            <p>Always ask for consent and respect a change of mind.</p>
+            <p>Answers stay in this browser. On a shared device, use Clear MyList data in Profiles when you finish.</p>
+            <p>If an older question changed meaning or split into separate directions, rate the new options individually.</p>
+        </div>
+    </dialog>
+    <footer class="site-footer">
+        <div class="site-footer-inner">
+            <a class="site-brand site-footer-brand" href="index.html" data-checklist-nav>
+                <span class="site-brand-mark">
+                    <img src="img/favicon/android-chrome-192x192.png" width="22" height="22" alt="">
+                </span>
+                <span>MyList <small>Deviant Bound</small></span>
+            </a>
+            <nav class="site-footer-nav" aria-label="Help and resources">
+                <div>
+                    <h2>Help</h2>
+                    <ul>
+                        <li><a href="docs/about.html">About and privacy</a></li>
+                        <li><a href="docs/troubleshooting.html">Troubleshooting</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>Explore</h2>
+                    <ul>
+                        <li><a href="https://deviantbound.com">Community</a></li>
+                        <li><a href="https://bdsmtest.deviantbound.com/">BDSM Test</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </footer>
+</body>
+</html>

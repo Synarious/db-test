@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    <title>About and privacy · Deviant Bound</title>
+    <script src="../js/image-themes.js"></script>
+    <link rel="stylesheet" href="../css/app.css">
+    <script defer src="../js/site-header.js"></script>
+    <script defer src="../js/contact-email.js"></script>
+</head>
+<body class="help-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a class="site-brand" href="../index.html" data-checklist-nav>
+                <span class="site-brand-mark">
+                    <img src="../img/favicon/android-chrome-192x192.png" width="22" height="22" alt="">
+                </span>
+                Deviant Bound
+            </a>
+            <nav class="site-nav" aria-label="Main navigation">
+                <a href="../index.html" data-checklist-nav>MyList</a>
+                <a href="../results.html" data-checklist-nav>Results</a>
+                <a href="../compare.html" data-checklist-nav>Compare</a>
+                <a href="../profiles.html" data-checklist-nav>Profiles</a>
+                <details class="site-help">
+                    <summary>Help</summary>
+                    <ul>
+                        <li><a href="../docs/about.html" aria-current="page">About and privacy</a></li>
+                        <li><a href="../docs/troubleshooting.html">Troubleshooting</a></li>
+                        <li><a href="../docs/ios-devices.html">iPhone and iPad downloads</a></li>
+                    </ul>
+                </details>
+            </nav>
+        </div>
+    </header>
+    <main id="main" tabindex="-1">
+        <header class="help-header">
+            <h1>About and privacy</h1>
+        </header>
+        <section class="panel help-topic">
+            <h2>What is MyList for?</h2>
+            <p>MyList is a checklist for adults to think through their interests, relationship preferences, and boundaries before talking with a partner. Use your ratings to start a conversation and agree on consent together.</p>
+            <ul>
+                <li><a href="../index.html">MyList</a> lets you rate topics from favorites to hard limits or leave them blank. Use Question preferences to choose which topics you see. Use Customize to add an optional name, age, or role and pick a theme.</li>
+                <li><a href="../results.html">Results</a> shows your ratings by category, lets you finish skipped questions, and gives you options to download a text file or image or copy a share link.</li>
+                <li><a href="../compare.html">Compare</a> uses a partner’s share link or JSON backup to show where your rated interests overlap, differ, or run into a hard limit.</li>
+                <li><a href="../profiles.html">Profiles</a> lets you export a backup or import a backup or share link. You can fill blank fields in your active profile or import into a new named profile.</li>
+            </ul>
+        </section>
+        <section class="panel help-topic">
+            <h2>Where are my answers stored?</h2>
+            <p>MyList saves your ratings, question preferences, optional profile details, theme, and age-gate choice in your browser’s storage for this site. They usually survive closing the tab or quitting the browser. To pick up where you left off, return to the same site address in the same browser profile, such as your personal Chrome profile.</p>
+            <p>Anyone who uses that browser profile can open your saved list. On a different device or in a different browser or profile, you’ll start with a blank list unless you import a copy. Clearing the site’s data in browser settings can erase your list. In private browsing, the browser typically discards it when the private session ends.</p>
+            <p>MyList runs comparisons and reads and creates files on your device. If you open Compare with a backup from Results, MyList briefly holds the file contents in that tab’s storage and removes them when Compare reads them.</p>
+        </section>
+        <section class="panel help-topic">
+            <h2>Why save answers in the browser?</h2>
+            <p>Sites that save answers to an online account keep a copy on their servers. With MyList, your ratings and profile stay out of an account database. You can fill out the checklist without giving an email address and decide who gets a copy. To move or recover your list and settings, keep a private <a href="../profiles.html#backup-heading">JSON backup</a>.</p>
+        </section>
+        <section class="panel help-topic">
+            <h2>Hosting provider</h2>
+            <p>Cloudflare hosts MyList. When your browser requests a page or other site file, Cloudflare may process your IP address and information about your browser and connection to deliver and protect the site. See <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare’s Privacy Policy</a> for details about how it handles visitor traffic.</p>
+        </section>
+        <section class="panel help-topic">
+            <h2>What’s in a download or share link?</h2>
+            <p>Text and image downloads can show your optional profile details, including your saved gender and partner preference. A JSON backup includes your saved ratings, even those hidden by your current filters, along with your settings and profile details in plain text.</p>
+            <p>A share link includes all saved ratings, even those hidden by your filters, and includes your results profile when you’ve entered one. This can include your name, age, role, gender, and partner preference. That information is encoded after the # in the URL. Your browser reads that part locally when opening the page. Anyone with the full link can view or forward your results.</p>
+        </section>
+        <section class="panel help-topic">
+            <h2>How do I clear my data?</h2>
+            <p>Open <a href="../profiles.html#clear-heading">Clear MyList data</a>, select the button, then confirm. This deletes your saved ratings, settings, profile details, and age-gate choice from this browser profile. To keep a copy, export a backup first.</p>
+            <p>Delete downloaded files separately. Share links contain their own copy of your results, so anyone who already has the link can still open it after you clear your browser data.</p>
+        </section>
+        <section class="panel help-topic">
+            <h2>Project background</h2>
+            <p>This free tool was inspired by <a href="https://goctionni.github.io/KinkList/v1.0.2.html">the original KinkList</a> and built for the Deviant Bound community.</p>
+        </section>
+        <section class="panel help-topic help-contact">
+            <h2>Contact</h2>
+            <div id="contact-email"></div>
+        </section>
+    </main>
+</body>
+</html>

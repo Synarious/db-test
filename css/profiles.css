@@ -1,0 +1,65 @@
+.profiles-page { max-width: 70rem; }
+.profiles-page h2 { font-size: 1.25rem; }
+.current-profile {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    border-color: var(--highlight-border);
+    overflow-wrap: anywhere;
+}
+.current-profile .eyebrow { margin-bottom: .4rem; }
+.current-profile h2 { font-size: clamp(1.45rem, 4vw, 2rem); }
+.current-profile .description { margin-top: .45rem; }
+.profile-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+.profile-side { display: grid; gap: 1rem; }
+.profile-side #import-profile { margin-top: 1rem; }
+.profile-form { display: grid; justify-items: start; gap: .85rem; margin-top: 1rem; }
+.profile-form .field { width: 100%; }
+.copy-progress { display: flex; align-items: flex-start; gap: .5rem; color: var(--muted); font-size: .9rem; }
+.copy-progress input { flex: 0 0 auto; margin: .25rem 0 0; }
+.profile-list { display: grid; gap: .75rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.profile-card {
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: .7rem;
+    background: var(--inset);
+    overflow-wrap: anywhere;
+}
+.profile-card.is-active { border-color: var(--highlight-border); }
+.profile-card-heading { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem .65rem; }
+.profile-card-heading h3 { font-size: 1.15rem; }
+.profile-badge {
+    padding: .12rem .5rem;
+    border: 1px solid var(--highlight-border);
+    border-radius: 1rem;
+    background: var(--highlight);
+    color: var(--accent);
+    font-size: .75rem;
+    font-weight: 700;
+}
+.profile-theme { margin: .3rem 0 .75rem; color: var(--muted); font-size: .85rem; }
+.profile-progress { margin: 0; font-size: .875rem; }
+.profile-progress > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+    gap: .3rem .75rem;
+    padding-block: .45rem;
+    border-top: 1px solid var(--border);
+}
+.profile-progress dt { font-weight: 650; }
+.profile-progress dd { margin: 0; color: var(--muted); text-align: end; }
+.profile-progress a { display: inline-block; margin-inline-start: .55rem; }
+.profile-card-actions { margin-top: .55rem; gap: .25rem; }
+.profile-card-actions button { padding-inline: .65rem; font-size: .875rem; }
+
+@media (max-width: 47rem) {
+    .profile-layout { grid-template-columns: minmax(0, 1fr); }
+}
