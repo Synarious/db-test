@@ -1,3 +1,4 @@
+import { translatePublic } from './site-language.js';
 import { modes } from './questions.js';
 import { isRating, missedQuestionsMessage, requestedMode } from './quiz-state.js';
 import { sampleScores } from './sample-report.js';
@@ -43,8 +44,8 @@ function finishedQuiz(profile, selected) {
 }
 
 function displayDetails(entry) {
-    document.querySelector('#detail-title').textContent = entry.role;
-    document.querySelector('#detail-text').textContent = entry.description;
+    translatePublic(document.querySelector('#detail-title'), entry.role);
+    translatePublic(document.querySelector('#detail-text'), entry.description);
     const coverage = document.querySelector('#detail-coverage');
     coverage.hidden = entry.total === undefined;
     coverage.textContent = coverage.hidden ? '' : `${entry.answered} of ${entry.total} contributing questions rated.`;

@@ -88,6 +88,10 @@
     --fill: linear-gradient(to right in hsl, var(--rating-start), var(--rating-color)) left / var(--fill-width) 100% no-repeat var(--control-border);
     --thumb-color: var(--rating-color);
 }
+[dir="rtl"] .rating-track input {
+    --fill: linear-gradient(to left in hsl, var(--rating-start), var(--rating-color)) right / var(--fill-width) 100% no-repeat var(--control-border);
+}
+[dir="rtl"] .rating-track input.unrated,
 .rating-track input.unrated { --fill: var(--control-border); --thumb-color: var(--control); }
 .rating-track input:focus-visible { outline: none; }
 .rating-track input::-webkit-slider-runnable-track {

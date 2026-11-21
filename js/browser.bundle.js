@@ -420,6 +420,1504 @@
     }
   });
 
+  // js/locale.js
+  function supportedLanguage(tag) {
+    const code = typeof tag === "string" ? tag.trim().toLowerCase().split("-")[0] : "";
+    return Object.hasOwn(languages, code) ? code : null;
+  }
+  function detectLanguage(preferences, browserLanguage, locale2, timeZone2) {
+    const primary = preferences[0] || browserLanguage;
+    const preferred = supportedLanguage(primary);
+    if (preferred) return { language: preferred, suggest: false };
+    const secondary = [...preferences.slice(1), browserLanguage, locale2].map(supportedLanguage).find(Boolean);
+    return {
+      language: secondary || (Object.hasOwn(zoneHints, timeZone2) ? zoneHints[timeZone2] : "en"),
+      suggest: true
+    };
+  }
+  var languages, zoneHints;
+  var init_locale = __esm({
+    "js/locale.js"() {
+      languages = {
+        en: "English",
+        es: "Español",
+        fr: "Français",
+        de: "Deutsch",
+        pt: "Português",
+        it: "Italiano",
+        ja: "日本語",
+        ar: "العربية"
+      };
+      zoneHints = {
+        "Europe/Madrid": "es",
+        "Europe/Paris": "fr",
+        "Europe/Berlin": "de",
+        "Europe/Lisbon": "pt",
+        "Europe/Rome": "it",
+        "America/Sao_Paulo": "pt",
+        "Asia/Tokyo": "ja",
+        "Asia/Riyadh": "ar",
+        "Africa/Cairo": "ar",
+        "Europe/London": "en",
+        "America/Mexico_City": "es"
+      };
+    }
+  });
+
+  // js/locales/es.js
+  var es_default;
+  var init_es = __esm({
+    "js/locales/es.js"() {
+      es_default = {
+        "Language": "Idioma",
+        "Choose your language": "Elige tu idioma",
+        "Automatic": "Automático",
+        "Apply": "Aplicar",
+        "Close": "Cerrar",
+        "Cancel": "Cancelar",
+        "Home": "Inicio",
+        "BDSM Test": "Test BDSM",
+        "Test": "Test",
+        "Results": "Resultados",
+        "Profiles": "Perfiles",
+        "Customize": "Personalizar",
+        "Customization": "Personalización",
+        "Theme": "Tema",
+        "Save changes": "Guardar cambios",
+        "About & privacy": "Acerca de y privacidad",
+        "Main navigation": "Navegación principal",
+        "Skip to content": "Saltar al contenido",
+        "Adults only": "Solo para adultos",
+        "Take the test": "Hacer el test",
+        "View sample results": "Ver resultados de ejemplo",
+        "Results preview": "Vista previa de resultados",
+        "Example profile": "Perfil de ejemplo",
+        "Explore 29 BDSM interests and dynamics with Quick (30 questions) or Advanced (69 questions).": "Explora 29 intereses y dinámicas BDSM con el test rápido (30 preguntas) o avanzado (69 preguntas).",
+        "Confirm you are 18 or older to open the quiz.": "Confirma que tienes 18 años o más para abrir el test.",
+        "I am 18 or older": "Tengo 18 años o más",
+        "I am under 18": "Soy menor de 18 años",
+        "Choose your test": "Elige tu test",
+        "Quick": "Rápido",
+        "Advanced": "Avanzado",
+        "Start Quick": "Iniciar test rápido",
+        "Start Advanced": "Iniciar test avanzado",
+        "Change mode": "Cambiar modo",
+        "Next page": "Página siguiente",
+        "See results": "Ver resultados",
+        "Your results": "Tus resultados",
+        "Reset answers": "Borrar respuestas",
+        "Strongly disagree": "Totalmente en desacuerdo",
+        "Disagree": "En desacuerdo",
+        "Neither agree nor disagree": "Ni de acuerdo ni en desacuerdo",
+        "Agree": "De acuerdo",
+        "Strongly agree": "Totalmente de acuerdo",
+        "Create profile": "Crear perfil",
+        "Profile list": "Lista de perfiles",
+        "Save or share": "Guardar o compartir",
+        "Quiz statistics": "Estadísticas del test",
+        "More info": "Más información",
+        "Unrated": "Sin puntuar",
+        "Return home": "Volver al inicio",
+        "Neutral": "Neutral",
+        "Continue": "Continuar",
+        "Take the BDSM Test": "Hacer el test BDSM",
+        "Quiz results": "Resultados del test",
+        "Manage profiles": "Gestionar perfiles",
+        "Return to quiz": "Volver al test",
+        "Review answers": "Revisar respuestas",
+        "Reset your answers?": "¿Borrar tus respuestas?",
+        "You must be 18 or older to continue.": "Debes tener 18 años o más para continuar.",
+        "Rate each statement based on what appeals to you. Assume everyone involved is an adult who freely agrees and can stop at any time.": "Puntúa cada afirmación según lo que te atraiga. Supón que todas las personas involucradas son adultas, dan su consentimiento libremente y pueden parar en cualquier momento.",
+        "Assume adult consent and agreed boundaries. Leave any question unrated to skip it.": "Supón que todas las personas son adultas, consienten y han acordado límites. Deja cualquier pregunta sin puntuar para omitirla.",
+        "Some content is available in English.": "Parte del contenido está en inglés.",
+        "Made with love for the BDSM community <3": "Hecho con cariño para la comunidad BDSM <3",
+        "Forever free. No accounts. No tricks!": "Gratis para siempre. Sin cuentas ni trucos.",
+        "Private.": "Privado.",
+        "Your answers stay in your browser. We never track or receive them. You control your data, and your scores are calculated entirely on your device.": "Tus respuestas se quedan en tu navegador. Nunca las rastreamos ni las recibimos. Tú controlas tus datos y tus puntuaciones se calculan íntegramente en tu dispositivo.",
+        "Keep separate answers, results, and themes for each profile in this browser.": "Guarda por separado las respuestas, los resultados y los temas de cada perfil en este navegador.",
+        "New profile": "Nuevo perfil",
+        "Import shared results": "Importar resultados compartidos",
+        "Restore backup": "Restaurar copia",
+        "Restore a JSON backup as a separate profile": "Restaura una copia JSON como perfil independiente",
+        "Profile table": "Tabla de perfiles",
+        "Profile": "Perfil",
+        "Imported results": "Resultados importados",
+        "Actions": "Acciones",
+        "Default": "Predeterminado",
+        "Active": "Activo",
+        "Graphite": "Grafito",
+        "Not started": "Sin empezar",
+        "Start": "Empezar",
+        "None": "Ninguno",
+        "Reset progress": "Borrar progreso",
+        "Profile name": "Nombre del perfil",
+        "Make active": "Activar",
+        "Rename / edit": "Renombrar o editar",
+        "Download backup": "Descargar copia",
+        "Delete profile": "Eliminar perfil",
+        "Resume": "Continuar",
+        "View results": "Ver resultados",
+        "View report": "Ver informe",
+        "Complete": "Completado",
+        "Saved": "Guardado",
+        "Share results": "Compartir resultados",
+        // Quiz statements, keyed by question ID.
+        Q01: "Me gusta marcar el rumbo en un intercambio de poder acordado.",
+        Q02: "Me gusta ceder voluntariamente la iniciativa a mi pareja dentro de los límites que fijamos juntos.",
+        Q03: "Me atrae la idea de atar con cuerdas a una pareja adulta.",
+        Q04: "Me atrae la idea de que una pareja adulta me ate con cuerdas.",
+        Q05: "Disfrutaría provocando a mi pareja una sensación dolorosamente intensa si me lo pide.",
+        Q06: "Disfrutaría recibiendo una sensación acordada que resulte dolorosamente intensa.",
+        Q07: "Disfrutaría guiando a mi pareja cuando interpreta el papel de mascota.",
+        Q08: "Disfrutaría interpretando de forma lúdica a una mascota con una pareja adulta.",
+        Q09: "Me atrae dirigir un intercambio de poder estructurado con reglas y deberes acordados.",
+        Q10: "Me atrae asumir tareas de servicio bien definidas en un intercambio de poder formal.",
+        Q11: "Me gusta que brindar consuelo y tranquilidad sea una parte central de cómo cuido a mi pareja.",
+        Q12: "Me divertiría mantener el control mientras mi pareja desafía en broma una regla que acordamos.",
+        Q13: "Me gusta desafiar una regla de forma juguetona cuando mi pareja y yo hemos acordado que ese desafío es bienvenido.",
+        Q14: "Me gusta enseñar una habilidad a mi pareja y darle comentarios como parte de nuestra dinámica.",
+        Q15: "Me gusta que mi pareja guíe mi práctica y me dé comentarios como parte de nuestra dinámica.",
+        Q16: "Disfrutaría que me observaran en un contexto íntimo personas adultas que hayan aceptado mirar.",
+        Q17: "Disfrutaría observando un momento íntimo entre personas adultas que hayan aceptado que las miren.",
+        Q18: "Me ilusiona probar prácticas kink que desconozco y que encajan con mis límites.",
+        Q19: "Disfrutaría recibiendo expresiones humillantes acordadas durante un juego de roles.",
+        Q20: "Disfrutaría usando expresiones humillantes acordadas con una pareja dispuesta durante un juego de roles.",
+        Q21: "Me atrae una relación que permite abiertamente varios vínculos románticos o íntimos.",
+        Q22: "Disfruto tanto dirigiendo como siguiendo en un intercambio de poder consensuado.",
+        Q23: "Me atrae la intimidad sin un componente kink explícito.",
+        Q24: "Disfrutaría siendo quien persigue en una persecución lúdica y acordada.",
+        Q25: "Disfrutaría siendo quien huye en una persecución lúdica y acordada.",
+        Q26: "Disfrutaría el papel de reclamar simbólicamente como mía a una pareja que haya aceptado esa dinámica.",
+        Q27: "Disfrutaría usando un título acordado como Daddy o Mommy al asumir un papel de autoridad protectora con otra persona adulta.",
+        Q28: "Disfrutaría siendo la persona adulta que recibe cuidados en una dinámica de autoridad protectora, con un nombre de rol acordado como Boy o Girl.",
+        Q29: "Me interesa el juego de roles no sexual en el que personas adultas que consienten imaginan tener otra edad.",
+        Q30: "Me gusta cambiar mi papel en un intercambio de poder según mi estado de ánimo o mi pareja.",
+        Q31: "En un intercambio de poder, me gusta decidir qué pasa después dentro de los límites que negociamos.",
+        Q32: "Durante una escena, me resulta gratificante seguir las indicaciones acordadas de mi pareja.",
+        Q33: "Disfrutaría marcando el ritmo cuando mi pareja me pide que le provoque una sensación que le resulta dolorosa.",
+        Q34: "Incluso con una pareja de confianza y límites acordados, prefiero sensaciones que no lleguen a doler.",
+        Q35: "Me divertiría dar indicaciones juguetonas a una pareja que interpreta a una mascota.",
+        Q36: "Disfrutaría expresándome con gestos lúdicos inspirados en animales al interpretar a una mascota.",
+        Q37: "Me atraería establecer rituales habituales para un intercambio de poder acordado.",
+        Q38: "Me resultaría significativo cumplir tareas recurrentes que elegí asumir en un papel de servicio formal.",
+        Q39: "Me atrae trabajar con cuerdas para crear un patrón deliberado sobre mi pareja.",
+        Q40: "Disfrutaría sintiendo el contacto de la cuerda durante una inmovilización consensuada.",
+        Q41: "Disfrutaría apoyando a mi pareja si quiere ayuda para tranquilizarse después de una experiencia intensa.",
+        Q42: "Disfrutaría respondiendo a las provocaciones acordadas de mi pareja con un recordatorio juguetón de nuestras reglas.",
+        Q43: "Cuando la resistencia juguetona es bienvenida, me gusta ver cómo reacciona mi pareja a mis provocaciones.",
+        Q44: "Disfrutaría planificando varias sesiones de práctica para una pareja que me pide que le enseñe una habilidad.",
+        Q45: "Disfrutaría practicando una habilidad con el tiempo junto a una pareja adulta que me ayude a seguir mis avances.",
+        Q46: "Un pequeño público adulto que ha dado su consentimiento haría más atractiva una escena en la que participe.",
+        Q47: "Disfrutaría observando por invitación una escena consensuada sin participar en ella.",
+        Q48: "Cuando encuentro una práctica que me gusta, suelo preferir seguir con variantes conocidas.",
+        Q49: "Un comentario burlón acordado que resulte deliberadamente humillante aumentaría mi disfrute de una escena.",
+        Q50: "Disfrutaría usando expresiones humillantes acordadas en un intercambio improvisado con mi pareja.",
+        Q51: "Podría sentirme a gusto en una relación donde mi pareja también tiene otro vínculo romántico permitido por nuestro acuerdo.",
+        Q52: "Me gustaría elegir distintos papeles de un intercambio de poder en distintas ocasiones.",
+        Q53: "Me sentiría a gusto con una intimidad sin ningún componente kink.",
+        Q54: "Disfrutaría la expectación de ir alcanzando a una pareja dispuesta durante una escena primal.",
+        Q55: "Disfrutaría la expectación al saber que una pareja dispuesta se acerca a mí durante una escena primal.",
+        Q56: "Me gustaría compartir un símbolo que represente el vínculo que mi pareja elige tener conmigo en una dinámica de posesión.",
+        Q57: "Que se dirijan a mí con un título de autoridad protectora haría más atractivo cuidar a otra persona adulta.",
+        Q58: "Disfrutaría dejando que una pareja adulta y afectuosa aporte estructura mientras yo recibo sus cuidados.",
+        Q59: "En un juego de roles no sexual entre adultos, disfrutaría imaginando otra edad incluso sin un papel de cuidados.",
+        Q60: "Disfrutaría alternando entre dirigir y seguir dentro de la misma escena si acordamos el cambio de antemano.",
+        Q61: "Disfrutaría dirigiendo una escena aunque mi pareja y yo no usáramos títulos ni protocolos formales.",
+        Q62: "Disfrutaría siguiendo la iniciativa de mi pareja en una escena aun sin un papel de servicio continuo.",
+        Q63: "Disfrutaría guiando a mi pareja en su papel de mascota aunque nunca usáramos lenguaje de posesión.",
+        Q64: "Me atrae una dinámica de posesión simbólica incluso sin juegos de roles inspirados en animales.",
+        Q65: "Me atrae cuidar de forma práctica a mi pareja en una dinámica sin un papel de autoridad.",
+        Q66: "Disfrutaría un papel de autoridad protectora con otra persona adulta incluso sin imaginar otra edad en el juego de roles.",
+        Q67: "Disfrutaría recibiendo cuidados en una dinámica estructurada entre adultos sin imaginar que tengo otra edad.",
+        Q68: "Aunque todos estuvieran de acuerdo, preferiría que una escena íntima quedara en privado en vez de tener público.",
+        Q69: "Incluso con una comunicación abierta y el acuerdo de todos, preferiría una relación en la que ambos mantengamos la exclusividad romántica."
+      };
+    }
+  });
+
+  // js/locales/fr.js
+  var fr_default;
+  var init_fr = __esm({
+    "js/locales/fr.js"() {
+      fr_default = {
+        "Language": "Langue",
+        "Choose your language": "Choisissez votre langue",
+        "Automatic": "Automatique",
+        "Apply": "Appliquer",
+        "Close": "Fermer",
+        "Cancel": "Annuler",
+        "Home": "Accueil",
+        "BDSM Test": "Test BDSM",
+        "Test": "Test",
+        "Results": "Résultats",
+        "Profiles": "Profils",
+        "Customize": "Personnaliser",
+        "Customization": "Personnalisation",
+        "Theme": "Thème",
+        "Save changes": "Enregistrer les modifications",
+        "About & privacy": "À propos et confidentialité",
+        "Main navigation": "Navigation principale",
+        "Skip to content": "Aller au contenu",
+        "Adults only": "Réservé aux adultes",
+        "Take the test": "Passer le test",
+        "View sample results": "Voir un exemple de résultats",
+        "Results preview": "Aperçu des résultats",
+        "Example profile": "Profil exemple",
+        "Explore 29 BDSM interests and dynamics with Quick (30 questions) or Advanced (69 questions).": "Explorez 29 intérêts et dynamiques BDSM avec le test rapide (30 questions) ou avancé (69 questions).",
+        "Confirm you are 18 or older to open the quiz.": "Confirmez que vous avez au moins 18 ans pour accéder au test.",
+        "I am 18 or older": "J’ai 18 ans ou plus",
+        "I am under 18": "J’ai moins de 18 ans",
+        "Choose your test": "Choisissez votre test",
+        "Quick": "Rapide",
+        "Advanced": "Avancé",
+        "Start Quick": "Démarrer le test rapide",
+        "Start Advanced": "Démarrer le test avancé",
+        "Change mode": "Changer de mode",
+        "Next page": "Page suivante",
+        "See results": "Voir les résultats",
+        "Your results": "Vos résultats",
+        "Reset answers": "Effacer les réponses",
+        "Strongly disagree": "Pas du tout d’accord",
+        "Disagree": "Pas d’accord",
+        "Neither agree nor disagree": "Ni d’accord ni en désaccord",
+        "Agree": "D’accord",
+        "Strongly agree": "Tout à fait d’accord",
+        "Create profile": "Créer un profil",
+        "Profile list": "Liste des profils",
+        "Save or share": "Enregistrer ou partager",
+        "Quiz statistics": "Statistiques du test",
+        "More info": "Plus d’informations",
+        "Unrated": "Non évalué",
+        "Return home": "Retour à l’accueil",
+        "Neutral": "Neutre",
+        "Continue": "Continuer",
+        "Take the BDSM Test": "Passer le test BDSM",
+        "Quiz results": "Résultats du test",
+        "Manage profiles": "Gérer les profils",
+        "Return to quiz": "Revenir au test",
+        "Review answers": "Relire les réponses",
+        "Reset your answers?": "Effacer vos réponses ?",
+        "You must be 18 or older to continue.": "Vous devez avoir au moins 18 ans pour continuer.",
+        "Rate each statement based on what appeals to you. Assume everyone involved is an adult who freely agrees and can stop at any time.": "Évaluez chaque affirmation selon ce qui vous attire. Supposez que toutes les personnes impliquées sont adultes, consentent librement et peuvent arrêter à tout moment.",
+        "Assume adult consent and agreed boundaries. Leave any question unrated to skip it.": "Supposez que les adultes consentent et ont convenu de limites. Pour passer une question, laissez-la sans réponse.",
+        "Some content is available in English.": "Une partie du contenu est en anglais.",
+        "Made with love for the BDSM community <3": "Créé avec amour pour la communauté BDSM <3",
+        "Forever free. No accounts. No tricks!": "Gratuit pour toujours. Sans compte ni piège.",
+        "Private.": "Confidentiel.",
+        "Your answers stay in your browser. We never track or receive them. You control your data, and your scores are calculated entirely on your device.": "Vos réponses restent dans votre navigateur. Nous ne les suivons ni ne les recevons. Vous gardez le contrôle de vos données et vos scores sont calculés entièrement sur votre appareil.",
+        "Keep separate answers, results, and themes for each profile in this browser.": "Conservez des réponses, des résultats et des thèmes distincts pour chaque profil dans ce navigateur.",
+        "New profile": "Nouveau profil",
+        "Import shared results": "Importer des résultats partagés",
+        "Restore backup": "Restaurer une sauvegarde",
+        "Restore a JSON backup as a separate profile": "Restaure une sauvegarde JSON dans un profil distinct",
+        "Profile table": "Tableau des profils",
+        "Profile": "Profil",
+        "Imported results": "Résultats importés",
+        "Actions": "Actions",
+        "Default": "Par défaut",
+        "Active": "Actif",
+        "Graphite": "Graphite",
+        "Not started": "Non commencé",
+        "Start": "Commencer",
+        "None": "Aucun",
+        "Reset progress": "Réinitialiser la progression",
+        "Profile name": "Nom du profil",
+        "Make active": "Activer",
+        "Rename / edit": "Renommer ou modifier",
+        "Download backup": "Télécharger la sauvegarde",
+        "Delete profile": "Supprimer le profil",
+        "Resume": "Reprendre",
+        "View results": "Voir les résultats",
+        "View report": "Voir le rapport",
+        "Complete": "Terminé",
+        "Saved": "Enregistré",
+        "Share results": "Partager les résultats",
+        // Quiz statements, keyed by question ID.
+        Q01: "J’aime donner la direction dans un échange de pouvoir convenu.",
+        Q02: "J’aime laisser volontairement mon partenaire prendre les devants dans les limites que nous fixons ensemble.",
+        Q03: "L’idée d’attacher un partenaire adulte avec des cordes me plaît.",
+        Q04: "L’idée qu’un partenaire adulte m’attache avec des cordes me plaît.",
+        Q05: "J’aimerais faire ressentir à mon partenaire une sensation douloureusement intense s’il me le demande.",
+        Q06: "J’aimerais ressentir une sensation convenue qui soit douloureusement intense.",
+        Q07: "J’aimerais guider un partenaire qui joue le rôle d’un animal de compagnie.",
+        Q08: "J’aimerais incarner de façon ludique un animal de compagnie avec un partenaire adulte.",
+        Q09: "J’aimerais diriger un échange de pouvoir structuré selon des règles et des obligations convenues.",
+        Q10: "J’aimerais assumer des tâches de service clairement définies dans un échange de pouvoir formel.",
+        Q11: "J’aime mettre le réconfort et l’apaisement au cœur de la façon dont je prends soin de mon partenaire.",
+        Q12: "Je trouverais amusant de garder la main pendant que mon partenaire remet en question, par jeu, une règle convenue ensemble.",
+        Q13: "J’aime défier une règle pour taquiner mon partenaire lorsque nous avons convenu que cette espièglerie est bienvenue.",
+        Q14: "J’aime enseigner une compétence à mon partenaire et lui donner des retours dans le cadre de notre dynamique.",
+        Q15: "J’aime que mon partenaire guide ma pratique et me donne des retours dans le cadre de notre dynamique.",
+        Q16: "J’aimerais être observé dans un contexte intime par des adultes qui ont accepté de regarder.",
+        Q17: "J’aimerais observer un moment intime entre adultes qui ont accepté d’être regardés.",
+        Q18: "J’ai envie d’essayer des pratiques kink que je ne connais pas encore et qui respectent mes limites.",
+        Q19: "J’aimerais recevoir des paroles humiliantes convenues dans un jeu de rôle.",
+        Q20: "J’aimerais employer des paroles humiliantes convenues avec un partenaire volontaire dans un jeu de rôle.",
+        Q21: "Une relation qui permet ouvertement plusieurs liens amoureux ou intimes me plaît.",
+        Q22: "J’aime autant mener que suivre dans un échange de pouvoir consenti.",
+        Q23: "L’intimité sans élément kink explicite me plaît.",
+        Q24: "J’aimerais jouer la personne qui poursuit dans une course ludique convenue.",
+        Q25: "J’aimerais jouer la personne poursuivie dans une course ludique convenue.",
+        Q26: "J’aimerais revendiquer symboliquement comme mien un partenaire qui a accepté cette dynamique.",
+        Q27: "J’aimerais utiliser un titre convenu, comme Daddy ou Mommy, en tenant un rôle d’autorité bienveillante auprès d’un autre adulte.",
+        Q28: "J’aimerais être l’adulte dont on prend soin dans une dynamique d’autorité bienveillante, avec un nom de rôle convenu comme Boy ou Girl.",
+        Q29: "Je m’intéresse aux jeux de rôle non sexuels où des adultes consentants incarnent un âge différent du leur.",
+        Q30: "J’aime changer de rôle dans un échange de pouvoir selon mon humeur ou mon partenaire.",
+        Q31: "Dans un échange de pouvoir, j’aime décider de la suite dans les limites que nous avons négociées.",
+        Q32: "Pendant une scène, je trouve gratifiant de suivre les consignes convenues de mon partenaire.",
+        Q33: "J’aimerais décider du rythme quand mon partenaire me demande de lui faire ressentir une sensation qu’il trouve douloureuse.",
+        Q34: "Même avec un partenaire de confiance et des limites convenues, je préfère les sensations qui restent en deçà de la douleur.",
+        Q35: "J’aimerais donner des indications ludiques à un partenaire qui incarne un animal de compagnie.",
+        Q36: "J’aimerais m’exprimer par des gestes ludiques inspirés des animaux dans un rôle d’animal de compagnie.",
+        Q37: "J’aimerais établir des rituels réguliers pour un échange de pouvoir convenu.",
+        Q38: "Je trouverais du sens à accomplir les tâches récurrentes que j’ai choisi d’assumer dans un rôle de service formel.",
+        Q39: "J’aime l’idée de travailler la corde pour créer un motif précis sur mon partenaire.",
+        Q40: "J’aimerais sentir la corde contre moi lors d’une immobilisation consentie.",
+        Q41: "J’aimerais soutenir mon partenaire quand il souhaite de l’aide pour retrouver son calme après une expérience intense.",
+        Q42: "J’aimerais répondre aux taquineries convenues de mon partenaire par un rappel ludique de nos règles.",
+        Q43: "Lorsque la résistance ludique est bienvenue, j’aime voir comment mon partenaire réagit à mes taquineries.",
+        Q44: "J’aimerais planifier plusieurs séances de pratique pour un partenaire qui me demande de lui enseigner une compétence.",
+        Q45: "J’aimerais travailler une compétence dans la durée avec un partenaire adulte qui m’aide à suivre mes progrès.",
+        Q46: "La présence d’un petit public d’adultes consentants rendrait une scène à laquelle je participe plus attrayante.",
+        Q47: "J’aimerais être invité à observer une scène consentie sans y participer.",
+        Q48: "Quand je trouve une pratique qui me plaît, je préfère généralement m’en tenir à des variantes familières.",
+        Q49: "Une remarque moqueuse convenue et volontairement humiliante renforcerait mon plaisir pendant une scène.",
+        Q50: "J’aimerais employer des paroles humiliantes convenues dans un échange improvisé avec mon partenaire.",
+        Q51: "Je pourrais m’épanouir dans une relation où mon partenaire a aussi un autre lien amoureux permis par notre accord.",
+        Q52: "J’aimerais occuper des rôles différents dans un échange de pouvoir selon les occasions.",
+        Q53: "Une intimité entièrement dépourvue de kink me conviendrait.",
+        Q54: "J’aimerais le suspense de rattraper peu à peu un partenaire volontaire pendant une scène primal.",
+        Q55: "J’aimerais le suspense de savoir qu’un partenaire volontaire se rapproche de moi pendant une scène primal.",
+        Q56: "J’aimerais partager un symbole du lien que mon partenaire choisit d’avoir avec moi dans une dynamique d’appartenance.",
+        Q57: "Être appelé par un titre d’autorité bienveillante rendrait plus attrayant le fait de soutenir un autre adulte.",
+        Q58: "J’aimerais laisser un partenaire adulte bienveillant poser un cadre pendant que je tiens le rôle de la personne dont on prend soin.",
+        Q59: "Dans un jeu de rôle non sexuel entre adultes, j’aimerais essayer d’incarner un autre âge, même sans rôle de soin.",
+        Q60: "J’aimerais échanger les rôles de leader et de suiveur au cours d’une même scène si nous avons convenu du changement à l’avance.",
+        Q61: "J’aimerais diriger une scène même si mon partenaire et moi n’utilisions ni titres ni protocoles formels.",
+        Q62: "J’aimerais suivre mon partenaire dans une scène même sans tenir un rôle de service durable.",
+        Q63: "J’aimerais guider mon partenaire dans son rôle d’animal de compagnie même sans employer de termes d’appartenance.",
+        Q64: "Une dynamique d’appartenance symbolique me plaît même sans jeu de rôle inspiré des animaux.",
+        Q65: "J’aimerais prodiguer des soins concrets dans une dynamique sans rôle d’autorité.",
+        Q66: "J’aimerais tenir un rôle d’autorité bienveillante auprès d’un autre adulte même sans jeu de rôle autour d’un âge imaginaire.",
+        Q67: "J’aimerais qu’on prenne soin de moi dans une dynamique structurée entre adultes sans incarner un autre âge.",
+        Q68: "Même si tout le monde était d’accord, je préférerais qu’une scène intime reste privée plutôt que d’avoir un public.",
+        Q69: "Même avec une communication ouverte et l’accord de tout le monde, je préférerais une relation où nous conservons tous deux l’exclusivité amoureuse."
+      };
+    }
+  });
+
+  // js/locales/de.js
+  var de_default;
+  var init_de = __esm({
+    "js/locales/de.js"() {
+      de_default = {
+        "Language": "Sprache",
+        "Choose your language": "Sprache auswählen",
+        "Automatic": "Automatisch",
+        "Apply": "Übernehmen",
+        "Close": "Schließen",
+        "Cancel": "Abbrechen",
+        "Home": "Startseite",
+        "BDSM Test": "BDSM-Test",
+        "Test": "Test",
+        "Results": "Ergebnisse",
+        "Profiles": "Profile",
+        "Customize": "Anpassen",
+        "Customization": "Anpassung",
+        "Theme": "Design",
+        "Save changes": "Änderungen speichern",
+        "About & privacy": "Über uns und Datenschutz",
+        "Main navigation": "Hauptnavigation",
+        "Skip to content": "Zum Inhalt springen",
+        "Adults only": "Nur für Erwachsene",
+        "Take the test": "Test starten",
+        "View sample results": "Beispielergebnisse ansehen",
+        "Results preview": "Ergebnisvorschau",
+        "Example profile": "Beispielprofil",
+        "Explore 29 BDSM interests and dynamics with Quick (30 questions) or Advanced (69 questions).": "Entdecke 29 BDSM-Interessen und Dynamiken im Kurztest (30 Fragen) oder im erweiterten Test (69 Fragen).",
+        "Confirm you are 18 or older to open the quiz.": "Bestätige, dass du mindestens 18 Jahre alt bist, um den Test zu öffnen.",
+        "I am 18 or older": "Ich bin mindestens 18",
+        "I am under 18": "Ich bin unter 18",
+        "Choose your test": "Wähle deinen Test",
+        "Quick": "Kurztest",
+        "Advanced": "Erweitert",
+        "Start Quick": "Kurztest starten",
+        "Start Advanced": "Erweiterten Test starten",
+        "Change mode": "Modus wechseln",
+        "Next page": "Nächste Seite",
+        "See results": "Ergebnisse ansehen",
+        "Your results": "Deine Ergebnisse",
+        "Reset answers": "Antworten zurücksetzen",
+        "Strongly disagree": "Stimme überhaupt nicht zu",
+        "Disagree": "Stimme nicht zu",
+        "Neither agree nor disagree": "Weder Zustimmung noch Ablehnung",
+        "Agree": "Stimme zu",
+        "Strongly agree": "Stimme voll zu",
+        "Create profile": "Profil erstellen",
+        "Profile list": "Profilliste",
+        "Save or share": "Speichern oder teilen",
+        "Quiz statistics": "Teststatistiken",
+        "More info": "Weitere Informationen",
+        "Unrated": "Nicht bewertet",
+        "Return home": "Zur Startseite",
+        "Neutral": "Neutral",
+        "Continue": "Weiter",
+        "Take the BDSM Test": "BDSM-Test starten",
+        "Quiz results": "Testergebnisse",
+        "Manage profiles": "Profile verwalten",
+        "Return to quiz": "Zurück zum Test",
+        "Review answers": "Antworten prüfen",
+        "Reset your answers?": "Deine Antworten zurücksetzen?",
+        "You must be 18 or older to continue.": "Du musst mindestens 18 Jahre alt sein, um fortzufahren.",
+        "Rate each statement based on what appeals to you. Assume everyone involved is an adult who freely agrees and can stop at any time.": "Bewerte jede Aussage danach, wie sehr sie dich anspricht. Gehe davon aus, dass alle Beteiligten erwachsen sind, freiwillig zustimmen und jederzeit aufhören können.",
+        "Assume adult consent and agreed boundaries. Leave any question unrated to skip it.": "Gehe von einvernehmlicher Teilnahme Erwachsener und vereinbarten Grenzen aus. Lass eine Frage unbewertet, um sie zu überspringen.",
+        "Some content is available in English.": "Einige Inhalte sind auf Englisch verfügbar.",
+        "Made with love for the BDSM community <3": "Mit Liebe für die BDSM-Community gemacht <3",
+        "Forever free. No accounts. No tricks!": "Für immer kostenlos. Keine Konten, keine Tricks.",
+        "Private.": "Privat.",
+        "Your answers stay in your browser. We never track or receive them. You control your data, and your scores are calculated entirely on your device.": "Deine Antworten bleiben in deinem Browser. Wir verfolgen und empfangen sie nicht. Du behältst die Kontrolle über deine Daten und deine Ergebnisse werden vollständig auf deinem Gerät berechnet.",
+        "Keep separate answers, results, and themes for each profile in this browser.": "Speichere Antworten, Ergebnisse und Designs für jedes Profil separat in diesem Browser.",
+        "New profile": "Neues Profil",
+        "Import shared results": "Geteilte Ergebnisse importieren",
+        "Restore backup": "Sicherung wiederherstellen",
+        "Restore a JSON backup as a separate profile": "Eine JSON-Sicherung als separates Profil wiederherstellen",
+        "Profile table": "Profiltabelle",
+        "Profile": "Profil",
+        "Imported results": "Importierte Ergebnisse",
+        "Actions": "Aktionen",
+        "Default": "Standard",
+        "Active": "Aktiv",
+        "Graphite": "Graphit",
+        "Not started": "Nicht begonnen",
+        "Start": "Starten",
+        "None": "Keine",
+        "Reset progress": "Fortschritt zurücksetzen",
+        "Profile name": "Profilname",
+        "Make active": "Aktivieren",
+        "Rename / edit": "Umbenennen oder bearbeiten",
+        "Download backup": "Sicherung herunterladen",
+        "Delete profile": "Profil löschen",
+        "Resume": "Fortsetzen",
+        "View results": "Ergebnisse ansehen",
+        "View report": "Bericht ansehen",
+        "Complete": "Abgeschlossen",
+        "Saved": "Gespeichert",
+        "Share results": "Ergebnisse teilen",
+        // Quiz statements, keyed by question ID.
+        Q01: "Ich übernehme in einem vereinbarten Machtaustausch gern die Führung.",
+        Q02: "Ich überlasse meinem Gegenüber gern freiwillig die Führung innerhalb gemeinsam festgelegter Grenzen.",
+        Q03: "Die Vorstellung, eine erwachsene Person mit Seilen zu fesseln, reizt mich.",
+        Q04: "Die Vorstellung, von einer erwachsenen Person mit Seilen gefesselt zu werden, reizt mich.",
+        Q05: "Ich würde meinem Gegenüber gern auf Wunsch einen schmerzhaft intensiven Reiz geben.",
+        Q06: "Ich würde gern einen vereinbarten Reiz erleben, der sich schmerzhaft intensiv anfühlt.",
+        Q07: "Ich würde mein Gegenüber gern anleiten, wenn es die Rolle eines Haustiers spielt.",
+        Q08: "Ich würde mit einer erwachsenen Person gern spielerisch die Rolle eines Haustiers übernehmen.",
+        Q09: "Es reizt mich, einen strukturierten Machtaustausch mit vereinbarten Regeln und Pflichten zu leiten.",
+        Q10: "Es reizt mich, in einem formellen Machtaustausch klar festgelegte Dienstpflichten zu übernehmen.",
+        Q11: "Ich mache Trost und Zuspruch gern zu einem zentralen Teil meiner Fürsorge für mein Gegenüber.",
+        Q12: "Es würde mir Spaß machen, die Führung zu behalten, während mein Gegenüber spielerisch eine gemeinsam vereinbarte Regel infrage stellt.",
+        Q13: "Wenn wir uns darauf geeinigt haben, dass spielerischer Ungehorsam willkommen ist, stelle ich eine Regel gern neckisch infrage.",
+        Q14: "Ich vermittle meinem Gegenüber im Rahmen unserer Dynamik gern eine Fertigkeit und gebe Rückmeldung.",
+        Q15: "Ich lasse mich im Rahmen unserer Dynamik gern beim Üben anleiten und bekomme gern Rückmeldung.",
+        Q16: "Ich würde mich in einer intimen Umgebung gern von Erwachsenen beobachten lassen, die dem Zuschauen zugestimmt haben.",
+        Q17: "Ich würde gern einen intimen Moment zwischen Erwachsenen beobachten, die dem zugestimmt haben.",
+        Q18: "Ich freue mich darauf, unbekannte Spielarten des Kink auszuprobieren, die zu meinen Grenzen passen.",
+        Q19: "Ich würde in einem Rollenspiel gern vereinbarte erniedrigende Worte an mich gerichtet hören.",
+        Q20: "Ich würde in einem Rollenspiel gern vereinbarte erniedrigende Worte gegenüber einer einwilligenden Person verwenden.",
+        Q21: "Eine Beziehung, die offen mehrere romantische oder intime Verbindungen erlaubt, reizt mich.",
+        Q22: "Ich übernehme in einvernehmlichem Machtaustausch gern sowohl die führende als auch die folgende Rolle.",
+        Q23: "Intimität ohne ausdrückliche Kink-Elemente reizt mich.",
+        Q24: "Bei einer vereinbarten spielerischen Verfolgung würde ich gern die verfolgende Rolle übernehmen.",
+        Q25: "Bei einer vereinbarten spielerischen Verfolgung würde ich gern die verfolgte Rolle übernehmen.",
+        Q26: "Ich würde mein Gegenüber gern symbolisch als mein Eigen beanspruchen, wenn es dieser Dynamik zugestimmt hat.",
+        Q27: "Ich würde gern einen vereinbarten Titel wie Daddy oder Mommy in einer fürsorglichen Autoritätsrolle mit einer anderen erwachsenen Person verwenden.",
+        Q28: "Ich würde gern als erwachsene Person in einer fürsorglichen Autoritätsdynamik umsorgt werden und dabei einen vereinbarten Rollennamen wie Boy oder Girl verwenden.",
+        Q29: "Mich interessiert nichtsexuelles Rollenspiel, in dem einwilligende Erwachsene ein anderes Alter darstellen.",
+        Q30: "Je nach Stimmung oder Gegenüber wechsle ich gern meine Rolle in einem Machtaustausch.",
+        Q31: "Bei einem Machtaustausch entscheide ich gern innerhalb der ausgehandelten Grenzen, was als Nächstes passiert.",
+        Q32: "Während einer Szene empfinde ich es als erfüllend, vereinbarten Anweisungen meines Gegenübers zu folgen.",
+        Q33: "Wenn mich mein Gegenüber um einen schmerzhaften Reiz bittet, würde ich gern das Tempo bestimmen.",
+        Q34: "Auch bei einer vertrauten Person und vereinbarten Grenzen bevorzuge ich Reize unterhalb der Schmerzgrenze.",
+        Q35: "Ich würde einem Gegenüber in der Haustierrolle gern spielerische Signale geben.",
+        Q36: "Ich würde mich in der Haustierrolle gern durch spielerische, von Tieren inspirierte Gesten ausdrücken.",
+        Q37: "Es würde mich reizen, regelmäßige Rituale für einen vereinbarten Machtaustausch festzulegen.",
+        Q38: "Es wäre für mich erfüllend, wiederkehrende Aufgaben auszuführen, die ich in einer formellen Dienstrolle freiwillig übernommen habe.",
+        Q39: "Die Arbeit mit Seilen, um am Körper meines Gegenübers ein bewusst gestaltetes Muster zu schaffen, reizt mich.",
+        Q40: "Bei einer einvernehmlichen Fesselung würde ich gern spüren, wie das Seil an meinem Körper anliegt.",
+        Q41: "Ich würde mein Gegenüber gern dabei unterstützen, nach einem intensiven Erlebnis zur Ruhe zu kommen, wenn es sich Hilfe wünscht.",
+        Q42: "Ich würde auf vereinbarte Neckereien meines Gegenübers gern mit einem spielerischen Hinweis auf unsere Regeln reagieren.",
+        Q43: "Wenn spielerischer Widerstand willkommen ist, sehe ich gern, wie mein Gegenüber auf meine Neckereien reagiert.",
+        Q44: "Ich würde gern mehrere Übungseinheiten für eine Person planen, die mich bittet, ihr eine Fertigkeit beizubringen.",
+        Q45: "Ich würde gern über längere Zeit mit einer erwachsenen Person üben, die mir hilft, meine Fortschritte zu verfolgen.",
+        Q46: "Ein kleines Publikum aus einwilligenden Erwachsenen würde eine Szene, an der ich beteiligt bin, reizvoller machen.",
+        Q47: "Ich würde eine einvernehmliche Szene gern auf Einladung beobachten, ohne mitzumachen.",
+        Q48: "Wenn mir eine Spielart gefällt, bleibe ich meistens lieber bei vertrauten Varianten.",
+        Q49: "Eine vereinbarte neckische Bemerkung, die bewusst erniedrigend wirkt, würde den Reiz einer Szene für mich erhöhen.",
+        Q50: "Ich würde in einem improvisierten Austausch mit meinem Gegenüber gern vereinbarte erniedrigende Sprache verwenden.",
+        Q51: "Ich könnte in einer Beziehung erfüllt sein, in der mein Gegenüber auch eine weitere romantische Verbindung hat, die unsere Vereinbarung erlaubt.",
+        Q52: "Ich würde bei verschiedenen Gelegenheiten gern unterschiedliche Rollen in einem Machtaustausch wählen.",
+        Q53: "Intimität ganz ohne Kink würde mich zufriedenstellen.",
+        Q54: "Ich würde die Spannung genießen, in einer Primal-Szene ein einwilligendes Gegenüber langsam einzuholen.",
+        Q55: "Ich würde die Spannung genießen, in einer Primal-Szene zu wissen, dass ein einwilligendes Gegenüber näher kommt.",
+        Q56: "Ich hätte gern ein gemeinsames Symbol für die Bindung, die mein Gegenüber in einer Besitzdynamik freiwillig zu mir eingeht.",
+        Q57: "Ein fürsorglicher Autoritätstitel würde es für mich reizvoller machen, eine andere erwachsene Person zu unterstützen.",
+        Q58: "Ich würde mir gern von einer fürsorglichen erwachsenen Person Struktur geben lassen, während ich die umsorgte Rolle übernehme.",
+        Q59: "In einem nichtsexuellen Rollenspiel unter Erwachsenen würde ich auch ohne Fürsorgerolle gern ein anderes Alter darstellen.",
+        Q60: "Ich würde die führende und folgende Rolle gern innerhalb derselben Szene tauschen, wenn wir den Wechsel vorher vereinbaren.",
+        Q61: "Ich würde eine Szene auch dann gern leiten, wenn wir keine Titel oder formellen Protokolle verwenden.",
+        Q62: "Ich würde meinem Gegenüber in einer Szene auch ohne dauerhafte Dienstrolle gern folgen.",
+        Q63: "Ich würde mein Gegenüber in der Haustierrolle gern anleiten, auch wenn wir nie von Besitz sprechen.",
+        Q64: "Eine symbolische Besitzdynamik reizt mich auch ohne von Tieren inspiriertes Rollenspiel.",
+        Q65: "Es reizt mich, in einer Dynamik ohne Autoritätsrolle praktische Fürsorge zu leisten.",
+        Q66: "Ich würde mit einer anderen erwachsenen Person auch ohne Altersrollenspiel gern eine fürsorgliche Autoritätsrolle übernehmen.",
+        Q67: "Ich würde in einer strukturierten Dynamik unter Erwachsenen gern umsorgt werden, ohne ein anderes Alter darzustellen.",
+        Q68: "Selbst wenn alle zustimmen würden, wäre mir eine intime Szene ohne Publikum lieber.",
+        Q69: "Auch bei offener Kommunikation und Einverständnis aller wäre mir eine Beziehung lieber, in der wir beide romantisch exklusiv bleiben."
+      };
+    }
+  });
+
+  // js/locales/pt.js
+  var pt_default;
+  var init_pt = __esm({
+    "js/locales/pt.js"() {
+      pt_default = {
+        "Language": "Idioma",
+        "Choose your language": "Escolha seu idioma",
+        "Automatic": "Automático",
+        "Apply": "Aplicar",
+        "Close": "Fechar",
+        "Cancel": "Cancelar",
+        "Home": "Início",
+        "BDSM Test": "Teste BDSM",
+        "Test": "Teste",
+        "Results": "Resultados",
+        "Profiles": "Perfis",
+        "Customize": "Personalizar",
+        "Customization": "Personalização",
+        "Theme": "Tema",
+        "Save changes": "Salvar alterações",
+        "About & privacy": "Sobre e privacidade",
+        "Main navigation": "Navegação principal",
+        "Skip to content": "Pular para o conteúdo",
+        "Adults only": "Apenas para adultos",
+        "Take the test": "Fazer o teste",
+        "View sample results": "Ver exemplo de resultados",
+        "Results preview": "Prévia dos resultados",
+        "Example profile": "Perfil de exemplo",
+        "Explore 29 BDSM interests and dynamics with Quick (30 questions) or Advanced (69 questions).": "Explore 29 interesses e dinâmicas BDSM com o teste rápido (30 perguntas) ou avançado (69 perguntas).",
+        "Confirm you are 18 or older to open the quiz.": "Confirme que você tem pelo menos 18 anos para abrir o teste.",
+        "I am 18 or older": "Tenho 18 anos ou mais",
+        "I am under 18": "Tenho menos de 18 anos",
+        "Choose your test": "Escolha seu teste",
+        "Quick": "Rápido",
+        "Advanced": "Avançado",
+        "Start Quick": "Iniciar teste rápido",
+        "Start Advanced": "Iniciar teste avançado",
+        "Change mode": "Alterar modo",
+        "Next page": "Próxima página",
+        "See results": "Ver resultados",
+        "Your results": "Seus resultados",
+        "Reset answers": "Limpar respostas",
+        "Strongly disagree": "Discordo totalmente",
+        "Disagree": "Discordo",
+        "Neither agree nor disagree": "Nem concordo nem discordo",
+        "Agree": "Concordo",
+        "Strongly agree": "Concordo totalmente",
+        "Create profile": "Criar perfil",
+        "Profile list": "Lista de perfis",
+        "Save or share": "Salvar ou compartilhar",
+        "Quiz statistics": "Estatísticas do teste",
+        "More info": "Mais informações",
+        "Unrated": "Sem avaliação",
+        "Return home": "Voltar ao início",
+        "Neutral": "Neutro",
+        "Continue": "Continuar",
+        "Take the BDSM Test": "Fazer o teste BDSM",
+        "Quiz results": "Resultados do teste",
+        "Manage profiles": "Gerenciar perfis",
+        "Return to quiz": "Voltar ao teste",
+        "Review answers": "Revisar respostas",
+        "Reset your answers?": "Limpar suas respostas?",
+        "You must be 18 or older to continue.": "Você deve ter pelo menos 18 anos para continuar.",
+        "Rate each statement based on what appeals to you. Assume everyone involved is an adult who freely agrees and can stop at any time.": "Avalie cada afirmação de acordo com o que lhe atrai. Considere que todas as pessoas envolvidas são adultas, participam por livre consentimento e podem parar a qualquer momento.",
+        "Assume adult consent and agreed boundaries. Leave any question unrated to skip it.": "Considere o consentimento entre adultos e os limites combinados. Deixe uma pergunta sem avaliação para pulá-la.",
+        "Some content is available in English.": "Parte do conteúdo está em inglês.",
+        "Made with love for the BDSM community <3": "Feito com carinho para a comunidade BDSM <3",
+        "Forever free. No accounts. No tricks!": "Grátis para sempre. Sem contas nem truques.",
+        "Private.": "Privado.",
+        "Your answers stay in your browser. We never track or receive them. You control your data, and your scores are calculated entirely on your device.": "Suas respostas ficam no navegador. Nunca as rastreamos nem as recebemos. Você controla seus dados, e as pontuações são calculadas inteiramente no seu dispositivo.",
+        "Keep separate answers, results, and themes for each profile in this browser.": "Mantenha respostas, resultados e temas separados para cada perfil neste navegador.",
+        "New profile": "Novo perfil",
+        "Import shared results": "Importar resultados compartilhados",
+        "Restore backup": "Restaurar backup",
+        "Restore a JSON backup as a separate profile": "Restaura um backup JSON em um perfil separado",
+        "Profile table": "Tabela de perfis",
+        "Profile": "Perfil",
+        "Imported results": "Resultados importados",
+        "Actions": "Ações",
+        "Default": "Padrão",
+        "Active": "Ativo",
+        "Graphite": "Grafite",
+        "Not started": "Não iniciado",
+        "Start": "Iniciar",
+        "None": "Nenhum",
+        "Reset progress": "Limpar progresso",
+        "Profile name": "Nome do perfil",
+        "Make active": "Ativar",
+        "Rename / edit": "Renomear ou editar",
+        "Download backup": "Baixar backup",
+        "Delete profile": "Excluir perfil",
+        "Resume": "Retomar",
+        "View results": "Ver resultados",
+        "View report": "Ver relatório",
+        "Complete": "Concluído",
+        "Saved": "Salvo",
+        "Share results": "Compartilhar resultados",
+        // Quiz statements, keyed by question ID.
+        Q01: "Gosto de definir o rumo de uma troca de poder acordada.",
+        Q02: "Gosto de deixar voluntariamente que a outra pessoa lidere dentro dos limites que definimos juntos.",
+        Q03: "A ideia de amarrar uma pessoa adulta com cordas me atrai.",
+        Q04: "A ideia de ser amarrado com cordas por uma pessoa adulta me atrai.",
+        Q05: "Eu gostaria de proporcionar à outra pessoa uma sensação dolorosamente intensa se ela me pedisse.",
+        Q06: "Eu gostaria de receber uma sensação combinada que fosse dolorosamente intensa.",
+        Q07: "Eu gostaria de orientar a outra pessoa enquanto ela interpreta um animal de estimação.",
+        Q08: "Eu gostaria de interpretar um animal de estimação de forma lúdica com outra pessoa adulta.",
+        Q09: "Gosto da ideia de liderar uma troca de poder estruturada com regras e deveres combinados.",
+        Q10: "Gosto da ideia de assumir tarefas de serviço bem definidas em uma troca de poder formal.",
+        Q11: "Gosto de colocar o conforto e o acolhimento no centro dos cuidados que ofereço à outra pessoa.",
+        Q12: "Eu me divertiria mantendo a liderança enquanto a outra pessoa desafia, de brincadeira, uma regra que combinamos.",
+        Q13: "Gosto de desafiar uma regra de forma provocadora quando concordamos que esse tipo de brincadeira é bem-vindo.",
+        Q14: "Gosto de ensinar uma habilidade à outra pessoa e dar retorno como parte da nossa dinâmica.",
+        Q15: "Gosto que a outra pessoa oriente minha prática e me dê retorno como parte da nossa dinâmica.",
+        Q16: "Eu gostaria de ser observado em um contexto íntimo por pessoas adultas que aceitaram assistir.",
+        Q17: "Eu gostaria de observar um momento íntimo entre pessoas adultas que aceitaram ser observadas.",
+        Q18: "Tenho vontade de experimentar práticas kink que ainda não conheço e que respeitem meus limites.",
+        Q19: "Eu gostaria de receber falas humilhantes previamente combinadas durante uma interpretação de papéis.",
+        Q20: "Eu gostaria de usar falas humilhantes combinadas com uma pessoa disposta durante uma interpretação de papéis.",
+        Q21: "Um relacionamento que permite abertamente várias conexões românticas ou íntimas me atrai.",
+        Q22: "Gosto tanto de liderar quanto de seguir em uma troca de poder consensual.",
+        Q23: "A intimidade sem um elemento kink explícito me atrai.",
+        Q24: "Eu gostaria de assumir o papel de quem persegue em uma perseguição lúdica e combinada.",
+        Q25: "Eu gostaria de assumir o papel de quem é perseguido em uma perseguição lúdica e combinada.",
+        Q26: "Eu gostaria de reivindicar simbolicamente como minha uma pessoa que tenha aceitado essa dinâmica.",
+        Q27: "Eu gostaria de usar um título combinado, como Daddy ou Mommy, ao assumir um papel de autoridade cuidadora com outra pessoa adulta.",
+        Q28: "Eu gostaria de ser a pessoa adulta que recebe cuidados em uma dinâmica de autoridade cuidadora, usando um nome de papel combinado, como Boy ou Girl.",
+        Q29: "Tenho interesse em jogos de interpretação não sexuais nos quais pessoas adultas que consentem assumem uma idade imaginária diferente.",
+        Q30: "Gosto de mudar meu papel numa troca de poder conforme meu humor ou a pessoa com quem estou.",
+        Q31: "Em uma troca de poder, gosto de decidir o que acontece em seguida dentro dos limites que negociamos.",
+        Q32: "Durante uma cena, acho gratificante seguir as orientações combinadas da outra pessoa.",
+        Q33: "Eu gostaria de definir o ritmo quando a outra pessoa me pede para proporcionar uma sensação que considera dolorosa.",
+        Q34: "Mesmo com uma pessoa de confiança e limites combinados, prefiro sensações que não cheguem a doer.",
+        Q35: "Eu gostaria de dar sinais lúdicos a uma pessoa que interpreta um animal de estimação.",
+        Q36: "Eu gostaria de me expressar com gestos lúdicos inspirados em animais no papel de animal de estimação.",
+        Q37: "Eu gostaria de definir rituais regulares para uma troca de poder acordada.",
+        Q38: "Eu acharia significativo cumprir tarefas recorrentes que escolhi assumir num papel formal de serviço.",
+        Q39: "Gosto da ideia de trabalhar com cordas para criar um desenho intencional sobre o corpo da outra pessoa.",
+        Q40: "Eu gostaria de sentir a corda em contato com meu corpo durante uma imobilização consensual.",
+        Q41: "Eu gostaria de apoiar a outra pessoa quando ela quiser ajuda para se acalmar após uma experiência intensa.",
+        Q42: "Eu gostaria de responder às provocações combinadas da outra pessoa com um lembrete lúdico das nossas regras.",
+        Q43: "Quando a resistência lúdica é bem-vinda, gosto de ver como a outra pessoa reage às minhas provocações.",
+        Q44: "Eu gostaria de planejar várias sessões de prática para uma pessoa que me pede para ensinar uma habilidade.",
+        Q45: "Eu gostaria de praticar uma habilidade ao longo do tempo com uma pessoa adulta que me ajude a acompanhar meu progresso.",
+        Q46: "Um pequeno público de adultos que consentem tornaria mais atraente uma cena da qual eu participasse.",
+        Q47: "Eu gostaria de ser convidado a observar uma cena consensual sem participar dela.",
+        Q48: "Quando encontro uma prática de que gosto, geralmente prefiro continuar com variações conhecidas.",
+        Q49: "Um comentário provocador combinado e intencionalmente humilhante aumentaria meu prazer durante uma cena.",
+        Q50: "Eu gostaria de usar falas humilhantes combinadas como parte de um diálogo improvisado com a outra pessoa.",
+        Q51: "Eu poderia me sentir realizado em um relacionamento que permita que a outra pessoa também tenha outra conexão romântica.",
+        Q52: "Eu ficaria feliz em escolher papéis diferentes numa troca de poder em ocasiões diferentes.",
+        Q53: "Eu me sentiria satisfeito com uma intimidade totalmente sem kink.",
+        Q54: "Eu gostaria da expectativa de alcançar aos poucos uma pessoa disposta durante uma cena primal.",
+        Q55: "Eu gostaria da expectativa de saber que uma pessoa disposta está se aproximando durante uma cena primal.",
+        Q56: "Eu gostaria de compartilhar um símbolo que represente o vínculo que a outra pessoa escolheu ter comigo numa dinâmica de posse.",
+        Q57: "Ser chamado por um título de autoridade cuidadora tornaria mais atraente oferecer apoio a outra pessoa adulta.",
+        Q58: "Eu gostaria de deixar que uma pessoa adulta cuidadora ofereça estrutura enquanto assumo o papel de quem recebe cuidados.",
+        Q59: "Num jogo de interpretação não sexual entre adultos, eu gostaria de experimentar outra idade imaginária mesmo sem um papel de cuidado.",
+        Q60: "Eu gostaria de alternar entre liderar e seguir na mesma cena se combinássemos a mudança com antecedência.",
+        Q61: "Eu gostaria de conduzir uma cena mesmo sem títulos ou protocolos formais.",
+        Q62: "Eu gostaria de seguir a liderança da outra pessoa em uma cena mesmo sem um papel contínuo de serviço.",
+        Q63: "Eu gostaria de orientar a outra pessoa no papel de animal de estimação mesmo sem usar linguagem de posse.",
+        Q64: "Uma dinâmica de posse simbólica me atrai mesmo sem interpretação de papéis inspirada em animais.",
+        Q65: "Prestar cuidados práticos em uma dinâmica sem papel de autoridade me atrai.",
+        Q66: "Eu gostaria de assumir um papel de autoridade cuidadora com outra pessoa adulta mesmo sem interpretar outra idade.",
+        Q67: "Eu gostaria de receber cuidados numa dinâmica estruturada entre adultos sem assumir outra idade imaginária.",
+        Q68: "Mesmo que todos concordassem, eu preferiria que uma cena íntima ficasse em privado, sem público.",
+        Q69: "Mesmo com comunicação aberta e o acordo de todos, eu preferiria um relacionamento em que ambos mantivéssemos exclusividade romântica."
+      };
+    }
+  });
+
+  // js/locales/it.js
+  var it_default;
+  var init_it = __esm({
+    "js/locales/it.js"() {
+      it_default = {
+        "Language": "Lingua",
+        "Choose your language": "Scegli la lingua",
+        "Automatic": "Automatico",
+        "Apply": "Applica",
+        "Close": "Chiudi",
+        "Cancel": "Annulla",
+        "Home": "Home",
+        "BDSM Test": "Test BDSM",
+        "Test": "Test",
+        "Results": "Risultati",
+        "Profiles": "Profili",
+        "Customize": "Personalizza",
+        "Customization": "Personalizzazione",
+        "Theme": "Tema",
+        "Save changes": "Salva le modifiche",
+        "About & privacy": "Informazioni e privacy",
+        "Main navigation": "Navigazione principale",
+        "Skip to content": "Vai al contenuto",
+        "Adults only": "Solo per adulti",
+        "Take the test": "Fai il test",
+        "View sample results": "Vedi un esempio di risultati",
+        "Results preview": "Anteprima dei risultati",
+        "Example profile": "Profilo di esempio",
+        "Explore 29 BDSM interests and dynamics with Quick (30 questions) or Advanced (69 questions).": "Esplora 29 interessi e dinamiche BDSM con il test rapido (30 domande) o avanzato (69 domande).",
+        "Confirm you are 18 or older to open the quiz.": "Conferma di avere almeno 18 anni per accedere al test.",
+        "I am 18 or older": "Ho almeno 18 anni",
+        "I am under 18": "Ho meno di 18 anni",
+        "Choose your test": "Scegli il test",
+        "Quick": "Rapido",
+        "Advanced": "Avanzato",
+        "Start Quick": "Inizia il test rapido",
+        "Start Advanced": "Inizia il test avanzato",
+        "Change mode": "Cambia modalità",
+        "Next page": "Pagina successiva",
+        "See results": "Vedi i risultati",
+        "Your results": "I tuoi risultati",
+        "Reset answers": "Azzera le risposte",
+        "Strongly disagree": "Per niente d’accordo",
+        "Disagree": "Non sono d’accordo",
+        "Neither agree nor disagree": "Né d’accordo né in disaccordo",
+        "Agree": "Sono d’accordo",
+        "Strongly agree": "Completamente d’accordo",
+        "Create profile": "Crea profilo",
+        "Profile list": "Elenco dei profili",
+        "Save or share": "Salva o condividi",
+        "Quiz statistics": "Statistiche del test",
+        "More info": "Altre informazioni",
+        "Unrated": "Non valutato",
+        "Return home": "Torna alla home",
+        "Neutral": "Neutrale",
+        "Continue": "Continua",
+        "Take the BDSM Test": "Fai il test BDSM",
+        "Quiz results": "Risultati del test",
+        "Manage profiles": "Gestisci i profili",
+        "Return to quiz": "Torna al test",
+        "Review answers": "Rivedi le risposte",
+        "Reset your answers?": "Azzerare le tue risposte?",
+        "You must be 18 or older to continue.": "Devi avere almeno 18 anni per continuare.",
+        "Rate each statement based on what appeals to you. Assume everyone involved is an adult who freely agrees and can stop at any time.": "Valuta ogni affermazione in base a ciò che ti attrae. Supponi che tutte le persone coinvolte siano adulte, acconsentano liberamente e possano fermarsi in qualsiasi momento.",
+        "Assume adult consent and agreed boundaries. Leave any question unrated to skip it.": "Presupponi il consenso tra adulti e limiti concordati. Lascia una domanda senza valutazione per saltarla.",
+        "Some content is available in English.": "Alcuni contenuti sono in inglese.",
+        "Made with love for the BDSM community <3": "Fatto con amore per la comunità BDSM <3",
+        "Forever free. No accounts. No tricks!": "Gratis per sempre. Niente account, niente trucchi.",
+        "Private.": "Privato.",
+        "Your answers stay in your browser. We never track or receive them. You control your data, and your scores are calculated entirely on your device.": "Le tue risposte restano nel browser. Non le tracciamo né le riceviamo. Hai il controllo dei tuoi dati e i punteggi vengono calcolati interamente sul tuo dispositivo.",
+        "Keep separate answers, results, and themes for each profile in this browser.": "Mantieni risposte, risultati e temi separati per ogni profilo in questo browser.",
+        "New profile": "Nuovo profilo",
+        "Import shared results": "Importa risultati condivisi",
+        "Restore backup": "Ripristina backup",
+        "Restore a JSON backup as a separate profile": "Ripristina un backup JSON in un profilo separato",
+        "Profile table": "Tabella dei profili",
+        "Profile": "Profilo",
+        "Imported results": "Risultati importati",
+        "Actions": "Azioni",
+        "Default": "Predefinito",
+        "Active": "Attivo",
+        "Graphite": "Grafite",
+        "Not started": "Non iniziato",
+        "Start": "Inizia",
+        "None": "Nessuno",
+        "Reset progress": "Azzera i progressi",
+        "Profile name": "Nome del profilo",
+        "Make active": "Attiva",
+        "Rename / edit": "Rinomina o modifica",
+        "Download backup": "Scarica backup",
+        "Delete profile": "Elimina profilo",
+        "Resume": "Riprendi",
+        "View results": "Vedi i risultati",
+        "View report": "Vedi il report",
+        "Complete": "Completato",
+        "Saved": "Salvato",
+        "Share results": "Condividi risultati",
+        // Quiz statements, keyed by question ID.
+        Q01: "Mi piace stabilire la direzione in uno scambio di potere concordato.",
+        Q02: "Mi piace lasciare volontariamente che l’altra persona prenda l’iniziativa entro i limiti che fissiamo insieme.",
+        Q03: "Mi attrae l’idea di legare con corde una persona adulta.",
+        Q04: "Mi attrae l’idea che una persona adulta mi leghi con corde.",
+        Q05: "Mi piacerebbe provocare all’altra persona una sensazione dolorosamente intensa se me lo chiedesse.",
+        Q06: "Mi piacerebbe ricevere una sensazione concordata che risulti dolorosamente intensa.",
+        Q07: "Mi piacerebbe guidare l’altra persona mentre interpreta il ruolo di un animale da compagnia.",
+        Q08: "Mi piacerebbe interpretare in modo giocoso un animale da compagnia con una persona adulta.",
+        Q09: "Mi attrae guidare uno scambio di potere strutturato con regole e doveri concordati.",
+        Q10: "Mi attrae assumere compiti di servizio ben definiti in uno scambio di potere formale.",
+        Q11: "Mi piace mettere il conforto e la rassicurazione al centro del modo in cui mi prendo cura dell’altra persona.",
+        Q12: "Mi divertirebbe mantenere la guida mentre l’altra persona sfida per gioco una regola concordata insieme.",
+        Q13: "Mi piace sfidare una regola per stuzzicare l’altra persona quando abbiamo concordato che questa forma di disobbedienza giocosa è gradita.",
+        Q14: "Mi piace insegnare un’abilità all’altra persona e offrirle riscontri come parte della nostra dinamica.",
+        Q15: "Mi piace che l’altra persona guidi i miei esercizi e mi dia riscontri come parte della nostra dinamica.",
+        Q16: "Mi piacerebbe essere osservato in un contesto intimo da persone adulte che hanno accettato di guardare.",
+        Q17: "Mi piacerebbe osservare un momento intimo tra persone adulte che hanno accettato di essere guardate.",
+        Q18: "Ho voglia di provare pratiche kink che non conosco e che rispettano i miei limiti.",
+        Q19: "Mi piacerebbe ricevere parole umilianti concordate durante un gioco di ruolo.",
+        Q20: "Mi piacerebbe usare parole umilianti concordate con una persona consenziente durante un gioco di ruolo.",
+        Q21: "Mi attrae una relazione che consenta apertamente più legami romantici o intimi.",
+        Q22: "Mi piace sia guidare sia seguire in uno scambio di potere consensuale.",
+        Q23: "Mi attrae l’intimità senza una componente kink esplicita.",
+        Q24: "Mi piacerebbe assumere il ruolo di chi insegue in un inseguimento giocoso concordato.",
+        Q25: "Mi piacerebbe assumere il ruolo di chi viene inseguito in un inseguimento giocoso concordato.",
+        Q26: "Mi piacerebbe rivendicare simbolicamente come mia una persona che abbia accettato questa dinamica.",
+        Q27: "Mi piacerebbe usare un titolo concordato come Daddy o Mommy, assumendo un ruolo di autorità premurosa con un’altra persona adulta.",
+        Q28: "Mi piacerebbe essere la persona adulta accudita in una dinamica di autorità premurosa, con un nome di ruolo concordato come Boy o Girl.",
+        Q29: "Mi interessano i giochi di ruolo non sessuali in cui persone adulte consenzienti interpretano un’età immaginaria diversa.",
+        Q30: "Mi piace cambiare ruolo in uno scambio di potere a seconda del mio umore o della persona con cui sono.",
+        Q31: "In uno scambio di potere, mi piace decidere cosa accade dopo entro i limiti che abbiamo negoziato.",
+        Q32: "Durante una scena, trovo gratificante seguire le indicazioni concordate dell’altra persona.",
+        Q33: "Mi piacerebbe decidere il ritmo quando l’altra persona mi chiede di provocarle una sensazione che trova dolorosa.",
+        Q34: "Anche con una persona di fiducia e limiti concordati, preferisco sensazioni che restino al di sotto della soglia del dolore.",
+        Q35: "Mi piacerebbe dare indicazioni giocose a chi interpreta un animale da compagnia.",
+        Q36: "Mi piacerebbe esprimermi con gesti giocosi ispirati agli animali mentre interpreto un animale da compagnia.",
+        Q37: "Mi piacerebbe stabilire rituali ricorrenti per uno scambio di potere concordato.",
+        Q38: "Troverei significativo svolgere compiti ricorrenti che ho scelto di assumere in un ruolo formale di servizio.",
+        Q39: "Mi attrae lavorare con le corde per creare un motivo intenzionale sul corpo dell’altra persona.",
+        Q40: "Mi piacerebbe sentire la corda sul corpo durante un’immobilizzazione consensuale.",
+        Q41: "Mi piacerebbe sostenere l’altra persona quando desidera aiuto per calmarsi dopo un’esperienza intensa.",
+        Q42: "Mi piacerebbe rispondere alle provocazioni concordate dell’altra persona ricordandole le nostre regole in modo giocoso.",
+        Q43: "Quando la resistenza giocosa è gradita, mi piace vedere come reagisce l’altra persona alle mie provocazioni.",
+        Q44: "Mi piacerebbe pianificare più sessioni di pratica per una persona che mi chiede di insegnarle un’abilità.",
+        Q45: "Mi piacerebbe esercitarmi nel tempo con una persona adulta che mi aiuti a seguire i miei progressi.",
+        Q46: "Un piccolo pubblico di persone adulte consenzienti renderebbe più attraente una scena a cui partecipo.",
+        Q47: "Mi piacerebbe essere invitato a osservare una scena consensuale senza partecipare.",
+        Q48: "Quando trovo una pratica che mi piace, di solito preferisco continuare con le varianti che conosco.",
+        Q49: "Una battuta concordata e volutamente umiliante aumenterebbe il mio piacere durante una scena.",
+        Q50: "Mi piacerebbe usare parole umilianti concordate in uno scambio improvvisato con l’altra persona.",
+        Q51: "Potrei sentirmi appagato in una relazione in cui l’altra persona ha anche un altro legame romantico previsto dal nostro accordo.",
+        Q52: "Mi piacerebbe scegliere ruoli diversi in uno scambio di potere in occasioni diverse.",
+        Q53: "Mi sentirei appagato da un’intimità completamente priva di kink.",
+        Q54: "Mi piacerebbe la suspense di raggiungere a poco a poco una persona consenziente durante una scena primal.",
+        Q55: "Mi piacerebbe la suspense di sapere che una persona consenziente si sta avvicinando durante una scena primal.",
+        Q56: "Mi piacerebbe condividere un simbolo del legame che l’altra persona sceglie di avere con me in una dinamica di possesso.",
+        Q57: "Essere chiamato con un titolo di autorità premurosa renderebbe più attraente sostenere un’altra persona adulta.",
+        Q58: "Mi piacerebbe lasciare che una persona adulta premurosa offra una struttura mentre assumo il ruolo di chi viene accudito.",
+        Q59: "In un gioco di ruolo non sessuale tra adulti, mi piacerebbe interpretare un’età diversa anche senza un ruolo di cura.",
+        Q60: "Mi piacerebbe scambiare i ruoli di chi guida e chi segue nella stessa scena, se concordassimo il cambio in anticipo.",
+        Q61: "Mi piacerebbe dirigere una scena anche senza usare titoli o protocolli formali.",
+        Q62: "Mi piacerebbe seguire la guida dell’altra persona in una scena anche senza un ruolo di servizio continuativo.",
+        Q63: "Mi piacerebbe guidare l’altra persona nel ruolo di animale da compagnia anche senza usare termini di possesso.",
+        Q64: "Mi attrae una dinamica di possesso simbolico anche senza giochi di ruolo ispirati agli animali.",
+        Q65: "Mi attrae offrire cure concrete in una dinamica senza un ruolo di autorità.",
+        Q66: "Mi piacerebbe un ruolo di autorità premurosa con un’altra persona adulta anche senza interpretare un’età immaginaria.",
+        Q67: "Mi piacerebbe essere accudito in una dinamica strutturata tra adulti senza interpretare un’età diversa.",
+        Q68: "Anche se tutte le persone fossero d’accordo, preferirei che una scena intima restasse privata, senza pubblico.",
+        Q69: "Anche con una comunicazione aperta e l’accordo di tutti, preferirei una relazione in cui entrambi manteniamo l’esclusività romantica."
+      };
+    }
+  });
+
+  // js/locales/ja.js
+  var ja_default;
+  var init_ja = __esm({
+    "js/locales/ja.js"() {
+      ja_default = {
+        "Language": "言語",
+        "Choose your language": "言語を選択",
+        "Automatic": "自動",
+        "Apply": "適用",
+        "Close": "閉じる",
+        "Cancel": "キャンセル",
+        "Home": "ホーム",
+        "BDSM Test": "BDSMテスト",
+        "Test": "テスト",
+        "Results": "結果",
+        "Profiles": "プロフィール",
+        "Customize": "カスタマイズ",
+        "Customization": "カスタマイズ",
+        "Theme": "テーマ",
+        "Save changes": "変更を保存",
+        "About & privacy": "概要とプライバシー",
+        "Main navigation": "メインナビゲーション",
+        "Skip to content": "コンテンツへ移動",
+        "Adults only": "成人限定",
+        "Take the test": "テストを受ける",
+        "View sample results": "結果の例を見る",
+        "Results preview": "結果のプレビュー",
+        "Example profile": "プロフィール例",
+        "Explore 29 BDSM interests and dynamics with Quick (30 questions) or Advanced (69 questions).": "クイック版（30問）または詳細版（69問）で、29種類のBDSMの関心や関係性を探ってみましょう。",
+        "Confirm you are 18 or older to open the quiz.": "テストを開くには、18歳以上であることを確認してください。",
+        "I am 18 or older": "18歳以上です",
+        "I am under 18": "18歳未満です",
+        "Choose your test": "テストを選択",
+        "Quick": "クイック版",
+        "Advanced": "詳細版",
+        "Start Quick": "クイック版を開始",
+        "Start Advanced": "詳細版を開始",
+        "Change mode": "モードを変更",
+        "Next page": "次のページ",
+        "See results": "結果を見る",
+        "Your results": "あなたの結果",
+        "Reset answers": "回答をリセット",
+        "Strongly disagree": "まったく同意しない",
+        "Disagree": "同意しない",
+        "Neither agree nor disagree": "どちらともいえない",
+        "Agree": "同意する",
+        "Strongly agree": "強く同意する",
+        "Create profile": "プロフィールを作成",
+        "Profile list": "プロフィール一覧",
+        "Save or share": "保存または共有",
+        "Quiz statistics": "テストの統計",
+        "More info": "詳細",
+        "Unrated": "未評価",
+        "Return home": "ホームに戻る",
+        "Neutral": "中立",
+        "Continue": "続ける",
+        "Take the BDSM Test": "BDSMテストを受ける",
+        "Quiz results": "テスト結果",
+        "Manage profiles": "プロフィールを管理",
+        "Return to quiz": "テストに戻る",
+        "Review answers": "回答を確認",
+        "Reset your answers?": "回答をリセットしますか？",
+        "You must be 18 or older to continue.": "続けるには18歳以上である必要があります。",
+        "Rate each statement based on what appeals to you. Assume everyone involved is an adult who freely agrees and can stop at any time.": "自分がどの程度魅力を感じるかに基づいて、各項目を評価してください。関わる人は全員成人で、自由に同意し、いつでも中止できるものとします。",
+        "Assume adult consent and agreed boundaries. Leave any question unrated to skip it.": "成人同士の同意と合意した境界を前提とします。スキップする質問は評価せずに進んでください。",
+        "Some content is available in English.": "一部のコンテンツは英語で表示されます。",
+        "Made with love for the BDSM community <3": "BDSMコミュニティへの愛を込めて <3",
+        "Forever free. No accounts. No tricks!": "ずっと無料。アカウント登録も隠れた条件もありません。",
+        "Private.": "プライバシー。",
+        "Your answers stay in your browser. We never track or receive them. You control your data, and your scores are calculated entirely on your device.": "回答はブラウザー内に保存され、当サイトが追跡したり受け取ったりすることはありません。データは自分で管理でき、スコアは端末内で計算されます。",
+        "Keep separate answers, results, and themes for each profile in this browser.": "このブラウザーで、プロフィールごとに回答、結果、テーマを分けて保存できます。",
+        "New profile": "新しいプロフィール",
+        "Import shared results": "共有された結果を読み込む",
+        "Restore backup": "バックアップを復元",
+        "Restore a JSON backup as a separate profile": "JSONバックアップを別のプロフィールとして復元",
+        "Profile table": "プロフィール表",
+        "Profile": "プロフィール",
+        "Imported results": "読み込んだ結果",
+        "Actions": "操作",
+        "Default": "既定",
+        "Active": "使用中",
+        "Graphite": "グラファイト",
+        "Not started": "未開始",
+        "Start": "開始",
+        "None": "なし",
+        "Reset progress": "進捗をリセット",
+        "Profile name": "プロフィール名",
+        "Make active": "有効にする",
+        "Rename / edit": "名前変更・編集",
+        "Download backup": "バックアップをダウンロード",
+        "Delete profile": "プロフィールを削除",
+        "Resume": "再開",
+        "View results": "結果を見る",
+        "View report": "レポートを見る",
+        "Complete": "完了",
+        "Saved": "保存済み",
+        "Share results": "結果を共有",
+        // Quiz statements, keyed by question ID.
+        Q01: "合意したパワーエクスチェンジで、私が方向性を決めるのが好きだ。",
+        Q02: "一緒に決めた境界の中で、自分からパートナーに主導を委ねるのが好きだ。",
+        Q03: "成人のパートナーをロープで縛ることに魅力を感じる。",
+        Q04: "成人のパートナーにロープで縛られることに魅力を感じる。",
+        Q05: "パートナーが望んだとき、その人が痛いと感じるほど強い刺激を与えることを楽しめそうだ。",
+        Q06: "合意の上で、痛いと感じるほど強い刺激を受けることを楽しめそうだ。",
+        Q07: "ペット役を演じているパートナーを導くことを楽しめそうだ。",
+        Q08: "成人のパートナーと、遊びとしてペットになりきることを楽しめそうだ。",
+        Q09: "合意したルールや役割のある、体系立ったパワーエクスチェンジを主導することに惹かれる。",
+        Q10: "形式的なパワーエクスチェンジの中で、明確に定められた奉仕の務めを担うことに惹かれる。",
+        Q11: "パートナーをケアするうえで、慰めや安心を与えることを大切にするのが好きだ。",
+        Q12: "一緒に決めたルールにパートナーが遊びで反発する中、主導権を保つのは楽しそうだ。",
+        Q13: "ふざけた反発を歓迎することに互いに合意しているときは、からかうようにルールに逆らうのが好きだ。",
+        Q14: "二人の関係性の一環として、パートナーに技能を教え、助言するのが好きだ。",
+        Q15: "二人の関係性の一環として、パートナーに練習を指導してもらい、助言を受けるのが好きだ。",
+        Q16: "見ることに同意した成人に、親密な場面で見られることを楽しめそうだ。",
+        Q17: "見られることに同意した成人同士の親密な場面を、見ることを楽しめそうだ。",
+        Q18: "自分の境界に合う、未経験のキンクプレイを試すのが楽しみだ。",
+        Q19: "ロールプレイで、合意した屈辱的な言葉を向けられることを楽しめそうだ。",
+        Q20: "ロールプレイで、同意したパートナーに合意した屈辱的な言葉を使うことを楽しめそうだ。",
+        Q21: "複数の恋愛関係や親密な関係を公に認め合う関係に魅力を感じる。",
+        Q22: "合意のあるパワーエクスチェンジで、主導する側も従う側も好きだ。",
+        Q23: "はっきりしたキンクの要素がない親密さにも魅力を感じる。",
+        Q24: "合意した遊びの追いかけっこで、追う側になることを楽しめそうだ。",
+        Q25: "合意した遊びの追いかけっこで、追われる側になることを楽しめそうだ。",
+        Q26: "その関係性に同意したパートナーを、象徴的に自分のものとする役を楽しめそうだ。",
+        Q27: "別の成人に対してケアを伴う権限のある役割を担い、DaddyやMommyなど合意した呼び名を使うことを楽しめそうだ。",
+        Q28: "ケアを伴う権限のある関係性で、世話を受ける成人の役を担い、BoyやGirlなど合意した役名を使うことを楽しめそうだ。",
+        Q29: "同意した成人が想像上の異なる年齢を演じる、性的でないロールプレイに関心がある。",
+        Q30: "気分やパートナーに応じて、パワーエクスチェンジで担う役割を変えるのが好きだ。",
+        Q31: "パワーエクスチェンジで、話し合って決めた境界の中で次に何をするか決めるのが好きだ。",
+        Q32: "シーンの最中、合意したパートナーの指示に従うことに充実感を覚える。",
+        Q33: "パートナーに痛みを伴う刺激を求められたとき、そのペースを決めることを楽しめそうだ。",
+        Q34: "信頼するパートナーと境界を定めていても、痛みを感じない程度の刺激のほうが好きだ。",
+        Q35: "ペットになりきったパートナーに、遊びとして合図を出すことを楽しめそうだ。",
+        Q36: "ペット役として、動物をまねた遊び心のあるしぐさで自分を表現することを楽しめそうだ。",
+        Q37: "合意したパワーエクスチェンジで、継続的に行う儀式を決めることに魅力を感じる。",
+        Q38: "形式的な奉仕役として自分で引き受けた定期的な務めを果たすことに、やりがいを感じそうだ。",
+        Q39: "ロープでパートナーの身体に意図した模様を作ることに魅力を感じる。",
+        Q40: "合意のある拘束で、ロープが身体に触れる感覚を楽しめそうだ。",
+        Q41: "強い体験の後でパートナーが落ち着くための助けを求めたとき、支える役を楽しめそうだ。",
+        Q42: "合意したからかいに対し、二人のルールを冗談めかして思い出させることを楽しめそうだ。",
+        Q43: "遊びとして反発することが歓迎されるとき、自分のからかいにパートナーがどう反応するかを見るのが好きだ。",
+        Q44: "技能を教えてほしいと頼むパートナーのために、何回かの練習を計画することを楽しめそうだ。",
+        Q45: "上達を一緒に確認してくれる成人のパートナーと、時間をかけて技能を練習することを楽しめそうだ。",
+        Q46: "同意した成人の少人数の観客がいると、自分が参加するシーンの魅力が増す。",
+        Q47: "合意のあるシーンに招かれ、参加せずに見学することを楽しめそうだ。",
+        Q48: "気に入ったプレイが見つかると、たいてい慣れたバリエーションを続けるほうが好きだ。",
+        Q49: "合意の上でわざと屈辱を感じさせるからかいを受けると、シーンをより楽しめそうだ。",
+        Q50: "パートナーとの即興のやりとりで、合意した屈辱的な言葉を使うことを楽しめそうだ。",
+        Q51: "二人の合意のもとでパートナーが別の恋愛関係も持つ関係でも、充実感を得られそうだ。",
+        Q52: "機会ごとに、パワーエクスチェンジで異なる側を選ぶことを楽しめそうだ。",
+        Q53: "キンクがまったくない親密さでも満足できそうだ。",
+        Q54: "プライマルプレイで、同意したパートナーに少しずつ追いつくときの緊張感を楽しめそうだ。",
+        Q55: "プライマルプレイで、同意したパートナーが迫ってくると分かるときの緊張感を楽しめそうだ。",
+        Q56: "所有の関係性で、パートナーが自ら選んだ私との絆を表す象徴を共有することを楽しめそうだ。",
+        Q57: "気遣いを伴う権限を表す呼び名で呼ばれると、別の成人を支えることにより魅力を感じる。",
+        Q58: "世話を受ける役として、気遣ってくれる成人のパートナーに生活や行動の枠組みを示してもらうことを楽しめそうだ。",
+        Q59: "性的でない成人同士のロールプレイで、世話をする役がいなくても、想像上の別の年齢を演じることを楽しめそうだ。",
+        Q60: "前もって合意していれば、同じシーンの中で主導する役と従う役を交代することを楽しめそうだ。",
+        Q61: "呼び名や形式的な手順を使わなくても、シーンを主導することを楽しめそうだ。",
+        Q62: "継続的な奉仕役を引き受けなくても、シーンでパートナーの主導に従うことを楽しめそうだ。",
+        Q63: "所有を表す言葉を使わなくても、ペット役のパートナーを導くことを楽しめそうだ。",
+        Q64: "動物を模したロールプレイがなくても、象徴的な所有の関係性に魅力を感じる。",
+        Q65: "権限のある役割を担わずに、実際的な世話をする関係性に魅力を感じる。",
+        Q66: "別の年齢を演じなくても、成人の相手に対してケアを伴う権限のある役割を担うことを楽しめそうだ。",
+        Q67: "別の年齢を演じなくても、枠組みのある成人同士の関係で世話を受けることを楽しめそうだ。",
+        Q68: "全員が同意していても、親密なシーンには観客を入れず、プライベートに保ちたい。",
+        Q69: "率直に話し合い、全員の同意があっても、お互いに恋愛関係は相手一人に限る関係を好む。"
+      };
+    }
+  });
+
+  // js/locales/ar.js
+  var ar_default;
+  var init_ar = __esm({
+    "js/locales/ar.js"() {
+      ar_default = {
+        "Language": "اللغة",
+        "Choose your language": "اختر لغتك",
+        "Automatic": "تلقائي",
+        "Apply": "تطبيق",
+        "Close": "إغلاق",
+        "Cancel": "إلغاء",
+        "Home": "الرئيسية",
+        "BDSM Test": "اختبار BDSM",
+        "Test": "اختبار",
+        "Results": "النتائج",
+        "Profiles": "الملفات الشخصية",
+        "Customize": "تخصيص",
+        "Customization": "التخصيص",
+        "Theme": "المظهر",
+        "Save changes": "حفظ التغييرات",
+        "About & privacy": "حول الموقع والخصوصية",
+        "Main navigation": "التنقل الرئيسي",
+        "Skip to content": "انتقل إلى المحتوى",
+        "Adults only": "للبالغين فقط",
+        "Take the test": "ابدأ الاختبار",
+        "View sample results": "عرض نتائج نموذجية",
+        "Results preview": "معاينة النتائج",
+        "Example profile": "ملف شخصي نموذجي",
+        "Explore 29 BDSM interests and dynamics with Quick (30 questions) or Advanced (69 questions).": "استكشف 29 اهتمامًا وديناميكية في BDSM عبر الاختبار السريع (30 سؤالًا) أو المتقدم (69 سؤالًا).",
+        "Confirm you are 18 or older to open the quiz.": "أكّد أن عمرك 18 عامًا أو أكثر لفتح الاختبار.",
+        "I am 18 or older": "عمري 18 عامًا أو أكثر",
+        "I am under 18": "عمري أقل من 18 عامًا",
+        "Choose your test": "اختر اختبارك",
+        "Quick": "سريع",
+        "Advanced": "متقدم",
+        "Start Quick": "ابدأ الاختبار السريع",
+        "Start Advanced": "ابدأ الاختبار المتقدم",
+        "Change mode": "تغيير الوضع",
+        "Next page": "الصفحة التالية",
+        "See results": "عرض النتائج",
+        "Your results": "نتائجك",
+        "Reset answers": "إعادة ضبط الإجابات",
+        "Strongly disagree": "لا أوافق بشدة",
+        "Disagree": "لا أوافق",
+        "Neither agree nor disagree": "محايد",
+        "Agree": "أوافق",
+        "Strongly agree": "أوافق بشدة",
+        "Create profile": "إنشاء ملف شخصي",
+        "Profile list": "قائمة الملفات الشخصية",
+        "Save or share": "حفظ أو مشاركة",
+        "Quiz statistics": "إحصاءات الاختبار",
+        "More info": "مزيد من المعلومات",
+        "Unrated": "غير مقيّم",
+        "Return home": "العودة إلى الرئيسية",
+        "Neutral": "محايد",
+        "Continue": "متابعة",
+        "Take the BDSM Test": "ابدأ اختبار BDSM",
+        "Quiz results": "نتائج الاختبار",
+        "Manage profiles": "إدارة الملفات الشخصية",
+        "Return to quiz": "العودة إلى الاختبار",
+        "Review answers": "مراجعة الإجابات",
+        "Reset your answers?": "هل تريد إعادة ضبط إجاباتك؟",
+        "You must be 18 or older to continue.": "يجب أن يكون عمرك 18 عامًا أو أكثر للمتابعة.",
+        "Rate each statement based on what appeals to you. Assume everyone involved is an adult who freely agrees and can stop at any time.": "قيّم كل عبارة بحسب مدى انجذابك إليها. افترض أن جميع المشاركين بالغون ويوافقون بحرية ويمكنهم التوقف في أي وقت.",
+        "Assume adult consent and agreed boundaries. Leave any question unrated to skip it.": "افترض وجود موافقة بين بالغين وحدود متفق عليها. اترك أي سؤال بلا تقييم لتجاوزه.",
+        "Some content is available in English.": "بعض المحتوى متاح باللغة الإنجليزية.",
+        "Made with love for the BDSM community <3": "صُنع بحب لمجتمع BDSM ♡",
+        "Forever free. No accounts. No tricks!": "مجاني دائمًا، بلا حسابات أو حيل.",
+        "Private.": "الخصوصية.",
+        "Your answers stay in your browser. We never track or receive them. You control your data, and your scores are calculated entirely on your device.": "تبقى إجاباتك في متصفحك. لا نتتبّعها ولا نتلقّاها. أنت تتحكم في بياناتك، وتُحسب درجاتك بالكامل على جهازك.",
+        "Keep separate answers, results, and themes for each profile in this browser.": "احتفظ بإجابات ونتائج ومظهر مستقل لكل ملف شخصي في هذا المتصفح.",
+        "New profile": "ملف شخصي جديد",
+        "Import shared results": "استيراد النتائج المشتركة",
+        "Restore backup": "استعادة نسخة احتياطية",
+        "Restore a JSON backup as a separate profile": "استعادة نسخة JSON الاحتياطية كملف شخصي مستقل",
+        "Profile table": "جدول الملفات الشخصية",
+        "Profile": "الملف الشخصي",
+        "Imported results": "النتائج المستوردة",
+        "Actions": "الإجراءات",
+        "Default": "الافتراضي",
+        "Active": "نشط",
+        "Graphite": "غرافيت",
+        "Not started": "لم يبدأ",
+        "Start": "ابدأ",
+        "None": "لا توجد",
+        "Reset progress": "إعادة ضبط التقدم",
+        "Profile name": "اسم الملف الشخصي",
+        "Make active": "تنشيط",
+        "Rename / edit": "إعادة التسمية أو التعديل",
+        "Download backup": "تنزيل نسخة احتياطية",
+        "Delete profile": "حذف الملف الشخصي",
+        "Resume": "استئناف",
+        "View results": "عرض النتائج",
+        "View report": "عرض التقرير",
+        "Complete": "مكتمل",
+        "Saved": "محفوظ",
+        "Share results": "مشاركة النتائج",
+        // Quiz statements, keyed by question ID.
+        Q01: "أستمتع بأن أكون الشخص الذي يحدد المسار في تبادل للسلطة قائم على اتفاق.",
+        Q02: "أستمتع بأن أترك لشريكي زمام المبادرة طوعًا ضمن الحدود التي نضعها معًا.",
+        Q03: "تروق لي فكرة تقييد شريك بالغ بالحبال.",
+        Q04: "تروق لي فكرة أن يقيّدني شريك بالغ بالحبال.",
+        Q05: "سأستمتع بمنح شريكي إحساسًا يجده شديدًا إلى حد الألم عندما يطلب مني ذلك.",
+        Q06: "سأستمتع بتلقي إحساس متفق عليه تكون شدته مؤلمة.",
+        Q07: "سأستمتع بتوجيه شريكي عندما يؤدي دور حيوان أليف.",
+        Q08: "سأستمتع بتقمص شخصية حيوان أليف على سبيل اللعب مع شريك بالغ.",
+        Q09: "تجذبني قيادة تبادل منظّم للسلطة له قواعد وواجبات متفق عليها.",
+        Q10: "يجذبني تولي واجبات خدمة واضحة في تبادل رسمي للسلطة.",
+        Q11: "أستمتع بجعل الراحة والطمأنينة جزءًا أساسيًا من رعايتي لشريكي.",
+        Q12: "سيكون من الممتع أن أظل في موقع القيادة بينما يتحدى شريكي على سبيل المزاح قاعدة اتفقنا عليها.",
+        Q13: "أستمتع بتحدي قاعدة على سبيل المداعبة عندما نتفق أنا وشريكي على أن التمرد المرح مرحب به.",
+        Q14: "أحب أن أعلّم شريكي مهارة وأقدم له ملاحظات ضمن طبيعة علاقتنا.",
+        Q15: "أحب أن يرشدني شريكي أثناء التدريب ويقدم لي ملاحظات ضمن طبيعة علاقتنا.",
+        Q16: "سأستمتع بأن يشاهدني في موقف حميم أشخاص بالغون وافقوا على المشاهدة.",
+        Q17: "سأستمتع بمشاهدة لحظة حميمية بين بالغين وافقوا على أن يشاهدهم أحد.",
+        Q18: "أتطلع إلى تجربة ممارسات كينك غير مألوفة تتوافق مع حدودي.",
+        Q19: "سأستمتع بأن يوجَّه إليّ كلام مهين متفق عليه أثناء تقمص الأدوار.",
+        Q20: "سأستمتع باستخدام كلام مهين متفق عليه مع شريك راغب أثناء تقمص الأدوار.",
+        Q21: "تروق لي علاقة تسمح صراحة بتعدد الروابط العاطفية أو الحميمة.",
+        Q22: "أستمتع بالقيادة واتباع القيادة على حد سواء في تبادل للسلطة بالتراضي.",
+        Q23: "تروق لي الحميمية من دون عنصر كينك صريح.",
+        Q24: "سأستمتع بلعب دور المطارد في مطاردة مرحة متفق عليها.",
+        Q25: "سأستمتع بلعب دور من تجري مطاردته في مطاردة مرحة متفق عليها.",
+        Q26: "سأستمتع بدور من يدّعي رمزيًا امتلاك شريك وافق على هذه العلاقة.",
+        Q27: "سأستمتع باستخدام لقب متفق عليه مثل Daddy أو Mommy في دور يجمع بين السلطة والرعاية مع شخص بالغ آخر.",
+        Q28: "سأستمتع بأن أكون الشخص البالغ الذي يتلقى الرعاية في علاقة تجمع بين السلطة والرعاية، مع استخدام اسم دور متفق عليه مثل Boy أو Girl.",
+        Q29: "أهتم بتقمص الأدوار غير الجنسي الذي يؤدي فيه بالغون موافقون دورًا بعمر متخيَّل مختلف.",
+        Q30: "أحب تغيير دوري في تبادل السلطة تبعًا لمزاجي أو للشريك.",
+        Q31: "في تبادل السلطة، أستمتع بتحديد ما يحدث تاليًا ضمن الحدود التي تفاوضنا بشأنها.",
+        Q32: "أشعر بالرضا عندما أتبع إرشادات شريكي المتفق عليها أثناء المشهد.",
+        Q33: "سأستمتع بتحديد الوتيرة حين يطلب مني شريكي أن أمنحه إحساسًا يجده مؤلمًا.",
+        Q34: "حتى مع شريك أثق به وحدود متفق عليها، أفضّل الأحاسيس التي لا تصل إلى حد الألم.",
+        Q35: "سأستمتع بإعطاء إشارات مرحة لشريك يتقمص شخصية حيوان أليف.",
+        Q36: "سأستمتع بالتعبير عن نفسي بإيماءات مرحة مستوحاة من الحيوانات أثناء أداء دور حيوان أليف.",
+        Q37: "تروق لي فكرة وضع طقوس متكررة لتبادل للسلطة متفق عليه.",
+        Q38: "سأجد معنى في أداء واجبات دورية اخترت توليها ضمن دور خدمة رسمي.",
+        Q39: "تروق لي فكرة استخدام الحبال لتشكيل نمط مقصود على جسد شريكي.",
+        Q40: "سأستمتع بإحساس ملامسة الحبل لجسدي أثناء تقييد بالتراضي.",
+        Q41: "سأستمتع بدعم شريكي عندما يرغب في المساعدة على استعادة هدوئه بعد تجربة شديدة.",
+        Q42: "سأستمتع بالرد على مداعبة شريكي المتفق عليها بتذكير مرح بقواعدنا.",
+        Q43: "عندما تكون المعارضة المرحة مرحبًا بها، أستمتع بملاحظة رد فعل شريكي على مداعبتي.",
+        Q44: "سأستمتع بالتخطيط لسلسلة جلسات تدريب لشريك يطلب مني تعليمه مهارة.",
+        Q45: "سأستمتع بممارسة مهارة على مدى فترة مع شريك بالغ يساعدني على متابعة تقدمي.",
+        Q46: "سيزيد وجود جمهور صغير من البالغين الموافقين من جاذبية مشهد أشارك فيه.",
+        Q47: "سأستمتع بأن أُدعى لمشاهدة مشهد قائم على التراضي من دون المشاركة فيه.",
+        Q48: "عندما أجد نوعًا من اللعب يعجبني، أميل عادةً إلى الاستمرار في أشكاله المألوفة.",
+        Q49: "سيزيد تعليق ساخر متفق عليه ومقصود به الإذلال من استمتاعي بالمشهد.",
+        Q50: "سأستمتع باستخدام كلام مهين متفق عليه في حوار مرتجل مع شريكي.",
+        Q51: "يمكن أن أشعر بالرضا في علاقة يكون لشريكي فيها أيضًا ارتباط عاطفي آخر يسمح به اتفاق علاقتنا.",
+        Q52: "سيسرّني اختيار أدوار مختلفة في تبادل السلطة في مناسبات مختلفة.",
+        Q53: "سأكون راضيًا عن حميمية لا تتضمن أي عنصر كينك.",
+        Q54: "سأستمتع بالترقب وأنا أقترب تدريجيًا من اللحاق بشريك راغب في مشهد من اللعب الغريزي.",
+        Q55: "سأستمتع بالترقب وأنا أعلم أن شريكًا راغبًا يقترب مني في مشهد من اللعب الغريزي.",
+        Q56: "سأستمتع بوجود رمز مشترك يمثّل الرابطة التي اختارها شريكي معي في علاقة تقوم على الملكية الرمزية.",
+        Q57: "إذا خوطبت بلقب يدل على سلطة راعية، فسيزيد ذلك من جاذبية تقديم الدعم لشخص بالغ آخر.",
+        Q58: "سأستمتع بأن يضع لي شريك بالغ ومراعٍ إطارًا منظمًا بينما أتولى دور من يتلقى الرعاية.",
+        Q59: "في تقمص أدوار غير جنسي بين بالغين، سأستمتع بتجربة عمر متخيَّل مختلف حتى من دون دور للرعاية.",
+        Q60: "سأستمتع بتبادل دوري القيادة واتباعها في المشهد نفسه إذا اتفقنا مسبقًا على التبديل.",
+        Q61: "سأستمتع بقيادة مشهد حتى لو لم نستخدم أنا وشريكي ألقابًا أو بروتوكولات رسمية.",
+        Q62: "سأستمتع باتباع قيادة شريكي في مشهد حتى من دون دور خدمة مستمر.",
+        Q63: "سأستمتع بتوجيه شريكي في دور الحيوان الأليف حتى لو لم نستخدم عبارات تدل على التملّك.",
+        Q64: "تروق لي علاقة تقوم على التملّك الرمزي حتى من دون تقمص أدوار مستوحاة من الحيوانات.",
+        Q65: "تروق لي فكرة تقديم رعاية عملية في علاقة لا أتولى فيها دورًا سلطويًا.",
+        Q66: "سأستمتع بدور يجمع بين السلطة والرعاية مع شخص بالغ آخر حتى من دون تقمص دور بعمر متخيَّل.",
+        Q67: "سأستمتع بتلقي الرعاية في علاقة منظّمة بين بالغين من دون تقمص عمر متخيَّل مختلف.",
+        Q68: "حتى لو وافق الجميع، سأفضّل أن يبقى المشهد الحميم خاصًا من دون جمهور.",
+        Q69: "حتى مع التواصل الصريح وموافقة الجميع، سأفضّل علاقة يحصر فيها كل منا ارتباطاته العاطفية بالآخر."
+      };
+    }
+  });
+
+  // js/locale-messages.js
+  function message(source, language2) {
+    const catalog = Object.hasOwn(catalogs, language2) ? catalogs[language2] : void 0;
+    return catalog && Object.hasOwn(catalog, source) ? catalog[source] : void 0;
+  }
+  var catalogs;
+  var init_locale_messages = __esm({
+    "js/locale-messages.js"() {
+      init_es();
+      init_fr();
+      init_de();
+      init_pt();
+      init_it();
+      init_ja();
+      init_ar();
+      catalogs = { es: es_default, fr: fr_default, de: de_default, pt: pt_default, it: it_default, ja: ja_default, ar: ar_default };
+    }
+  });
+
+  // js/site-language.js
+  function translatePublic(element, source, key = source) {
+    markedCopy.set(element, { source, key });
+    element.textContent = source;
+  }
+  function nodesWithin(root2) {
+    const walker = document.createTreeWalker(root2, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        if (!node.data.trim() || node.parentElement.closest(
+          'script, style, noscript, template, input, textarea, [translate="no"]'
+        )) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    return nodes;
+  }
+  function translated(source, allowModel, key) {
+    const bundled = message(key, language);
+    if (bundled) return bundled;
+    if (!allowModel || !translator || language === "en") return source;
+    if (!translations.has(source)) {
+      translations.set(source, source);
+      const cache = translations;
+      translator.translate(source).then((value) => {
+        if (translations !== cache) return;
+        cache.set(source, value || source);
+        schedule();
+      }).catch(() => {
+      });
+    }
+    return translations.get(source);
+  }
+  function renderPage() {
+    const root2 = document.documentElement;
+    root2.lang = language;
+    root2.dir = language === "ar" ? "rtl" : "ltr";
+    const separator = originalTitle.indexOf(" · ");
+    const title = originalTitle.slice(0, separator);
+    document.title = separator < 0 ? originalTitle : `${message(title, language) || title}${originalTitle.slice(separator)}`;
+    trigger.textContent = languages[language];
+    trigger.lang = language;
+    trigger.setAttribute("aria-label", `${message("Language", language) || "Language"} · ${languages[language]}`);
+    dialog2.querySelector("h2").textContent = message("Choose your language", language) || "Choose your language";
+    dialog2.querySelector("label").textContent = message("Language", language) || "Language";
+    form2.querySelector("[type=submit]").textContent = message("Apply", language) || "Apply";
+    form2.querySelector("[type=button]").textContent = message("Close", language) || "Close";
+    autoOption.textContent = `${message("Automatic", language) || "Automatic"} · ${languages[automatic]}`;
+    const notice = "Some content is available in English.";
+    status2.textContent = language === "en" ? "" : message(notice, language);
+    for (const node of nodesWithin(document.body)) {
+      const parent = node.parentElement;
+      if (dialog2.contains(parent) || parent === trigger || parent.closest(
+        "#quiz-profile > span, #report-profile"
+      )) continue;
+      const marked = markedCopy.get(parent);
+      let state = textSources.get(node);
+      if (!state || state.rendered !== node.data || marked && marked.source !== state.source) {
+        state = { original: node.data, source: marked?.source || node.data.trim(), rendered: node.data };
+        textSources.set(node, state);
+      }
+      const visible = !parent.closest("[hidden], dialog:not([open])");
+      const canTranslate = visible && (marked || publicCopy.get(node) === state.source) && /[a-z]{2}/i.test(state.source) && !/^(Deviant Bound|https?:)/.test(state.source);
+      const key = marked?.key ?? state.source;
+      const value = translated(state.source, canTranslate, key);
+      const output = state.original.replace(state.original.trim(), value);
+      if (node.data !== output) node.data = output;
+      state.rendered = output;
+      if (marked) {
+        parent.lang = value === state.source && !message(key, language) ? "en" : language;
+        parent.dir = "auto";
+      }
+    }
+    for (const element of document.querySelectorAll("[aria-label], [placeholder], [title]")) {
+      if (dialog2.contains(element) || element === trigger) continue;
+      const states = attributeSources.get(element) || {};
+      for (const attribute of attributes) {
+        const value = element.getAttribute(attribute);
+        if (value === null) continue;
+        const source = states[attribute]?.rendered === value ? states[attribute].source : value;
+        const rendered = message(source, language) || source;
+        if (value !== rendered) element.setAttribute(attribute, rendered);
+        states[attribute] = { source, rendered };
+      }
+      attributeSources.set(element, states);
+    }
+  }
+  function schedule() {
+    if (queued) return;
+    queued = true;
+    queueMicrotask(() => {
+      queued = false;
+      observer.disconnect();
+      renderPage();
+      observer.observe(document.body, observation);
+    });
+  }
+  function startTranslator(interactive = false) {
+    if (language === "en" || translator || translatorPromise || !globalThis.Translator) return;
+    const target = language;
+    const cache = translations;
+    const options2 = { sourceLanguage: "en", targetLanguage: target };
+    translatorPromise = (async () => {
+      const available = await Translator.availability(options2);
+      if (cache !== translations || available === "unavailable" || available !== "available" && !interactive) return;
+      const instance = await Translator.create(options2);
+      if (cache !== translations) {
+        instance.destroy();
+        return;
+      }
+      translator = instance;
+      schedule();
+    })().catch(() => {
+    }).finally(() => {
+      if (cache === translations) translatorPromise = null;
+    });
+  }
+  function openPicker() {
+    if (dialog2.open) return;
+    select.value = requested ? language : preference || (detected.suggest ? detected.language : "auto");
+    dialog2.showModal();
+  }
+  var storageKey, locale, timeZone, detected, automatic, initialURL, requested, preference, language, header, customize, controls, trigger, dialog2, form2, select, status2, autoOption, textSources, publicCopy, markedCopy, attributes, attributeSources, originalTitle, translator, translatorPromise, translations, observer, observation, queued;
+  var init_site_language = __esm({
+    "js/site-language.js"() {
+      init_locale();
+      init_locale_messages();
+      storageKey = "dbt-language";
+      ({ locale, timeZone } = new Intl.DateTimeFormat().resolvedOptions());
+      detected = detectLanguage(navigator.languages || [], navigator.language, locale, timeZone);
+      automatic = detected.suggest ? "en" : detected.language;
+      initialURL = new URL(location.href);
+      requested = supportedLanguage(initialURL.searchParams.get("lang"));
+      try {
+        const saved = localStorage.getItem(storageKey) ?? sessionStorage.getItem(storageKey);
+        preference = saved === "auto" ? saved : supportedLanguage(saved);
+      } catch {
+      }
+      language = requested || (preference === "auto" ? automatic : preference) || automatic;
+      header = document.querySelector(".site-header-inner");
+      customize = header.querySelector("[data-customize]");
+      controls = document.createElement("div");
+      controls.className = "site-header-controls";
+      customize.before(controls);
+      controls.append(customize);
+      trigger = document.createElement("button");
+      trigger.type = "button";
+      trigger.className = "secondary site-language";
+      trigger.setAttribute("aria-haspopup", "dialog");
+      controls.append(trigger);
+      dialog2 = document.createElement("dialog");
+      dialog2.className = "language-dialog";
+      dialog2.setAttribute("aria-labelledby", "language-heading");
+      dialog2.innerHTML = `
+    <h2 id="language-heading"></h2>
+    <form>
+        <label for="site-language-choice"></label>
+        <select id="site-language-choice" autofocus></select>
+        <p class="description" role="status"></p>
+        <div class="actions">
+            <button type="submit"></button>
+            <button type="button" class="secondary"></button>
+        </div>
+    </form>
+`;
+      document.body.append(dialog2);
+      form2 = dialog2.querySelector("form");
+      select = dialog2.querySelector("select");
+      status2 = dialog2.querySelector('[role="status"]');
+      autoOption = new Option("", "auto");
+      select.add(autoOption);
+      for (const [code, name] of Object.entries(languages)) {
+        const option = new Option(name, code);
+        option.lang = code;
+        option.dir = code === "ar" ? "rtl" : "ltr";
+        select.add(option);
+      }
+      textSources = /* @__PURE__ */ new WeakMap();
+      publicCopy = /* @__PURE__ */ new WeakMap();
+      markedCopy = /* @__PURE__ */ new WeakMap();
+      attributes = ["aria-label", "placeholder", "title"];
+      attributeSources = /* @__PURE__ */ new WeakMap();
+      originalTitle = document.title;
+      translations = /* @__PURE__ */ new Map();
+      for (const node of nodesWithin(document.body)) {
+        if (!dialog2.contains(node)) publicCopy.set(node, node.data.trim());
+      }
+      observer = new MutationObserver(schedule);
+      observation = {
+        subtree: true,
+        childList: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: ["hidden", "open", ...attributes]
+      };
+      queued = false;
+      trigger.addEventListener("click", openPicker);
+      form2.querySelector("[type=button]").addEventListener("click", () => dialog2.close());
+      form2.addEventListener("submit", (event) => {
+        event.preventDefault();
+        preference = select.value;
+        try {
+          localStorage.setItem(storageKey, preference);
+        } catch {
+          try {
+            sessionStorage.setItem(storageKey, preference);
+          } catch {
+          }
+        }
+        if (initialURL.searchParams.has("lang")) {
+          const url = new URL(location.href);
+          url.searchParams.delete("lang");
+          history.replaceState(history.state, "", url);
+          requested = null;
+        }
+        const target = preference === "auto" ? automatic : preference;
+        if (language !== target) {
+          translator?.destroy();
+          translator = null;
+          translatorPromise = null;
+          translations = /* @__PURE__ */ new Map();
+          language = target;
+        }
+        dialog2.close();
+        schedule();
+        startTranslator(true);
+      });
+      schedule();
+      startTranslator();
+      if (!requested && !preference && detected.suggest && detected.language !== "en") {
+        setTimeout(() => {
+          if (!document.querySelector("dialog[open]")) openPicker();
+        }, 0);
+      }
+    }
+  });
+
   // js/sample-report.js
   var sampleScores;
   var init_sample_report = __esm({
@@ -451,7 +1949,7 @@
       row.style.setProperty("--score-size", `${entry.score ?? 0}%`);
       const name = document.createElement("span");
       name.className = "score-name";
-      name.textContent = entry.role;
+      translatePublic(name, entry.role);
       const track = document.createElement("span");
       track.className = "score-track";
       track.setAttribute("aria-hidden", "true");
@@ -480,6 +1978,7 @@
   }
   var init_score_list = __esm({
     "js/score-list.js"() {
+      init_site_language();
     }
   });
 
@@ -659,21 +2158,21 @@
       const questions = items.slice(start, start + pageSize);
       const recorded = questions.filter(({ id }) => Object.hasOwn(draft.responses, id)).length;
       const answered = questions.filter(isAnswered).length;
-      let status3 = recorded ? "unanswered" : "not started";
+      let status4 = recorded ? "unanswered" : "not started";
       let marker = "•";
       if (allAnswered) {
-        status3 = "complete";
+        status4 = "complete";
         marker = "✓";
       } else if (answered === questions.length) {
-        status3 = "all questions answered";
+        status4 = "all questions answered";
         marker = "●";
       } else if (answered) {
-        status3 = "in progress";
+        status4 = "in progress";
         marker = "◐";
       }
       const button = pageList.children[page].firstElementChild;
-      button.dataset.status = status3;
-      button.setAttribute("aria-label", `Page ${page + 1}, ${status3}`);
+      button.dataset.status = status4;
+      button.setAttribute("aria-label", `Page ${page + 1}, ${status4}`);
       button.disabled = !available;
       button.lastElementChild.textContent = marker;
       available &&= recorded === questions.length;
@@ -714,7 +2213,7 @@
     number.className = "question-number";
     number.textContent = `${index + 1}. `;
     const statement = document.createElement("span");
-    statement.textContent = item.text;
+    translatePublic(statement, item.text, item.id);
     heading.append(number, statement);
     const slider = document.createElement("input");
     slider.type = "range";
@@ -860,9 +2359,10 @@
     localReport.hidden = false;
     document.querySelector("#local-report-heading").focus();
   }
-  var gate, ageStatus, ageActions, acceptAge, declineAge, picker, modeButtons, quiz, form2, questionList, pageSize, progress, progressLabel, pageList, next, storageStatus, reset, localReport, profileContext, ageSelection, profile, mode, storageScope, drafts;
+  var gate, ageStatus, ageActions, acceptAge, declineAge, picker, modeButtons, quiz, form3, questionList, pageSize, progress, progressLabel, pageList, next, storageStatus, reset, localReport, profileContext, ageSelection, profile, mode, storageScope, drafts;
   var init_quiz = __esm({
     "js/quiz.js"() {
+      init_site_language();
       init_questions();
       init_quiz_state();
       init_scoring();
@@ -879,7 +2379,7 @@
       picker = document.querySelector("#mode-picker");
       modeButtons = picker.querySelectorAll("[data-mode]");
       quiz = document.querySelector("#quiz");
-      form2 = document.querySelector("#response-form");
+      form3 = document.querySelector("#response-form");
       questionList = document.querySelector("#question-list");
       pageSize = 5;
       progress = document.querySelector("#progress");
@@ -903,15 +2403,15 @@
       document.querySelector("#return-to-quiz").addEventListener("click", () => showAgeSelection(true));
       document.querySelector("#save-local-backup").addEventListener("click", () => {
         const backup = profile ?? defaultProfile();
-        const status3 = document.querySelector("#local-backup-status");
+        const status4 = document.querySelector("#local-backup-status");
         try {
           downloadProfileBackup({ ...backup, drafts: { ...backup.drafts, ...Object.fromEntries(drafts) } });
-          status3.textContent = "Backup download started.";
+          status4.textContent = "Backup download started.";
         } catch {
-          status3.textContent = "Could not download the backup. Try again.";
+          status4.textContent = "Could not download the backup. Try again.";
         }
       });
-      form2.addEventListener("submit", (event) => {
+      form3.addEventListener("submit", (event) => {
         event.preventDefault();
         advance();
       });
@@ -1107,8 +2607,8 @@
     return candidates.map((mode2) => ({ mode: mode2, ...profile2.drafts[mode2] })).filter((draft) => draft.completedAt).sort((a, b) => b.completedAt - a.completedAt)[0] ?? null;
   }
   function displayDetails(entry) {
-    document.querySelector("#detail-title").textContent = entry.role;
-    document.querySelector("#detail-text").textContent = entry.description;
+    translatePublic(document.querySelector("#detail-title"), entry.role);
+    translatePublic(document.querySelector("#detail-text"), entry.description);
     const coverage = document.querySelector("#detail-coverage");
     coverage.hidden = entry.total === void 0;
     coverage.textContent = coverage.hidden ? "" : `${entry.answered} of ${entry.total} contributing questions rated.`;
@@ -1151,7 +2651,7 @@
       reportBackup = null;
       missed.hidden = true;
       scoreList.replaceChildren();
-      for (const dialog2 of [share, statistics, details2]) if (dialog2.open) dialog2.close();
+      for (const dialog3 of [share, statistics, details2]) if (dialog3.open) dialog3.close();
       resultIntro.textContent = unavailable ? hasShare ? "This results link is invalid or uses an unsupported format." : "This report is unavailable in this browser. Check your saved profiles or import a backup." : needsAge ? "Confirm you are 18 or older to open this report." : "You must be 18 or older to view this report.";
       return;
     }
@@ -1221,6 +2721,7 @@
   var statistics, statisticsList, details2, share, shareLink, shareStatus, quizLink, scoreList, report, reportLinks, resultGate, recovery, resultHeading, resultIntro, reportDate, reportDateFormat, saveBackup, nativeShare, reportBackup, shareRequested, saveImage;
   var init_results_page = __esm({
     "js/results-page.js"() {
+      init_site_language();
       init_questions();
       init_quiz_state();
       init_sample_report();
@@ -1319,15 +2820,22 @@
 
   // js/profiles-page.js
   var profiles_page_exports = {};
-  function showStatus(message, focus = false) {
-    status2.textContent = message;
-    if (focus) status2.focus();
+  function showStatus(message2, focus = false) {
+    status3.textContent = message2;
+    if (focus) status3.focus();
   }
   function profileRow(profile2, selected, hasDefaultProgress) {
     const row = template.content.firstElementChild.cloneNode(true);
     row.dataset.profileId = profile2.id ?? "";
     row.classList.toggle("is-active", selected);
-    row.querySelector(".profile-name").textContent = profile2.name;
+    const name = row.querySelector(".profile-name");
+    if (profile2.id) {
+      name.translate = false;
+      name.dir = "auto";
+      name.textContent = profile2.name;
+    } else {
+      translatePublic(name, profile2.name);
+    }
     row.querySelector(".profile-badge").hidden = !selected;
     row.querySelector(".profile-theme").textContent = themes[profile2.theme];
     row.querySelector('[data-action="activate"]').hidden = selected;
@@ -1408,9 +2916,9 @@
     importButton.disabled = !available;
     importLinkButton.disabled = !available;
   }
-  function profilesChanged(message) {
+  function profilesChanged(message2) {
     document.dispatchEvent(new Event("quizprofilechange"));
-    showStatus(message, true);
+    showStatus(message2, true);
   }
   function confirmReset(profile2) {
     editingId2 = profile2?.id ?? null;
@@ -1434,9 +2942,10 @@
     importDialog.showModal();
     if (link) importForm.elements.name.focus();
   }
-  var manager, list, template, createForm, copyProgress, importButton, backupFile, importLinkButton, importDialog, importForm, importStatus, status2, storageStatus2, editProfile, editForm, editStatus, resetProfile, resetStatus, deletion, deleteStatus, editingId2;
+  var manager, list, template, createForm, copyProgress, importButton, backupFile, importLinkButton, importDialog, importForm, importStatus, status3, storageStatus2, editProfile, editForm, editStatus, resetProfile, resetStatus, deletion, deleteStatus, editingId2;
   var init_profiles_page = __esm({
     "js/profiles-page.js"() {
+      init_site_language();
       init_questions();
       init_quiz_state();
       init_session();
@@ -1454,7 +2963,7 @@
       importDialog = document.querySelector("#import-share-dialog");
       importForm = document.querySelector("#import-share-form");
       importStatus = document.querySelector("#import-share-status");
-      status2 = document.querySelector("#profile-status");
+      status3 = document.querySelector("#profile-status");
       storageStatus2 = document.querySelector("#profile-storage-status");
       editProfile = document.querySelector("#edit-profile-dialog");
       editForm = document.querySelector("#edit-profile-form");
@@ -1794,6 +3303,7 @@
   });
 
   // js/browser.js
+  init_site_language();
   var pages = {
     home: () => Promise.resolve().then(() => (init_home(), home_exports)),
     quiz: () => Promise.resolve().then(() => (init_quiz(), quiz_exports)),

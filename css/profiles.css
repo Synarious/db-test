@@ -1,4 +1,5 @@
 .profiles-page { max-width: 72rem; padding-block: clamp(1.5rem, 4vw, 2.75rem); }
+.profiles-page h1 { font-size: clamp(1.85rem, 4vw, 2.65rem); overflow-wrap: anywhere; }
 .profiles-page h2 { font-size: 1.25rem; }
 .profile-sheet {
     border: 1px solid var(--border);
@@ -18,7 +19,6 @@
     min-height: 2.5rem;
     padding: .35rem .65rem;
     font-size: .85rem;
-    white-space: nowrap;
 }
 .profile-danger {
     background: var(--inset);
@@ -36,7 +36,7 @@
 }
 .profile-table {
     width: 100%;
-    min-width: 46rem;
+    min-width: 38rem;
     border-spacing: 0;
     font-size: .9rem;
     text-align: start;
@@ -54,7 +54,6 @@
     --cell-background: var(--control);
     background: var(--cell-background);
     font-size: .8rem;
-    white-space: nowrap;
 }
 .profile-table tr > :first-child {
     position: sticky;
@@ -67,7 +66,7 @@
 .profile-table tbody tr:nth-child(even) { --cell-background: var(--inset); }
 .profile-table tbody tr.is-active { --cell-background: var(--highlight); }
 .profile-table tbody tr > * { background: var(--cell-background); }
-.profile-table .is-active th { box-shadow: inset .2rem 0 var(--accent); }
+.profile-table .is-active th { border-inline-start: .2rem solid var(--accent); }
 .profile-badge {
     display: table;
     margin-top: .2rem;
@@ -79,7 +78,6 @@
 .profile-theme { white-space: nowrap; }
 .profile-progress-status {
     display: block;
-    white-space: nowrap;
     font-variant-numeric: tabular-nums;
 }
 .profile-progress-status[data-state="complete"] { color: var(--score-high); font-weight: 650; }
@@ -96,19 +94,18 @@
 .profile-row-actions { min-width: 11rem; }
 .create-profile {
     display: grid;
-    grid-template-columns: minmax(9rem, 1fr) minmax(0, 2fr);
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
     gap: .75rem 1rem;
     margin-top: 1rem;
     padding: clamp(1rem, 3vw, 1.55rem);
 }
 .profile-form { display: grid; justify-items: start; gap: .85rem; margin-top: 1rem; }
-.create-profile .profile-form { margin: 0; gap: .6rem; }
+.create-profile .profile-form { inline-size: min(100%, 32rem); margin: 0; gap: .6rem; }
 .profile-form .field { width: 100%; }
 .copy-progress { display: flex; align-items: flex-start; gap: .5rem; color: var(--muted); font-size: .9rem; }
 .copy-progress input { flex: 0 0 auto; margin: .25rem 0 0; }
 
 @media (max-width: 42rem) {
     .profile-toolbar-actions :is(button, .button), .profile-row-actions button, .profile-table .profile-share { min-height: 2.75rem; }
-    .create-profile { grid-template-columns: minmax(0, 1fr); }
 }

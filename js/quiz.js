@@ -1,3 +1,4 @@
+import { translatePublic } from './site-language.js';
 import { modes } from './questions.js';
 import {
     isRating, missedQuestionsMessage, newDraft, normalizeDraft, ratingStep, requestedMode, responseOptions,
@@ -124,7 +125,7 @@ function questionControl(item, index, draft) {
     number.className = 'question-number';
     number.textContent = `${index + 1}. `;
     const statement = document.createElement('span');
-    statement.textContent = item.text;
+    translatePublic(statement, item.text, item.id);
     heading.append(number, statement);
 
     const slider = document.createElement('input');

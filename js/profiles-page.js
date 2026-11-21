@@ -1,3 +1,4 @@
+import { translatePublic } from './site-language.js';
 import { modes } from './questions.js';
 import { isRating } from './quiz-state.js';
 import { clearDraft, defaultProfile, isDefaultDraftChange } from './session.js';
@@ -43,7 +44,14 @@ function profileRow(profile, selected, hasDefaultProgress) {
     const row = template.content.firstElementChild.cloneNode(true);
     row.dataset.profileId = profile.id ?? '';
     row.classList.toggle('is-active', selected);
-    row.querySelector('.profile-name').textContent = profile.name;
+    const name = row.querySelector('.profile-name');
+    if (profile.id) {
+        name.translate = false;
+        name.dir = 'auto';
+        name.textContent = profile.name;
+    } else {
+        translatePublic(name, profile.name);
+    }
     row.querySelector('.profile-badge').hidden = !selected;
     row.querySelector('.profile-theme').textContent = themes[profile.theme];
     row.querySelector('[data-action="activate"]').hidden = selected;

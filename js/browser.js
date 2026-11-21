@@ -1,4 +1,5 @@
 import './site.js';
+import './site-language.js';
 
 // The build includes these page modules in the same classic script.
 const pages = {

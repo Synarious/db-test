@@ -1,3 +1,5 @@
+import { translatePublic } from './site-language.js';
+
 function scoreColor(score) {
     if (score === null) return 'var(--muted)';
     if (score >= 80) return 'var(--score-high)';
@@ -16,7 +18,7 @@ export function renderScores(list, scores, showDetails) {
 
         const name = document.createElement('span');
         name.className = 'score-name';
-        name.textContent = entry.role;
+        translatePublic(name, entry.role);
 
         const track = document.createElement('span');
         track.className = 'score-track';

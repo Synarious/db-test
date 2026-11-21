@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { languages } from '../js/locale.js';
+import { message } from '../js/locale-messages.js';
 import { modes } from '../js/questions.js';
 import { normalizeDraft } from '../js/quiz-state.js';
 import { sharedResultLink } from '../js/result-links.js';
@@ -13,6 +15,18 @@ import {
 } from '../js/profile-store.js';
 
 const { standard, advanced } = modes;
+
+test('every non-English locale provides a distinct translation for each quiz statement', () => {
+    for (const language of Object.keys(languages).filter(code => code !== 'en')) {
+        const statements = advanced.items.map(({ id, text }) => {
+            const statement = message(id, language);
+            assert.ok(statement?.trim(), `${language} is missing ${id}`);
+            assert.notEqual(statement, text, `${language} still uses English for ${id}`);
+            return statement;
+        });
+        assert.equal(new Set(statements).size, advanced.items.length, language);
+    }
+});
 
 function mockStorage(t, name) {
     const previous = Object.getOwnPropertyDescriptor(globalThis, name);
