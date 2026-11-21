@@ -65,7 +65,7 @@
         <section id="quiz" class="panel quiz-panel" aria-labelledby="quiz-heading" hidden>
             <div class="quiz-toolbar">
                 <div>
-                    <h1 id="quiz-heading" tabindex="-1"></h1>
+                    <h1 id="quiz-heading" tabindex="-1" aria-describedby="progress-label"></h1>
                 </div>
                 <div class="actions">
                     <button type="button" id="change-mode" class="text-button">Change mode</button>
@@ -80,7 +80,9 @@
                     <progress id="progress"></progress>
                 </div>
                 <div class="quiz-actions actions">
-                    <button type="button" id="previous" class="secondary">Back</button>
+                    <nav class="quiz-pagination" aria-label="Quiz pages">
+                        <ol id="quiz-pages" role="list"></ol>
+                    </nav>
                     <button type="submit" id="next">Continue</button>
                 </div>
             </form>

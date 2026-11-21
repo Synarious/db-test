@@ -1,5 +1,7 @@
 import { modes } from './questions.js';
-import { missedQuestionsMessage, newDraft, normalizeDraft, ratingStep, requestedMode, responseOptions } from './quiz-state.js';
+import {
+    isRating, missedQuestionsMessage, newDraft, normalizeDraft, ratingStep, requestedMode, responseOptions,
+} from './quiz-state.js';
 import { scoreQuiz } from './scoring.js';
 import { renderScores } from './score-list.js';
 import {
@@ -22,7 +24,7 @@ const questionList = document.querySelector('#question-list');
 const pageSize = 5;
 const progress = document.querySelector('#progress');
 const progressLabel = document.querySelector('#progress-label');
-const back = document.querySelector('#previous');
+const pageList = document.querySelector('#quiz-pages');
 const next = document.querySelector('#next');
 const storageStatus = document.querySelector('#storage-status');
 const reset = document.querySelector('#reset-dialog');
@@ -55,7 +57,62 @@ function showStorageState(scope = storageScope) {
 }
 
 function renderProgress(draft, items) {
-    progress.value = items.filter(({ id }) => Object.hasOwn(draft.responses, id)).length;
+    const isAnswered = ({ id }) => isRating(draft.responses[id]);
+    const allAnswered = items.every(isAnswered);
+    let total = 0;
+    let available = true;
+    for (let page = 0; page < pageList.children.length; page += 1) {
+        const start = page * pageSize;
+        const questions = items.slice(start, start + pageSize);
+        const recorded = questions.filter(({ id }) => Object.hasOwn(draft.responses, id)).length;
+        const answered = questions.filter(isAnswered).length;
+        let status = recorded ? 'unanswered' : 'not started';
+        let marker = '•';
+        if (allAnswered) {
+            status = 'complete';
+            marker = '✓';
+        } else if (answered === questions.length) {
+            status = 'all questions answered';
+            marker = '●';
+        } else if (answered) {
+            status = 'in progress';
+            marker = '◐';
+        }
+        const button = pageList.children[page].firstElementChild;
+        button.dataset.status = status;
+        button.setAttribute('aria-label', `Page ${page + 1}, ${status}`);
+        button.disabled = !available;
+        button.lastElementChild.textContent = marker;
+        available &&= recorded === questions.length;
+        total += recorded;
+    }
+    progress.value = total;
+}
+
+function renderPagination(draft, itemCount, currentStart) {
+    const pages = [];
+    for (let start = 0; start < itemCount; start += pageSize) {
+        const item = document.createElement('li');
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'secondary';
+        button.textContent = String(start / pageSize + 1);
+        const marker = document.createElement('span');
+        marker.className = 'quiz-page-status';
+        marker.setAttribute('aria-hidden', 'true');
+        button.append(marker);
+        if (start === currentStart) button.setAttribute('aria-current', 'page');
+        else button.addEventListener('click', () => goToPage(draft, start));
+        item.append(button);
+        pages.push(item);
+    }
+    pageList.replaceChildren(...pages);
+}
+
+function goToPage(draft, index) {
+    draft.index = index;
+    showStorageState(persistDraft(draft));
+    showStep(true);
 }
 
 function questionControl(item, index, draft) {
@@ -137,9 +194,9 @@ function showStep(moveFocus = false) {
     heading.textContent = label;
     progressLabel.textContent = `Questions ${start + 1}–${end} of ${items.length}`;
     progress.max = items.length;
+    renderPagination(draft, items.length, start);
     renderProgress(draft, items);
     questionList.replaceChildren(...items.slice(start, end).map((item, i) => questionControl(item, start + i, draft)));
-    back.disabled = start === 0;
     next.textContent = end === items.length ? 'See results' : 'Next page';
     if (moveFocus) heading.focus();
 }
@@ -211,9 +268,7 @@ function advance() {
     const end = Math.min(start + pageSize, items.length);
     for (const { id } of items.slice(start, end)) draft.responses[id] ??= null;
     if (end < items.length) {
-        draft.index = end;
-        showStorageState(persistDraft(draft));
-        showStep(true);
+        goToPage(draft, end);
         return;
     }
 
@@ -257,12 +312,6 @@ document.querySelector('#save-local-backup').addEventListener('click', () => {
 form.addEventListener('submit', event => {
     event.preventDefault();
     advance();
-});
-back.addEventListener('click', () => {
-    const draft = getDraft(mode);
-    draft.index = Math.max(0, (Math.floor(draft.index / pageSize) - 1) * pageSize);
-    showStorageState(persistDraft(draft));
-    showStep(true);
 });
 
 document.querySelector('#open-reset').addEventListener('click', () => {

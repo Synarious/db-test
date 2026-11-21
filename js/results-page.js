@@ -28,6 +28,12 @@ const reportDateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium
 const saveBackup = document.querySelector('#save-report-backup');
 const nativeShare = document.querySelector('#share-result-link');
 let reportBackup = null;
+let shareRequested = new URLSearchParams(location.search).get('share') === '1';
+
+function openShareDialog() {
+    shareStatus.textContent = '';
+    share.showModal();
+}
 
 function finishedQuiz(profile, selected) {
     const candidates = selected ? [selected] : Object.keys(modes);
@@ -159,6 +165,14 @@ function refreshResults() {
         row.append(term, description);
         return row;
     }));
+
+    if (shareRequested && hasReport) {
+        shareRequested = false;
+        const url = new URL(location.href);
+        url.searchParams.delete('share');
+        history.replaceState(history.state, '', url);
+        openShareDialog();
+    }
 }
 
 document.querySelector('.skip-link').addEventListener('click', event => {
@@ -166,10 +180,7 @@ document.querySelector('.skip-link').addEventListener('click', event => {
     document.querySelector('#main').focus();
 });
 document.querySelector('#open-statistics').addEventListener('click', () => statistics.showModal());
-document.querySelector('#open-share').addEventListener('click', () => {
-    shareStatus.textContent = '';
-    share.showModal();
-});
+document.querySelector('#open-share').addEventListener('click', openShareDialog);
 document.querySelector('#copy-link').addEventListener('click', async () => {
     try {
         await navigator.clipboard.writeText(shareLink.value);
@@ -215,7 +226,7 @@ document.querySelector('#confirm-result-age').addEventListener('click', () => {
     saveAgeSelection('yes');
     refreshResults();
     resultHeading.tabIndex = -1;
-    resultHeading.focus();
+    if (!share.open) resultHeading.focus();
 });
 document.querySelector('#report-tools').hidden = false;
 document.addEventListener('quizprofilechange', refreshResults);

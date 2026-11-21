@@ -1,9 +1,9 @@
 export const localProfilePrefix = '#profile=';
 export const defaultProfileRef = 'default';
 
-export function localResultLink(mode, profileId) {
+export function localResultLink(mode, profileId, { share = false } = {}) {
     const query = mode ? `mode=${mode}` : 'report=imported';
-    return `results.html?${query}${localProfilePrefix}${profileId ?? defaultProfileRef}`;
+    return `results.html?${query}${share ? '&share=1' : ''}${localProfilePrefix}${profileId ?? defaultProfileRef}`;
 }
 
 export function sharedResultLink(hash, page = location) {

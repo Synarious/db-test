@@ -33,70 +33,65 @@
         </header>
         <noscript><p>Enable JavaScript to manage your profiles.</p></noscript>
         <div id="profile-manager" hidden>
-            <section class="panel current-profile" aria-labelledby="current-profile-heading">
-                <div>
-                    <p class="eyebrow">Active profile</p>
-                    <h2 id="current-profile-heading">Default</h2>
-                </div>
-                <div class="actions profile-toolbar-actions">
-                    <button type="button" id="use-default" class="secondary" hidden>Switch to Default</button>
-                    <button type="button" id="reset-default" class="text-button" aria-haspopup="dialog">Reset progress</button>
-                    <button type="button" class="text-button" id="export-default" hidden>Export Default backup</button>
-                    <button type="button" class="text-button" id="import-profile" title="Restore a JSON backup as a separate profile">Import backup</button>
-                    <button type="button" class="text-button" id="import-share-link" aria-haspopup="dialog">Import share link</button>
-                    <input type="file" id="backup-file" accept=".json,application/json" hidden>
-                    <a class="button secondary" href="#create-profile">New profile</a>
+            <section class="profile-sheet" aria-labelledby="profile-table-heading">
+                <header class="profile-toolbar">
+                    <h2 id="profile-table-heading">Profile list</h2>
+                    <div class="actions profile-toolbar-actions">
+                        <button type="button" class="secondary" id="import-profile" title="Restore a JSON backup as a separate profile">Restore backup</button>
+                        <button type="button" class="secondary" id="import-share-link" aria-haspopup="dialog">Import shared results</button>
+                        <input type="file" id="backup-file" accept=".json,application/json" hidden>
+                        <a class="button" href="#create-profile">New profile</a>
+                    </div>
+                </header>
+                <div class="profile-table-scroll" role="region" aria-label="Profile table" tabindex="0">
+                    <table class="profile-table" aria-labelledby="profile-table-heading">
+                        <thead>
+                            <tr>
+                                <th scope="col">Profile</th>
+                                <th scope="col">Theme</th>
+                                <th scope="col">Quick</th>
+                                <th scope="col">Advanced</th>
+                                <th scope="col">Imported results</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="profile-list"></tbody>
+                    </table>
                 </div>
             </section>
+            <p id="profile-storage-status" class="status" hidden>Browser storage is unavailable.</p>
             <p id="profile-status" class="status" role="status" tabindex="-1"></p>
-            <div class="profile-layout">
-                <section class="panel profile-overview" aria-label="Profile overview">
-                    <section aria-labelledby="test-progress-heading">
-                        <header class="profile-list-heading">
-                            <h2 id="test-progress-heading">Test progress</h2>
-                            <p class="description" id="current-profile-description">Progress is saved in this browser.</p>
-                        </header>
-                        <dl class="profile-progress" id="current-profile-progress"></dl>
-                    </section>
-                    <section class="saved-profiles" aria-labelledby="saved-profiles-heading">
-                        <h2 id="saved-profiles-heading">Saved profiles</h2>
-                        <p class="description" id="no-profiles">No saved profiles yet.</p>
-                        <ul id="profile-list" class="profile-list" hidden></ul>
-                    </section>
-                </section>
-                <section class="panel create-profile" id="create-profile" aria-labelledby="create-heading">
-                    <h2 id="create-heading">Create profile</h2>
-                    <form id="create-form" class="profile-form">
-                        <label class="field">Profile name<input id="new-profile-name" name="name" maxlength="80" autocomplete="off" required></label>
-                        <label class="copy-progress" id="copy-progress-option" hidden>
-                            <input type="checkbox" name="copyProgress"> Copy progress from Default
-                        </label>
-                        <button type="submit">Create profile</button>
-                    </form>
-                </section>
-            </div>
+            <section class="panel create-profile" id="create-profile" aria-labelledby="create-heading">
+                <h2 id="create-heading">Create profile</h2>
+                <form id="create-form" class="profile-form">
+                    <label class="field">Profile name<input id="new-profile-name" name="name" maxlength="80" autocomplete="off" required></label>
+                    <label class="copy-progress" id="copy-progress-option" hidden>
+                        <input type="checkbox" name="copyProgress"> Copy progress from Default
+                    </label>
+                    <button type="submit">Create profile</button>
+                </form>
+            </section>
         </div>
-        <template id="profile-card">
-            <li class="profile-card">
-                <header class="profile-card-heading">
-                    <div class="profile-card-name">
-                        <h3></h3>
-                        <span class="profile-badge" hidden>Active</span>
+        <template id="profile-row">
+            <tr>
+                <th scope="row"><span class="profile-name"></span><span class="profile-badge" hidden>Active</span></th>
+                <td class="profile-theme"></td>
+                <td data-progress="standard"></td>
+                <td data-progress="advanced"></td>
+                <td data-progress="imported"></td>
+                <td>
+                    <div class="actions profile-row-actions">
+                        <button type="button" class="secondary" data-action="activate">Make active</button>
+                        <button type="button" class="secondary" data-action="edit" aria-haspopup="dialog">Rename / edit</button>
+                        <button type="button" class="secondary profile-danger" data-action="reset" aria-haspopup="dialog">Reset progress</button>
+                        <button type="button" class="secondary" data-action="export">Download backup</button>
+                        <button type="button" class="secondary profile-danger" data-action="delete" aria-haspopup="dialog">Delete profile</button>
                     </div>
-                    <p class="profile-theme"></p>
-                </header>
-                <dl class="profile-progress"></dl>
-                <div class="actions profile-card-actions">
-                    <button type="button" class="secondary" data-action="activate">Make active</button>
-                    <button type="button" class="text-button" data-action="edit" aria-haspopup="dialog">Edit</button>
-                    <button type="button" class="text-button" data-action="reset" aria-haspopup="dialog">Reset progress</button>
-                    <button type="button" class="text-button" data-action="export">Export backup</button>
-                    <button type="button" class="text-button" data-action="delete" aria-haspopup="dialog">Delete</button>
-                </div>
-            </li>
+                </td>
+            </tr>
         </template>
         <dialog id="import-share-dialog" aria-labelledby="import-share-heading" aria-describedby="import-share-description">
-            <h2 id="import-share-heading">Import share link</h2>
+            <h2 id="import-share-heading">Import shared results</h2>
             <p id="import-share-description">Save the role scores from a Deviant Bound results link to a new profile.</p>
             <form id="import-share-form" class="profile-form">
                 <label class="field">Results link<input name="link" inputmode="url" autocomplete="off" autocapitalize="none" spellcheck="false" autofocus required></label>
@@ -109,7 +104,7 @@
             </form>
         </dialog>
         <dialog id="edit-profile-dialog" aria-labelledby="edit-profile-heading">
-            <h2 id="edit-profile-heading">Edit profile</h2>
+            <h2 id="edit-profile-heading">Rename or edit profile</h2>
             <form id="edit-profile-form" class="profile-form">
                 <label class="field">Profile name<input name="name" maxlength="80" autocomplete="off" autofocus required></label>
                 <label class="field">Theme<select name="theme"></select></label>
@@ -128,7 +123,7 @@
             <p id="reset-profile-description"></p>
             <form id="reset-profile-form" class="actions">
                 <button type="submit" formmethod="dialog" class="secondary" autofocus>Cancel</button>
-                <button type="submit">Reset progress</button>
+                <button type="submit" class="secondary profile-danger">Reset progress</button>
             </form>
             <p class="status" id="reset-profile-status" role="status"></p>
         </dialog>
@@ -137,7 +132,7 @@
             <p id="delete-description"></p>
             <form id="delete-form" class="actions">
                 <button type="submit" formmethod="dialog" class="secondary" autofocus>Cancel</button>
-                <button type="submit">Delete profile</button>
+                <button type="submit" class="secondary profile-danger">Delete profile</button>
             </form>
             <p class="status" id="delete-status" role="status"></p>
         </dialog>

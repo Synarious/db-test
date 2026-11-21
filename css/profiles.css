@@ -1,84 +1,114 @@
-.profiles-page { max-width: 60rem; padding-block: clamp(1.5rem, 4vw, 2.75rem); }
-.profiles-page .panel { padding: clamp(1rem, 3vw, 1.55rem); }
+.profiles-page { max-width: 72rem; padding-block: clamp(1.5rem, 4vw, 2.75rem); }
 .profiles-page h2 { font-size: 1.25rem; }
-.current-profile {
+.profile-sheet {
+    border: 1px solid var(--border);
+    border-radius: .85rem;
+    background: var(--surface);
+}
+.profile-toolbar {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    gap: .7rem 1rem;
-    border-color: var(--highlight-border);
+    gap: .65rem 1rem;
+    padding: .8rem 1rem;
+}
+.profile-toolbar-actions, .profile-row-actions { gap: .4rem; }
+.profile-toolbar-actions :is(button, .button), .profile-row-actions button {
+    min-height: 2.5rem;
+    padding: .35rem .65rem;
+    font-size: .85rem;
+    white-space: nowrap;
+}
+.profile-danger {
+    background: var(--inset);
+    border-color: color-mix(in srgb, var(--score-low) 65%, var(--control-border));
+    color: var(--score-low);
+}
+.profile-danger:not(:disabled):hover {
+    background: color-mix(in srgb, var(--score-low) 14%, var(--inset));
+    border-color: var(--score-low);
+}
+.profile-table-scroll {
+    border-top: 1px solid var(--border);
+    border-radius: 0 0 .8rem .8rem;
+    overflow-x: auto;
+}
+.profile-table {
+    width: 100%;
+    min-width: 46rem;
+    border-spacing: 0;
+    font-size: .9rem;
+    text-align: start;
+}
+.profile-table :is(th, td) {
+    padding: .65rem .7rem;
+    border-inline-end: 1px solid var(--border);
+    border-block-end: 1px solid var(--border);
+    vertical-align: middle;
+    text-align: start;
+}
+.profile-table tr > :last-child { border-inline-end: 0; }
+.profile-table tbody tr:last-child > * { border-block-end: 0; }
+.profile-table thead th {
+    --cell-background: var(--control);
+    background: var(--cell-background);
+    font-size: .8rem;
+    white-space: nowrap;
+}
+.profile-table tr > :first-child {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 1;
+    width: clamp(6.5rem, 15vw, 11rem);
     overflow-wrap: anywhere;
 }
-.current-profile .eyebrow { margin-bottom: .2rem; }
-.current-profile h2 { font-size: clamp(1.35rem, 4vw, 1.65rem); }
-.profile-toolbar-actions, .profile-card-actions { gap: .3rem; }
-.profile-toolbar-actions :is(button, .button), .profile-card-actions button {
-    min-height: 2.25rem;
-    padding: .35rem .6rem;
-    font-size: .875rem;
+.profile-table tbody tr { --cell-background: var(--surface); }
+.profile-table tbody tr:nth-child(even) { --cell-background: var(--inset); }
+.profile-table tbody tr.is-active { --cell-background: var(--highlight); }
+.profile-table tbody tr > * { background: var(--cell-background); }
+.profile-table .is-active th { box-shadow: inset .2rem 0 var(--accent); }
+.profile-badge {
+    display: table;
+    margin-top: .2rem;
+    color: var(--accent);
+    font-size: .75rem;
+    font-weight: 750;
 }
-.profile-layout { display: grid; gap: .85rem; margin-top: .85rem; }
-.profile-list-heading {
+.profile-theme, .profile-progress-status { color: var(--muted); }
+.profile-theme { white-space: nowrap; }
+.profile-progress-status {
+    display: block;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+.profile-progress-status[data-state="complete"] { color: var(--score-high); font-weight: 650; }
+.profile-progress-status[data-state="started"] { color: var(--primary); }
+.profile-table td a { display: inline-block; margin-top: .12rem; white-space: nowrap; }
+.profile-table .profile-share {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: .25rem .75rem;
-    margin-bottom: .6rem;
+    width: max-content;
+    min-height: 2.25rem;
+    margin-top: .35rem;
+    padding: .25rem .55rem;
+    font-size: .85rem;
 }
-.profile-list-heading .description { margin: 0; font-size: .875rem; }
-.saved-profiles { margin-top: .85rem; padding-top: .85rem; border-top: 1px solid var(--border); }
-.saved-profiles > .description { margin-top: .35rem; }
+.profile-row-actions { min-width: 11rem; }
 .create-profile {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    grid-template-columns: minmax(9rem, 1fr) minmax(0, 2fr);
     align-items: start;
     gap: .75rem 1rem;
+    margin-top: 1rem;
+    padding: clamp(1rem, 3vw, 1.55rem);
 }
 .profile-form { display: grid; justify-items: start; gap: .85rem; margin-top: 1rem; }
 .create-profile .profile-form { margin: 0; gap: .6rem; }
 .profile-form .field { width: 100%; }
 .copy-progress { display: flex; align-items: flex-start; gap: .5rem; color: var(--muted); font-size: .9rem; }
 .copy-progress input { flex: 0 0 auto; margin: .25rem 0 0; }
-.profile-list { margin: .55rem 0 0; padding: 0; list-style: none; }
-.profile-card {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: .5rem 1rem;
-    padding-block: .65rem;
-    border-top: 1px solid var(--border);
-    overflow-wrap: anywhere;
-}
-.profile-card-name { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem .55rem; }
-.profile-card-heading h3 { font-size: 1.15rem; }
-.profile-badge {
-    padding: .12rem .5rem;
-    border: 1px solid var(--highlight-border);
-    border-radius: 1rem;
-    background: var(--highlight);
-    color: var(--accent);
-    font-size: .75rem;
-    font-weight: 700;
-}
-.profile-theme { margin: .2rem 0 0; color: var(--muted); font-size: .85rem; }
-.profile-progress { margin: 0; font-size: .875rem; }
-.profile-card .profile-progress { grid-column: 1 / -1; grid-row: 2; }
-.profile-progress > div {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, auto);
-    gap: .3rem .75rem;
-    padding-block: .45rem;
-    border-top: 1px solid var(--border);
-}
-.profile-progress dt { font-weight: 650; }
-.profile-progress dd { margin: 0; color: var(--muted); text-align: end; }
-.profile-progress a { display: inline-block; margin-inline-start: .55rem; }
-.profile-card-actions { grid-column: 2; grid-row: 1; justify-content: flex-end; }
 
 @media (max-width: 42rem) {
-    .create-profile, .profile-card { grid-template-columns: minmax(0, 1fr); }
-    .profile-card .profile-progress, .profile-card-actions { grid-area: auto; }
-    .profile-card-actions { justify-content: flex-start; }
+    .profile-toolbar-actions :is(button, .button), .profile-row-actions button, .profile-table .profile-share { min-height: 2.75rem; }
+    .create-profile { grid-template-columns: minmax(0, 1fr); }
 }

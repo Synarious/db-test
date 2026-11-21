@@ -10,7 +10,7 @@ import {
 
 const manager = document.querySelector('#profile-manager');
 const list = document.querySelector('#profile-list');
-const template = document.querySelector('#profile-card');
+const template = document.querySelector('#profile-row');
 const createForm = document.querySelector('#create-form');
 const copyProgress = document.querySelector('#copy-progress-option');
 const importButton = document.querySelector('#import-profile');
@@ -20,16 +20,12 @@ const importDialog = document.querySelector('#import-share-dialog');
 const importForm = document.querySelector('#import-share-form');
 const importStatus = document.querySelector('#import-share-status');
 const status = document.querySelector('#profile-status');
-const noProfiles = document.querySelector('#no-profiles');
-const useDefault = document.querySelector('#use-default');
-const currentProgress = document.querySelector('#current-profile-progress');
+const storageStatus = document.querySelector('#profile-storage-status');
 const editProfile = document.querySelector('#edit-profile-dialog');
 const editForm = document.querySelector('#edit-profile-form');
 const editStatus = document.querySelector('#edit-profile-status');
 const resetProfile = document.querySelector('#reset-profile-dialog');
 const resetStatus = document.querySelector('#reset-profile-status');
-const resetDefault = document.querySelector('#reset-default');
-const exportDefault = document.querySelector('#export-default');
 const deletion = document.querySelector('#delete-dialog');
 const deleteStatus = document.querySelector('#delete-status');
 let editingId = null;
@@ -43,56 +39,74 @@ function showStatus(message, focus = false) {
     if (focus) status.focus();
 }
 
-function profileCard(profile, selected) {
-    const card = template.content.firstElementChild.cloneNode(true);
-    card.dataset.profileId = profile.id;
-    card.classList.toggle('is-active', selected);
-    card.querySelector('h3').textContent = profile.name;
-    card.querySelector('.profile-badge').hidden = !selected;
-    card.querySelector('.profile-theme').textContent = themes[profile.theme];
-    card.querySelector('[data-action="activate"]').hidden = selected;
-    for (const button of card.querySelectorAll('[data-action]')) {
-        button.setAttribute('aria-label', `${button.textContent} ${profile.name}`);
+function profileRow(profile, selected, hasDefaultProgress) {
+    const row = template.content.firstElementChild.cloneNode(true);
+    row.dataset.profileId = profile.id ?? '';
+    row.classList.toggle('is-active', selected);
+    row.querySelector('.profile-name').textContent = profile.name;
+    row.querySelector('.profile-badge').hidden = !selected;
+    row.querySelector('.profile-theme').textContent = themes[profile.theme];
+    row.querySelector('[data-action="activate"]').hidden = selected;
+    row.querySelector('[data-action="edit"]').hidden = !profile.id;
+    row.querySelector('[data-action="delete"]').hidden = !profile.id;
+    row.querySelector('[data-action="export"]').hidden = !profile.id && !hasDefaultProgress;
+    for (const button of row.querySelectorAll('[data-action]')) {
+        button.setAttribute('aria-label', `${button.title || button.textContent} for ${profile.name}`);
     }
-
-    const progress = card.querySelector('.profile-progress');
-    progress.hidden = selected;
-    if (!selected) renderProfileProgress(progress, profile, false);
-    return card;
+    renderProfileProgress(row, profile, selected);
+    return row;
 }
 
-function progressRow(title, summaryText, href, linkText) {
-    const row = document.createElement('div');
-    const label = document.createElement('dt');
-    label.textContent = title;
-    const summary = document.createElement('dd');
+function renderProgressCell(cell, { state, summaryText, href, linkText, label, shareHref }) {
+    const summary = document.createElement('span');
+    summary.className = 'profile-progress-status';
+    summary.dataset.state = state;
     summary.textContent = summaryText;
+    cell.append(summary);
     if (href) {
         const link = document.createElement('a');
         link.href = href;
         link.textContent = linkText;
-        link.setAttribute('aria-label', `${linkText} for ${title}`);
-        summary.append(link);
+        link.setAttribute('aria-label', `${linkText} for ${label}`);
+        cell.append(link);
     }
-    row.append(label, summary);
-    return row;
+    if (shareHref) {
+        const share = document.createElement('a');
+        share.className = 'button secondary profile-share';
+        share.href = shareHref;
+        share.textContent = 'Share results';
+        share.setAttribute('aria-label', `Share results for ${label}`);
+        cell.append(share);
+    }
 }
 
-function renderProfileProgress(progress, profile, showLinks) {
+function renderProfileProgress(row, profile, showLinks) {
     const { id, drafts, importedResults } = profile;
-    progress.replaceChildren();
     for (const [mode, settings] of Object.entries(modes)) {
         const draft = drafts[mode];
         const ratings = Object.values(draft.responses);
         const rated = ratings.filter(isRating).length;
+        const state = draft.completedAt ? 'complete' : ratings.length ? 'started' : 'empty';
         const summary = draft.completedAt ? 'Complete' : ratings.length ? `${rated} of ${settings.items.length} rated` : 'Not started';
         const href = draft.completedAt ? localResultLink(mode, id) : `quiz.html?mode=${mode}`;
         const linkText = draft.completedAt ? 'View results' : ratings.length ? 'Resume' : 'Start';
-        progress.append(progressRow(settings.label, summary, showLinks ? href : null, linkText));
+        renderProgressCell(row.querySelector(`[data-progress="${mode}"]`), {
+            state,
+            summaryText: summary,
+            href: showLinks ? href : null,
+            linkText,
+            label: `${profile.name} ${settings.label}`,
+            shareHref: draft.completedAt ? localResultLink(mode, id, { share: true }) : null,
+        });
     }
-    if (importedResults) {
-        progress.append(progressRow('Imported results', 'Saved', showLinks ? localResultLink(null, id) : null, 'View report'));
-    }
+    renderProgressCell(row.querySelector('[data-progress="imported"]'), {
+        state: importedResults ? 'complete' : 'empty',
+        summaryText: importedResults ? 'Saved' : 'None',
+        href: showLinks && importedResults ? localResultLink(null, id) : null,
+        linkText: 'View report',
+        label: `${profile.name} imported results`,
+        shareHref: importedResults ? localResultLink(null, id, { share: true }) : null,
+    });
 }
 
 function renderProfiles() {
@@ -106,19 +120,10 @@ function renderProfiles() {
     }
 
     const defaults = defaultProfile();
-    document.querySelector('#current-profile-heading').textContent = active?.name ?? 'Default';
-    document.querySelector('#current-profile-description').textContent = active
-        ? `Progress is saved in this browser. ${themes[active.theme]} theme.`
-        : 'Progress is saved in this browser.';
-    renderProfileProgress(currentProgress, active ?? defaults, true);
-    useDefault.hidden = !active;
-    resetDefault.hidden = Boolean(active);
-    noProfiles.hidden = profiles.length > 0;
-    noProfiles.textContent = available ? 'No saved profiles yet.' : 'Browser storage is unavailable.';
-    list.hidden = profiles.length === 0;
-    list.replaceChildren(...profiles.map(profile => profileCard(profile, profile.id === active?.id)));
-    copyProgress.hidden = !Object.values(defaults.drafts).some(draft => Object.keys(draft.responses).length);
-    exportDefault.hidden = Boolean(active) || copyProgress.hidden;
+    const hasDefaultProgress = Object.values(defaults.drafts).some(draft => Object.keys(draft.responses).length);
+    list.replaceChildren(...[defaults, ...profiles].map(profile => profileRow(profile, profile.id === active?.id, hasDefaultProgress)));
+    storageStatus.hidden = available;
+    copyProgress.hidden = !hasDefaultProgress;
     createForm.querySelector('button[type="submit"]').disabled = !available;
     importButton.disabled = !available;
     importLinkButton.disabled = !available;
@@ -137,18 +142,6 @@ function confirmReset(profile) {
     resetStatus.textContent = '';
     resetProfile.showModal();
 }
-
-resetDefault.addEventListener('click', () => confirmReset(null));
-
-useDefault.addEventListener('click', () => {
-    try {
-        selectProfile(null);
-    } catch {
-        showStatus('Could not switch to Default. Check browser storage and try again.');
-        return;
-    }
-    profilesChanged('Switched to Default.');
-});
 
 createForm.addEventListener('submit', event => {
     event.preventDefault();
@@ -185,25 +178,24 @@ function downloadProfile(profile) {
     }
 }
 
-exportDefault.addEventListener('click', () => downloadProfile(defaultProfile()));
-
 list.addEventListener('click', event => {
     const button = event.target.closest('[data-action]');
     if (!button) return;
-    const profile = readProfile(button.closest('[data-profile-id]').dataset.profileId);
-    if (!profile) {
+    const { profileId } = button.closest('[data-profile-id]').dataset;
+    const profile = profileId ? readProfile(profileId) : null;
+    if (profileId && !profile) {
         profilesChanged('This profile is no longer available.');
         return;
     }
     switch (button.dataset.action) {
         case 'activate':
             try {
-                selectProfile(profile.id);
+                selectProfile(profile?.id ?? null);
             } catch {
                 showStatus('Could not activate the profile. Check browser storage and try again.');
                 return;
             }
-            profilesChanged(`${profile.name} is now active.`);
+            profilesChanged(`${profile?.name ?? 'Default'} is now active.`);
             break;
         case 'edit':
             editingId = profile.id;
@@ -214,12 +206,13 @@ list.addEventListener('click', event => {
             editForm.elements.role.value = profile.details.role;
             editStatus.textContent = '';
             editProfile.showModal();
+            editForm.elements.name.select();
             break;
         case 'reset':
             confirmReset(profile);
             break;
         case 'export':
-            downloadProfile(profile);
+            downloadProfile(profile ?? defaultProfile());
             break;
         case 'delete':
             editingId = profile.id;

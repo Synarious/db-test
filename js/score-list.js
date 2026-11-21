@@ -1,7 +1,9 @@
 function scoreColor(score) {
     if (score === null) return 'var(--muted)';
-    if (score >= 70) return 'var(--score-high)';
-    if (score >= 35) return 'var(--score-mid)';
+    if (score >= 80) return 'var(--score-high)';
+    if (score >= 60) return 'var(--score-upper-mid)';
+    if (score >= 40) return 'var(--score-mid)';
+    if (score >= 20) return 'var(--score-lower-mid)';
     return 'var(--score-low)';
 }
 

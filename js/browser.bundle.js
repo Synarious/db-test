@@ -427,7 +427,7 @@
       sampleScores = Object.freeze([
         { role: "Experimentalist", score: 94, description: "An interest in exploring different consensual dynamics and experiences." },
         { role: "Switch", score: 76, description: "An interest in taking either a leading or a following role in a consensual dynamic." },
-        { role: "Submissive", score: 62, description: "An interest in willingly following someone else’s lead within agreed boundaries." },
+        { role: "Submissive", score: 52, description: "An interest in willingly following someone else’s lead within agreed boundaries." },
         { role: "Dominant", score: 38, description: "An interest in taking the lead within agreed boundaries." },
         { role: "Voyeur", score: 14, description: "An interest in watching when everyone involved has agreed." }
       ]);
@@ -437,8 +437,10 @@
   // js/score-list.js
   function scoreColor(score) {
     if (score === null) return "var(--muted)";
-    if (score >= 70) return "var(--score-high)";
-    if (score >= 35) return "var(--score-mid)";
+    if (score >= 80) return "var(--score-high)";
+    if (score >= 60) return "var(--score-upper-mid)";
+    if (score >= 40) return "var(--score-mid)";
+    if (score >= 20) return "var(--score-lower-mid)";
     return "var(--score-low)";
   }
   function renderScores(list2, scores, showDetails) {
@@ -615,9 +617,9 @@
   });
 
   // js/result-links.js
-  function localResultLink(mode2, profileId) {
+  function localResultLink(mode2, profileId, { share: share2 = false } = {}) {
     const query = mode2 ? `mode=${mode2}` : "report=imported";
-    return `results.html?${query}${localProfilePrefix}${profileId ?? defaultProfileRef}`;
+    return `results.html?${query}${share2 ? "&share=1" : ""}${localProfilePrefix}${profileId ?? defaultProfileRef}`;
   }
   function sharedResultLink(hash, page = location) {
     const base = page.protocol === "file:" ? "https://bdsmtest.deviantbound.com/" : page.href;
@@ -648,7 +650,60 @@
     storageStatus.textContent = scope === "local" ? "" : scope === "session" ? "Progress is saved for this tab. Keep it open to finish the quiz." : "Browser storage is unavailable. Keep this page open to finish the quiz.";
   }
   function renderProgress(draft, items) {
-    progress.value = items.filter(({ id }) => Object.hasOwn(draft.responses, id)).length;
+    const isAnswered = ({ id }) => isRating(draft.responses[id]);
+    const allAnswered = items.every(isAnswered);
+    let total = 0;
+    let available = true;
+    for (let page = 0; page < pageList.children.length; page += 1) {
+      const start = page * pageSize;
+      const questions = items.slice(start, start + pageSize);
+      const recorded = questions.filter(({ id }) => Object.hasOwn(draft.responses, id)).length;
+      const answered = questions.filter(isAnswered).length;
+      let status3 = recorded ? "unanswered" : "not started";
+      let marker = "•";
+      if (allAnswered) {
+        status3 = "complete";
+        marker = "✓";
+      } else if (answered === questions.length) {
+        status3 = "all questions answered";
+        marker = "●";
+      } else if (answered) {
+        status3 = "in progress";
+        marker = "◐";
+      }
+      const button = pageList.children[page].firstElementChild;
+      button.dataset.status = status3;
+      button.setAttribute("aria-label", `Page ${page + 1}, ${status3}`);
+      button.disabled = !available;
+      button.lastElementChild.textContent = marker;
+      available &&= recorded === questions.length;
+      total += recorded;
+    }
+    progress.value = total;
+  }
+  function renderPagination(draft, itemCount, currentStart) {
+    const pages2 = [];
+    for (let start = 0; start < itemCount; start += pageSize) {
+      const item = document.createElement("li");
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "secondary";
+      button.textContent = String(start / pageSize + 1);
+      const marker = document.createElement("span");
+      marker.className = "quiz-page-status";
+      marker.setAttribute("aria-hidden", "true");
+      button.append(marker);
+      if (start === currentStart) button.setAttribute("aria-current", "page");
+      else button.addEventListener("click", () => goToPage(draft, start));
+      item.append(button);
+      pages2.push(item);
+    }
+    pageList.replaceChildren(...pages2);
+  }
+  function goToPage(draft, index) {
+    draft.index = index;
+    showStorageState(persistDraft(draft));
+    showStep(true);
   }
   function questionControl(item, index, draft) {
     const row = document.createElement("div");
@@ -721,9 +776,9 @@
     heading.textContent = label;
     progressLabel.textContent = `Questions ${start + 1}–${end} of ${items.length}`;
     progress.max = items.length;
+    renderPagination(draft, items.length, start);
     renderProgress(draft, items);
     questionList.replaceChildren(...items.slice(start, end).map((item, i) => questionControl(item, start + i, draft)));
-    back.disabled = start === 0;
     next.textContent = end === items.length ? "See results" : "Next page";
     if (moveFocus) heading.focus();
   }
@@ -784,9 +839,7 @@
     const end = Math.min(start + pageSize, items.length);
     for (const { id } of items.slice(start, end)) draft.responses[id] ??= null;
     if (end < items.length) {
-      draft.index = end;
-      showStorageState(persistDraft(draft));
-      showStep(true);
+      goToPage(draft, end);
       return;
     }
     draft.completedAt = Date.now();
@@ -807,7 +860,7 @@
     localReport.hidden = false;
     document.querySelector("#local-report-heading").focus();
   }
-  var gate, ageStatus, ageActions, acceptAge, declineAge, picker, modeButtons, quiz, form2, questionList, pageSize, progress, progressLabel, back, next, storageStatus, reset, localReport, profileContext, ageSelection, profile, mode, storageScope, drafts;
+  var gate, ageStatus, ageActions, acceptAge, declineAge, picker, modeButtons, quiz, form2, questionList, pageSize, progress, progressLabel, pageList, next, storageStatus, reset, localReport, profileContext, ageSelection, profile, mode, storageScope, drafts;
   var init_quiz = __esm({
     "js/quiz.js"() {
       init_questions();
@@ -831,7 +884,7 @@
       pageSize = 5;
       progress = document.querySelector("#progress");
       progressLabel = document.querySelector("#progress-label");
-      back = document.querySelector("#previous");
+      pageList = document.querySelector("#quiz-pages");
       next = document.querySelector("#next");
       storageStatus = document.querySelector("#storage-status");
       reset = document.querySelector("#reset-dialog");
@@ -861,12 +914,6 @@
       form2.addEventListener("submit", (event) => {
         event.preventDefault();
         advance();
-      });
-      back.addEventListener("click", () => {
-        const draft = getDraft(mode);
-        draft.index = Math.max(0, (Math.floor(draft.index / pageSize) - 1) * pageSize);
-        showStorageState(persistDraft(draft));
-        showStep(true);
       });
       document.querySelector("#open-reset").addEventListener("click", () => {
         reset.returnValue = "";
@@ -1051,6 +1098,10 @@
 
   // js/results-page.js
   var results_page_exports = {};
+  function openShareDialog() {
+    shareStatus.textContent = "";
+    share.showModal();
+  }
   function finishedQuiz(profile2, selected) {
     const candidates = selected ? [selected] : Object.keys(modes);
     return candidates.map((mode2) => ({ mode: mode2, ...profile2.drafts[mode2] })).filter((draft) => draft.completedAt).sort((a, b) => b.completedAt - a.completedAt)[0] ?? null;
@@ -1159,8 +1210,15 @@
       row.append(term, description);
       return row;
     }));
+    if (shareRequested && hasReport) {
+      shareRequested = false;
+      const url = new URL(location.href);
+      url.searchParams.delete("share");
+      history.replaceState(history.state, "", url);
+      openShareDialog();
+    }
   }
-  var statistics, statisticsList, details2, share, shareLink, shareStatus, quizLink, scoreList, report, reportLinks, resultGate, recovery, resultHeading, resultIntro, reportDate, reportDateFormat, saveBackup, nativeShare, reportBackup, saveImage;
+  var statistics, statisticsList, details2, share, shareLink, shareStatus, quizLink, scoreList, report, reportLinks, resultGate, recovery, resultHeading, resultIntro, reportDate, reportDateFormat, saveBackup, nativeShare, reportBackup, shareRequested, saveImage;
   var init_results_page = __esm({
     "js/results-page.js"() {
       init_questions();
@@ -1192,15 +1250,13 @@
       saveBackup = document.querySelector("#save-report-backup");
       nativeShare = document.querySelector("#share-result-link");
       reportBackup = null;
+      shareRequested = new URLSearchParams(location.search).get("share") === "1";
       document.querySelector(".skip-link").addEventListener("click", (event) => {
         event.preventDefault();
         document.querySelector("#main").focus();
       });
       document.querySelector("#open-statistics").addEventListener("click", () => statistics.showModal());
-      document.querySelector("#open-share").addEventListener("click", () => {
-        shareStatus.textContent = "";
-        share.showModal();
-      });
+      document.querySelector("#open-share").addEventListener("click", openShareDialog);
       document.querySelector("#copy-link").addEventListener("click", async () => {
         try {
           await navigator.clipboard.writeText(shareLink.value);
@@ -1246,7 +1302,7 @@
         saveAgeSelection("yes");
         refreshResults();
         resultHeading.tabIndex = -1;
-        resultHeading.focus();
+        if (!share.open) resultHeading.focus();
       });
       document.querySelector("#report-tools").hidden = false;
       document.addEventListener("quizprofilechange", refreshResults);
@@ -1267,53 +1323,72 @@
     status2.textContent = message;
     if (focus) status2.focus();
   }
-  function profileCard(profile2, selected) {
-    const card = template.content.firstElementChild.cloneNode(true);
-    card.dataset.profileId = profile2.id;
-    card.classList.toggle("is-active", selected);
-    card.querySelector("h3").textContent = profile2.name;
-    card.querySelector(".profile-badge").hidden = !selected;
-    card.querySelector(".profile-theme").textContent = themes[profile2.theme];
-    card.querySelector('[data-action="activate"]').hidden = selected;
-    for (const button of card.querySelectorAll("[data-action]")) {
-      button.setAttribute("aria-label", `${button.textContent} ${profile2.name}`);
+  function profileRow(profile2, selected, hasDefaultProgress) {
+    const row = template.content.firstElementChild.cloneNode(true);
+    row.dataset.profileId = profile2.id ?? "";
+    row.classList.toggle("is-active", selected);
+    row.querySelector(".profile-name").textContent = profile2.name;
+    row.querySelector(".profile-badge").hidden = !selected;
+    row.querySelector(".profile-theme").textContent = themes[profile2.theme];
+    row.querySelector('[data-action="activate"]').hidden = selected;
+    row.querySelector('[data-action="edit"]').hidden = !profile2.id;
+    row.querySelector('[data-action="delete"]').hidden = !profile2.id;
+    row.querySelector('[data-action="export"]').hidden = !profile2.id && !hasDefaultProgress;
+    for (const button of row.querySelectorAll("[data-action]")) {
+      button.setAttribute("aria-label", `${button.title || button.textContent} for ${profile2.name}`);
     }
-    const progress2 = card.querySelector(".profile-progress");
-    progress2.hidden = selected;
-    if (!selected) renderProfileProgress(progress2, profile2, false);
-    return card;
+    renderProfileProgress(row, profile2, selected);
+    return row;
   }
-  function progressRow(title, summaryText, href, linkText) {
-    const row = document.createElement("div");
-    const label = document.createElement("dt");
-    label.textContent = title;
-    const summary = document.createElement("dd");
+  function renderProgressCell(cell, { state, summaryText, href, linkText, label, shareHref }) {
+    const summary = document.createElement("span");
+    summary.className = "profile-progress-status";
+    summary.dataset.state = state;
     summary.textContent = summaryText;
+    cell.append(summary);
     if (href) {
       const link = document.createElement("a");
       link.href = href;
       link.textContent = linkText;
-      link.setAttribute("aria-label", `${linkText} for ${title}`);
-      summary.append(link);
+      link.setAttribute("aria-label", `${linkText} for ${label}`);
+      cell.append(link);
     }
-    row.append(label, summary);
-    return row;
+    if (shareHref) {
+      const share2 = document.createElement("a");
+      share2.className = "button secondary profile-share";
+      share2.href = shareHref;
+      share2.textContent = "Share results";
+      share2.setAttribute("aria-label", `Share results for ${label}`);
+      cell.append(share2);
+    }
   }
-  function renderProfileProgress(progress2, profile2, showLinks) {
+  function renderProfileProgress(row, profile2, showLinks) {
     const { id, drafts: drafts2, importedResults } = profile2;
-    progress2.replaceChildren();
     for (const [mode2, settings] of Object.entries(modes)) {
       const draft = drafts2[mode2];
       const ratings = Object.values(draft.responses);
       const rated = ratings.filter(isRating).length;
+      const state = draft.completedAt ? "complete" : ratings.length ? "started" : "empty";
       const summary = draft.completedAt ? "Complete" : ratings.length ? `${rated} of ${settings.items.length} rated` : "Not started";
       const href = draft.completedAt ? localResultLink(mode2, id) : `quiz.html?mode=${mode2}`;
       const linkText = draft.completedAt ? "View results" : ratings.length ? "Resume" : "Start";
-      progress2.append(progressRow(settings.label, summary, showLinks ? href : null, linkText));
+      renderProgressCell(row.querySelector(`[data-progress="${mode2}"]`), {
+        state,
+        summaryText: summary,
+        href: showLinks ? href : null,
+        linkText,
+        label: `${profile2.name} ${settings.label}`,
+        shareHref: draft.completedAt ? localResultLink(mode2, id, { share: true }) : null
+      });
     }
-    if (importedResults) {
-      progress2.append(progressRow("Imported results", "Saved", showLinks ? localResultLink(null, id) : null, "View report"));
-    }
+    renderProgressCell(row.querySelector('[data-progress="imported"]'), {
+      state: importedResults ? "complete" : "empty",
+      summaryText: importedResults ? "Saved" : "None",
+      href: showLinks && importedResults ? localResultLink(null, id) : null,
+      linkText: "View report",
+      label: `${profile2.name} imported results`,
+      shareHref: importedResults ? localResultLink(null, id, { share: true }) : null
+    });
   }
   function renderProfiles() {
     const active = activeProfile();
@@ -1325,17 +1400,10 @@
       available = false;
     }
     const defaults = defaultProfile();
-    document.querySelector("#current-profile-heading").textContent = active?.name ?? "Default";
-    document.querySelector("#current-profile-description").textContent = active ? `Progress is saved in this browser. ${themes[active.theme]} theme.` : "Progress is saved in this browser.";
-    renderProfileProgress(currentProgress, active ?? defaults, true);
-    useDefault.hidden = !active;
-    resetDefault.hidden = Boolean(active);
-    noProfiles.hidden = profiles.length > 0;
-    noProfiles.textContent = available ? "No saved profiles yet." : "Browser storage is unavailable.";
-    list.hidden = profiles.length === 0;
-    list.replaceChildren(...profiles.map((profile2) => profileCard(profile2, profile2.id === active?.id)));
-    copyProgress.hidden = !Object.values(defaults.drafts).some((draft) => Object.keys(draft.responses).length);
-    exportDefault.hidden = Boolean(active) || copyProgress.hidden;
+    const hasDefaultProgress = Object.values(defaults.drafts).some((draft) => Object.keys(draft.responses).length);
+    list.replaceChildren(...[defaults, ...profiles].map((profile2) => profileRow(profile2, profile2.id === active?.id, hasDefaultProgress)));
+    storageStatus2.hidden = available;
+    copyProgress.hidden = !hasDefaultProgress;
     createForm.querySelector('button[type="submit"]').disabled = !available;
     importButton.disabled = !available;
     importLinkButton.disabled = !available;
@@ -1366,7 +1434,7 @@
     importDialog.showModal();
     if (link) importForm.elements.name.focus();
   }
-  var manager, list, template, createForm, copyProgress, importButton, backupFile, importLinkButton, importDialog, importForm, importStatus, status2, noProfiles, useDefault, currentProgress, editProfile, editForm, editStatus, resetProfile, resetStatus, resetDefault, exportDefault, deletion, deleteStatus, editingId2;
+  var manager, list, template, createForm, copyProgress, importButton, backupFile, importLinkButton, importDialog, importForm, importStatus, status2, storageStatus2, editProfile, editForm, editStatus, resetProfile, resetStatus, deletion, deleteStatus, editingId2;
   var init_profiles_page = __esm({
     "js/profiles-page.js"() {
       init_questions();
@@ -1377,7 +1445,7 @@
       init_profile_store();
       manager = document.querySelector("#profile-manager");
       list = document.querySelector("#profile-list");
-      template = document.querySelector("#profile-card");
+      template = document.querySelector("#profile-row");
       createForm = document.querySelector("#create-form");
       copyProgress = document.querySelector("#copy-progress-option");
       importButton = document.querySelector("#import-profile");
@@ -1387,32 +1455,18 @@
       importForm = document.querySelector("#import-share-form");
       importStatus = document.querySelector("#import-share-status");
       status2 = document.querySelector("#profile-status");
-      noProfiles = document.querySelector("#no-profiles");
-      useDefault = document.querySelector("#use-default");
-      currentProgress = document.querySelector("#current-profile-progress");
+      storageStatus2 = document.querySelector("#profile-storage-status");
       editProfile = document.querySelector("#edit-profile-dialog");
       editForm = document.querySelector("#edit-profile-form");
       editStatus = document.querySelector("#edit-profile-status");
       resetProfile = document.querySelector("#reset-profile-dialog");
       resetStatus = document.querySelector("#reset-profile-status");
-      resetDefault = document.querySelector("#reset-default");
-      exportDefault = document.querySelector("#export-default");
       deletion = document.querySelector("#delete-dialog");
       deleteStatus = document.querySelector("#delete-status");
       editingId2 = null;
       for (const [id, label] of Object.entries(themes)) {
         editForm.elements.theme.add(new Option(label, id));
       }
-      resetDefault.addEventListener("click", () => confirmReset(null));
-      useDefault.addEventListener("click", () => {
-        try {
-          selectProfile(null);
-        } catch {
-          showStatus("Could not switch to Default. Check browser storage and try again.");
-          return;
-        }
-        profilesChanged("Switched to Default.");
-      });
       createForm.addEventListener("submit", (event) => {
         event.preventDefault();
         const name = createForm.elements.name.value.trim();
@@ -1438,24 +1492,24 @@
         }
         profilesChanged(`${profile2.name} is now active.`);
       });
-      exportDefault.addEventListener("click", () => downloadProfile(defaultProfile()));
       list.addEventListener("click", (event) => {
         const button = event.target.closest("[data-action]");
         if (!button) return;
-        const profile2 = readProfile(button.closest("[data-profile-id]").dataset.profileId);
-        if (!profile2) {
+        const { profileId } = button.closest("[data-profile-id]").dataset;
+        const profile2 = profileId ? readProfile(profileId) : null;
+        if (profileId && !profile2) {
           profilesChanged("This profile is no longer available.");
           return;
         }
         switch (button.dataset.action) {
           case "activate":
             try {
-              selectProfile(profile2.id);
+              selectProfile(profile2?.id ?? null);
             } catch {
               showStatus("Could not activate the profile. Check browser storage and try again.");
               return;
             }
-            profilesChanged(`${profile2.name} is now active.`);
+            profilesChanged(`${profile2?.name ?? "Default"} is now active.`);
             break;
           case "edit":
             editingId2 = profile2.id;
@@ -1466,12 +1520,13 @@
             editForm.elements.role.value = profile2.details.role;
             editStatus.textContent = "";
             editProfile.showModal();
+            editForm.elements.name.select();
             break;
           case "reset":
             confirmReset(profile2);
             break;
           case "export":
-            downloadProfile(profile2);
+            downloadProfile(profile2 ?? defaultProfile());
             break;
           case "delete":
             editingId2 = profile2.id;
