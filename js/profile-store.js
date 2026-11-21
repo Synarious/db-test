@@ -1,6 +1,7 @@
 import { modes } from './questions.js';
 import { newDraft, normalizeDraft } from './quiz-state.js';
 import { decodeResults } from './shared-results.js';
+import { downloadFile } from './file-download.js';
 
 export const themes = Object.freeze({
     graphite: 'Graphite',
@@ -126,9 +127,9 @@ export function saveProfileDraft(id, mode, draft) {
     }
 }
 
-export function savedTheme() {
+export function savedTheme(profile = activeProfile()) {
     try {
-        return activeProfile()?.theme ?? normalizeTheme(localStorage.getItem(themeKey));
+        return profile?.theme ?? normalizeTheme(localStorage.getItem(themeKey));
     } catch {
         return defaultTheme;
     }
@@ -151,6 +152,11 @@ export function exportProfile(profile) {
     return JSON.stringify({ format: backupFormat, version: 1, profile: normalizeProfile(profile) }, null, 2);
 }
 
+export function downloadProfileBackup(profile) {
+    const file = new Blob([exportProfile(profile)], { type: 'application/json' });
+    downloadFile(file, 'deviant-bound-quiz-profile.json');
+}
+
 export function importProfile(text) {
     let backup;
     try {
@@ -162,11 +168,19 @@ export function importProfile(text) {
     if (backup?.format !== backupFormat || backup.version !== 1 || !cleanText(profile?.name, 80)) {
         throw new Error('Choose a Deviant Bound quiz profile backup.');
     }
+    const normalized = normalizeProfile(profile);
     for (const mode of Object.keys(modes)) {
         const draft = profile.drafts?.[mode];
         if (!draft?.responses || typeof draft.responses !== 'object' || Array.isArray(draft.responses)) {
             throw new Error('The backup is missing quiz progress data.');
         }
+        if (Object.keys(draft.responses).length !== Object.keys(normalized.drafts[mode].responses).length
+            || (draft.completedAt != null && draft.completedAt !== normalized.drafts[mode].completedAt)) {
+            throw new Error(`The backup contains invalid or unsupported ${modes[mode].label} progress.`);
+        }
     }
-    return normalizeProfile(profile);
+    if (profile.importedResults != null && !normalized.importedResults) {
+        throw new Error('The backup contains an invalid or unsupported imported report.');
+    }
+    return normalized;
 }

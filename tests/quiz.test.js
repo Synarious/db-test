@@ -2,10 +2,11 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { modes } from '../js/questions.js';
 import { normalizeDraft } from '../js/quiz-state.js';
+import { sharedResultLink } from '../js/result-links.js';
 import { roles } from '../js/roles.js';
 import { scoreQuiz } from '../js/scoring.js';
 import { decodeResults, encodeResults, resultsHashFromLink } from '../js/shared-results.js';
-import { clearDraft, loadAgeSelection, loadDraft, saveAgeSelection, saveDraft } from '../js/session.js';
+import { clearDraft, defaultProfile, loadAgeSelection, loadDraft, saveAgeSelection, saveDraft } from '../js/session.js';
 import {
     activeProfile, createProfile, exportProfile, importProfile, listProfiles, removeProfile,
     saveAppearance, savedTheme, selectProfile, updateProfile,
@@ -52,6 +53,16 @@ test('results link imports require a valid score payload', () => {
     ]) {
         assert.equal(resultsHashFromLink(link), null, link);
     }
+});
+
+test('results shared from disk use a portable link that Profiles can import', () => {
+    const hash = encodeResults(scoreQuiz(standard.items, { Q01: 5 }));
+    const local = new URL('file:///C:/quiz/profiles.html');
+    const hosted = new URL('https://example.com/subdir/results.html?mode=standard#profile=default');
+    const shared = sharedResultLink(hash, local);
+    assert.equal(shared, `https://bdsmtest.deviantbound.com/results.html${hash}`);
+    assert.equal(resultsHashFromLink(shared), hash);
+    assert.equal(sharedResultLink(hash, hosted), `https://example.com/subdir/results.html${hash}`);
 });
 
 test('both modes cover the requested categories with unique, reasoned items', () => {
@@ -105,6 +116,52 @@ test('preserves fractional ratings and uses their exact values for scoring', () 
     assert.equal(result.score, 68);
 });
 
+test('both age choices persist when a new tab starts without session storage', t => {
+    const session = mockStorage(t, 'sessionStorage');
+    mockStorage(t, 'localStorage');
+    const ageKey = 'db-quiz.age.v1';
+
+    assert.equal(loadAgeSelection(), null);
+    for (const choice of ['yes', 'no']) {
+        assert.ok(saveAgeSelection(choice));
+        session.clear();
+        assert.equal(loadAgeSelection(), choice);
+    }
+    session.setItem(ageKey, 'yes');
+    assert.equal(loadAgeSelection(), 'no');
+});
+
+test('an existing tab age choice is promoted to browser storage', t => {
+    const session = mockStorage(t, 'sessionStorage');
+    const local = mockStorage(t, 'localStorage');
+    const ageKey = 'db-quiz.age.v1';
+    session.setItem(ageKey, 'yes');
+
+    assert.equal(loadAgeSelection(), 'yes');
+    assert.equal(local.getItem(ageKey), 'yes');
+    assert.equal(session.getItem(ageKey), null);
+});
+
+test('age selection falls back to the tab or page when browser storage is blocked', t => {
+    const session = mockStorage(t, 'sessionStorage');
+    const local = mockStorage(t, 'localStorage');
+    const setLocal = local.setItem;
+    const denyWrites = () => { throw new Error('Storage unavailable'); };
+    local.setItem = denyWrites;
+
+    assert.ok(saveAgeSelection('yes'));
+    assert.equal(loadAgeSelection(), 'yes');
+    session.clear();
+    assert.equal(loadAgeSelection(), null);
+
+    session.setItem = denyWrites;
+    assert.equal(saveAgeSelection('no'), false);
+    assert.equal(loadAgeSelection(), 'no');
+    local.setItem = setLocal;
+    assert.ok(saveAgeSelection('yes'));
+    assert.equal(loadAgeSelection(), 'yes');
+});
+
 test('Default drafts keep ratings, skips, and position across tab sessions', t => {
     const session = mockStorage(t, 'sessionStorage');
     mockStorage(t, 'localStorage');
@@ -117,14 +174,12 @@ test('Default drafts keep ratings, skips, and position across tab sessions', t =
         completedAt: 200,
     };
 
-    assert.ok(saveAgeSelection('yes'));
-    assert.ok(saveDraft('standard', draft));
-    assert.ok(saveDraft('advanced', completed));
+    assert.equal(saveDraft('standard', draft), 'local');
+    assert.equal(saveDraft('advanced', completed), 'local');
     session.clear();
 
     assert.deepEqual(loadDraft('standard'), draft);
     assert.deepEqual(loadDraft('advanced'), completed);
-    assert.equal(loadAgeSelection(), null);
 });
 
 test('existing session progress migrates and stale tabs cannot restore reset answers', t => {
@@ -147,10 +202,43 @@ test('Default still saves in the tab when browser-wide storage is blocked', t =>
     const local = mockStorage(t, 'localStorage');
     local.setItem = () => { throw new Error('Storage unavailable'); };
     const draft = { index: 0, responses: { Q01: 5 }, completedAt: null };
-    assert.ok(saveDraft('standard', draft));
+    assert.equal(saveDraft('standard', draft), 'session');
     assert.deepEqual(loadDraft('standard'), draft);
     assert.ok(clearDraft('standard'));
     assert.deepEqual(loadDraft('standard').responses, {});
+});
+
+test('Default exports both modes and its own theme as a restorable profile', t => {
+    mockStorage(t, 'sessionStorage');
+    mockStorage(t, 'localStorage');
+    const completed = {
+        index: 25, responses: Object.fromEntries(standard.items.map(({ id }) => [id, id === 'Q01' ? 3.72 : null])),
+        completedAt: 200,
+    };
+    saveDraft('standard', completed);
+    saveDraft('advanced', { responses: { Q01: 2 } });
+    saveAppearance(null, 'porcelain');
+    const active = createProfile({ name: 'Existing', theme: 'ocean' });
+    selectProfile(active.id);
+
+    const restored = createProfile(importProfile(exportProfile(defaultProfile())));
+    assert.equal(restored.name, 'Default');
+    assert.equal(restored.theme, 'porcelain');
+    assert.deepEqual(restored.drafts.standard, completed);
+    assert.deepEqual(restored.drafts.advanced.responses, { Q01: 2 });
+    assert.equal(activeProfile().id, active.id);
+});
+
+test('backup import reports invalid answers, completion markers, and imported reports', () => {
+    for (const [alter, message] of [
+        [profile => { profile.drafts.standard.responses = { Q01: '5' }; }, /invalid or unsupported Quick/],
+        [profile => { profile.drafts.advanced.completedAt = 200; }, /invalid or unsupported Advanced/],
+        [profile => { profile.importedResults = '#results=v2.scores'; }, /invalid or unsupported imported report/],
+    ]) {
+        const backup = JSON.parse(exportProfile({ name: 'Backup' }));
+        alter(backup.profile);
+        assert.throws(() => importProfile(JSON.stringify(backup)), message);
+    }
 });
 
 test('guest progress and profile progress stay independent across profile switches', t => {

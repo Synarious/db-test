@@ -10,8 +10,7 @@
     <link rel="icon" href="img/favicon/favicon.ico">
     <link rel="stylesheet" href="css/site.css">
     <link rel="stylesheet" href="css/profiles.css">
-    <script type="module" src="js/site.js"></script>
-    <script type="module" src="js/profiles-page.js"></script>
+    <script defer src="js/browser.bundle.js" data-page="profiles"></script>
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -42,6 +41,7 @@
                 <div class="actions profile-toolbar-actions">
                     <button type="button" id="use-default" class="secondary" hidden>Switch to Default</button>
                     <button type="button" id="reset-default" class="text-button" aria-haspopup="dialog">Reset progress</button>
+                    <button type="button" class="text-button" id="export-default" hidden>Export Default backup</button>
                     <button type="button" class="text-button" id="import-profile" title="Restore a JSON backup as a separate profile">Import backup</button>
                     <button type="button" class="text-button" id="import-share-link" aria-haspopup="dialog">Import share link</button>
                     <input type="file" id="backup-file" accept=".json,application/json" hidden>
@@ -90,7 +90,7 @@
                     <button type="button" class="secondary" data-action="activate">Make active</button>
                     <button type="button" class="text-button" data-action="edit" aria-haspopup="dialog">Edit</button>
                     <button type="button" class="text-button" data-action="reset" aria-haspopup="dialog">Reset progress</button>
-                    <button type="button" class="text-button" data-action="export">Export</button>
+                    <button type="button" class="text-button" data-action="export">Export backup</button>
                     <button type="button" class="text-button" data-action="delete" aria-haspopup="dialog">Delete</button>
                 </div>
             </li>

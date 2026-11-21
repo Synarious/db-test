@@ -172,7 +172,7 @@ body::before {
     pointer-events: none;
     background: var(--accent);
     opacity: .11;
-    mask: url("../img/icon-texture.png") center top / 460px 360px repeat;
+    mask: var(--icon-texture, none) center top / 460px 360px repeat;
 }
 
 @media print, (forced-colors: active) {

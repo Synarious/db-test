@@ -1,7 +1,9 @@
 import { activeProfile, isAppearanceChange, saveAppearance, savedTheme, themes } from './profile-store.js';
+import iconTexture from '../img/icon-texture.png';
 
 const root = document.documentElement;
 const themeColor = document.querySelector('meta[name="theme-color"]');
+root.style.setProperty('--icon-texture', `url("${iconTexture}")`);
 
 function applyTheme(theme) {
     root.dataset.theme = theme;

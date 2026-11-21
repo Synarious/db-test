@@ -10,8 +10,7 @@
     <link rel="icon" href="img/favicon/favicon.ico">
     <link rel="stylesheet" href="css/site.css">
     <link rel="stylesheet" href="css/results.css">
-    <script type="module" src="js/site.js"></script>
-    <script type="module" src="js/results-page.js"></script>
+    <script defer src="js/browser.bundle.js" data-page="results"></script>
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -34,15 +33,16 @@
             <p id="result-intro" class="description">This example profile shows how role scores will appear.</p>
             <p id="missed-questions" class="description" hidden></p>
         </div>
-        <section id="saved-result-gate" class="panel saved-result-gate" aria-labelledby="saved-result-heading" hidden>
-            <h2 id="saved-result-heading">View your saved results</h2>
-            <p class="description" id="result-age-description">Confirm you are 18 or older to open your personal results in this tab.</p>
+        <section id="saved-result-gate" class="panel saved-result-gate" aria-label="Age confirmation" hidden>
             <div class="actions">
                 <button type="button" id="confirm-result-age">I am 18 or older</button>
-                <a class="button secondary" href="results.html#preview">Keep viewing the preview</a>
+                <a class="button secondary" href="#preview">View example</a>
             </div>
-            <p id="result-age-status" class="status" role="status"></p>
         </section>
+        <div class="actions results-back" id="result-recovery" hidden>
+            <a class="button secondary" href="profiles.html">Profiles / import backup</a>
+            <a class="button secondary" href="#preview">View example</a>
+        </div>
         <section class="report" aria-labelledby="report-heading">
             <header class="report-header">
                 <h2 id="report-heading">Example profile</h2>
@@ -60,7 +60,7 @@
             </footer>
             <noscript><p>Enable JavaScript to display quiz results.</p></noscript>
         </section>
-        <div class="actions results-back">
+        <div class="actions results-back" id="result-actions">
             <a class="button secondary" href="quiz.html" id="quiz-link">Take the BDSM Test</a>
             <a class="button secondary" href="profiles.html#create-profile" id="save-default-result" hidden>Save to a profile</a>
             <a class="button secondary" href="profiles.html" id="import-shared-result" hidden>Import shared results</a>
@@ -91,9 +91,12 @@
             </label>
             <div class="actions">
                 <button type="button" id="copy-link">Copy preview link</button>
+                <button type="button" id="share-result-link" class="secondary" hidden>Share link</button>
+                <button type="button" id="save-report-backup" class="secondary" hidden>Download JSON backup</button>
                 <button type="button" id="save-report-image" class="secondary">Save PNG</button>
                 <button type="button" id="print-report" class="secondary">Print / save PDF</button>
             </div>
+            <p id="backup-description" class="description" hidden>The JSON backup can be imported in Profiles. It includes saved answers, profile settings, and any report imported into this profile.</p>
             <p id="share-status" class="status" role="status"></p>
         </dialog>
     </main>

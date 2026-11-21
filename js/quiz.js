@@ -2,8 +2,12 @@ import { modes } from './questions.js';
 import { missedQuestionsMessage, newDraft, normalizeDraft, ratingStep, requestedMode, responseOptions } from './quiz-state.js';
 import { scoreQuiz } from './scoring.js';
 import { renderScores } from './score-list.js';
-import { clearDraft, isDefaultDraftChange, loadAgeSelection, loadDraft, saveAgeSelection, saveDraft } from './session.js';
-import { activeProfile, isProfileChange } from './profile-store.js';
+import {
+    clearDraft, defaultProfile, isAgeSelectionChange, isDefaultDraftChange, loadAgeSelection, loadDraft, saveAgeSelection, saveDraft,
+} from './session.js';
+import { activeProfile, downloadProfileBackup, isProfileChange } from './profile-store.js';
+import { localResultLink } from './result-links.js';
+import { encodeResults } from './shared-results.js';
 
 const gate = document.querySelector('#age-gate');
 const ageStatus = document.querySelector('#age-status');
@@ -25,10 +29,10 @@ const reset = document.querySelector('#reset-dialog');
 const localReport = document.querySelector('#local-report');
 const profileContext = document.querySelector('#quiz-profile');
 
-let ageSelection = loadAgeSelection();
+let ageSelection;
 let profile = activeProfile();
 let mode = null;
-let storageAvailable = true;
+let storageScope = 'local';
 const drafts = new Map();
 
 function getDraft(key) {
@@ -43,10 +47,10 @@ function persistDraft(draft) {
     return saved;
 }
 
-function showStorageState(saved) {
-    storageAvailable &&= saved;
-    storageStatus.textContent = storageAvailable
-        ? ''
+function showStorageState(scope = storageScope) {
+    storageScope = scope;
+    storageStatus.textContent = scope === 'local' ? '' : scope === 'session'
+        ? 'Progress is saved for this tab. Keep it open to finish the quiz.'
         : 'Browser storage is unavailable. Keep this page open to finish the quiz.';
 }
 
@@ -141,6 +145,7 @@ function showStep(moveFocus = false) {
 }
 
 function showAgeSelection(moveFocus = false) {
+    ageSelection = loadAgeSelection();
     const accepted = ageSelection === 'yes';
     const declined = ageSelection === 'no';
     gate.hidden = accepted;
@@ -149,13 +154,14 @@ function showAgeSelection(moveFocus = false) {
     profileContext.hidden = !accepted || !profile;
     profileContext.firstElementChild.textContent = profile ? `Active profile · ${profile.name}` : '';
     localReport.hidden = true;
+    if (!accepted && reset.open) reset.close();
     ageActions.hidden = declined;
     document.querySelector('#age-intro').hidden = declined;
     ageStatus.textContent = declined ? 'You must be 18 or older to continue.' : '';
 
     if (accepted && mode) {
         showStep(moveFocus);
-        showStorageState(true);
+        showStorageState();
     } else if (accepted) {
         for (const button of modeButtons) {
             const key = button.dataset.mode;
@@ -170,8 +176,7 @@ function showAgeSelection(moveFocus = false) {
 }
 
 function chooseAge(value) {
-    ageSelection = value;
-    showStorageState(saveAgeSelection(value));
+    saveAgeSelection(value);
     showAgeSelection(true);
 }
 
@@ -213,12 +218,16 @@ function advance() {
     }
 
     draft.completedAt = Date.now();
-    if (persistDraft(draft) && loadAgeSelection() === 'yes' && profile?.id === activeProfile()?.id) {
-        location.assign(`results.html?mode=${mode}`);
+    const scope = persistDraft(draft);
+    if (scope === 'local') {
+        location.assign(localResultLink(mode, profile?.id));
         return;
     }
-    showStorageState(false);
-    renderScores(document.querySelector('#local-scores'), scoreQuiz(items, draft.responses));
+    showStorageState(scope);
+    const scores = scoreQuiz(items, draft.responses);
+    renderScores(document.querySelector('#local-scores'), scores);
+    document.querySelector('#local-share-result').href = `results.html${encodeResults(scores)}`;
+    document.querySelector('#local-backup-status').textContent = '';
     const missed = document.querySelector('#local-missed-questions');
     missed.textContent = missedQuestionsMessage(items, draft.responses);
     missed.hidden = !missed.textContent;
@@ -234,6 +243,16 @@ declineAge.addEventListener('click', () => chooseAge('no'));
 for (const button of modeButtons) button.addEventListener('click', () => chooseMode(button.dataset.mode));
 document.querySelector('#change-mode').addEventListener('click', () => chooseMode(null));
 document.querySelector('#return-to-quiz').addEventListener('click', () => showAgeSelection(true));
+document.querySelector('#save-local-backup').addEventListener('click', () => {
+    const backup = profile ?? defaultProfile();
+    const status = document.querySelector('#local-backup-status');
+    try {
+        downloadProfileBackup({ ...backup, drafts: { ...backup.drafts, ...Object.fromEntries(drafts) } });
+        status.textContent = 'Backup download started.';
+    } catch {
+        status.textContent = 'Could not download the backup. Try again.';
+    }
+});
 
 form.addEventListener('submit', event => {
     event.preventDefault();
@@ -261,6 +280,10 @@ reset.addEventListener('close', () => {
 });
 
 window.addEventListener('storage', event => {
+    if (isAgeSelectionChange(event.key)) {
+        if (loadAgeSelection() !== ageSelection) showAgeSelection();
+        return;
+    }
     const defaultChanged = !profile && isDefaultDraftChange(event.key);
     if (!defaultChanged && !isProfileChange(event.key, profile?.id)) return;
     const current = activeProfile();
@@ -271,7 +294,7 @@ window.addEventListener('storage', event => {
     if (switched && reset.open) reset.close();
     if (switched || updatedDrafts || defaultChanged) {
         drafts.clear();
-        storageAvailable = true;
+        storageScope = 'local';
         showAgeSelection();
     } else if (renamed) {
         profileContext.firstElementChild.textContent = `Active profile · ${profile.name}`;
@@ -281,11 +304,13 @@ window.addEventListener('storage', event => {
 window.addEventListener('pageshow', event => {
     if (!event.persisted) return;
     const current = activeProfile();
-    if (!storageAvailable && profile?.id === current?.id) return;
+    if (storageScope !== 'local' && profile?.id === current?.id) {
+        if (loadAgeSelection() !== ageSelection) showAgeSelection();
+        return;
+    }
     profile = current;
-    ageSelection = loadAgeSelection();
     drafts.clear();
-    storageAvailable = true;
+    storageScope = 'local';
     restoreMode();
     showAgeSelection();
 });

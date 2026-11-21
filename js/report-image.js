@@ -1,6 +1,9 @@
+import { downloadFile } from './file-download.js';
+import iconTexture from '../img/icon-texture.png';
+
 async function drawTexture(context, width, height, accent) {
     const image = new Image();
-    image.src = new URL('../img/icon-texture.png', import.meta.url).href;
+    image.src = iconTexture;
     try {
         await image.decode();
     } catch {
@@ -126,17 +129,11 @@ export async function saveReportImage(report) {
     context.fillStyle = palette.accent;
     context.fillText(website, right, panelBottom + 32);
 
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-    if (!blob) throw new Error('PNG export failed');
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'deviant-bound-results.png';
-    document.body.append(link);
     try {
-        link.click();
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        if (!blob) throw new Error('PNG export failed');
+        downloadFile(blob, 'deviant-bound-results.png');
     } finally {
-        link.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 60_000);
+        canvas.width = canvas.height = 0;
     }
 }

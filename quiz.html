@@ -11,8 +11,7 @@
     <link rel="stylesheet" href="css/site.css">
     <link rel="stylesheet" href="css/quiz.css">
     <link rel="stylesheet" href="css/results.css">
-    <script type="module" src="js/site.js"></script>
-    <script type="module" src="js/quiz.js"></script>
+    <script defer src="js/browser.bundle.js" data-page="quiz"></script>
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -90,11 +89,16 @@
         <section id="local-report" class="report" aria-labelledby="local-report-heading" hidden>
             <header class="report-header">
                 <h1 id="local-report-heading" tabindex="-1">Your results</h1>
-                <p class="description">Browser storage is unavailable. Your results are available here until you leave the page.</p>
+                <p class="description">Your results are available on this page. Download a backup to keep your answers.</p>
                 <p class="description" id="local-missed-questions" hidden></p>
             </header>
             <ul id="local-scores" class="scores" aria-label="Your quiz scores"></ul>
-            <div class="results-back"><button type="button" id="return-to-quiz" class="secondary">Return to quiz</button></div>
+            <div class="actions results-back">
+                <button type="button" id="save-local-backup">Download answer backup</button>
+                <a class="button secondary" id="local-share-result" target="_blank" rel="noopener">Share scores (opens in a new tab)</a>
+                <button type="button" id="return-to-quiz" class="secondary">Return to quiz</button>
+            </div>
+            <p id="local-backup-status" class="status" role="status"></p>
         </section>
         <dialog id="reset-dialog" aria-labelledby="reset-heading">
             <h2 id="reset-heading">Reset your answers?</h2>
